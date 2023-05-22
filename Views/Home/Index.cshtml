@@ -1,0 +1,202 @@
+﻿@{
+    ViewData["Title"] = "Cookez - A place to store and create delicious and nutritious recipes for everyone";
+}
+<div class="card col-md-12 rounded-5 overflow-hidden border-0 mb-5">
+    <div class="row g-0">
+        <div class="col-md-6" style="background-color: #e7f9fd;">
+            <div class="card-body ms-5 mt-4">
+                <button type="button" class="pe-none btn btn-warning shadow rounded-5">
+                    <i class=" fa-solid fa-fire text-danger bg-warning"></i> <span class="fw-bold">Hot Recipe</span>
+                </button>
+                <a class="text-dark text-decoration-none" href="#"><h1 class="my-5 card-title">Pho Sai Gon</h1></a>
+                <p class="card-text mb-4">
+                    A Vietnamese soup made of beef or chicken broth and rice noodles.
+                    A Vietnamese soup made of beef or chicken broth and rice noodles.
+                    A Vietnamese soup made of beef or chicken broth and rice noodles.
+                </p>
+                <button type="button" class="btn rounded-5" style="background-color: #dbedf1;">
+                    <i class="fa-solid fa-clock"></i> <span class="text-dark">8 hours</span>
+                </button>
+                <button type="button" class="btn rounded-5" style="background-color: #dbedf1;">
+                    <i class="fa-solid fa-utensils"></i> <span class="text-dark">Breakfast</span>
+                </button>
+                <div class="mb-2 mt-5 d-flex justify-content-between">
+                    <div class="d-flex">
+                        <img src="~/images/avatar.jpeg" class="img-fluid rounded-5" style="height: 50px; width: 50px;" alt="Food">
+                        <div class="ms-2 user-info">
+                            <p class="fw-bold mb-0">Lionel Messi</p>
+                            <p class="text-secondary mb-0">20 May 2023</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-dark btn-lg rounded-3">
+                        <span class="text-light">View Detail</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <img src="~/images/pho.jpg" class="img-fluid h-100" alt="Food">
+        </div>
+    </div>
+</div>
+<hr />
+<div class="col-md-12 mt-5 mb-5">
+    <div class="row d-flex mb-4">
+        <div class="col-md-5"></div>
+        <h1 class="col-md-5">Categories</h1>
+        <button type="button" class="col-md-2 btn btn-lg rounded-3 float-end" style="background-color: #e7f9fd;">
+            <span class="text-dark fw-semibold">All categories</span> &nbsp; <i class="fa-solid fa-list"></i>
+        </button>
+    </div>
+    <div class="row text-center ps-5 mt-5">
+        <div class="mx-5 shadow-sm rounded-4 col-md-2 col-sm-6" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,192,192,0.4086426807050946) 100%);">
+            <a class="text-decoration-none text-dark" href="#">
+                <img src="~/images/category-protein.png" class="img-fluid w-100 h-50" />
+                <p class="fw-bold fs-4 pt-4 text-danger">Protein</p>
+            </a>
+        </div>
+        <div class="mx-5 shadow-sm rounded-4 col-md-2 col-sm-6" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,219,192,0.4086426807050946) 100%);">
+            <a class="text-decoration-none text-dark" href="#">
+                <img src="~/images/category-carb.png" class="img-fluid w-100 h-50" />
+                <p class="fw-bold fs-4 pt-4 text-warning">Carbs</p>
+            </a>
+        </div>
+        <div class="mx-5 shadow-sm rounded-4 col-md-2 col-sm-6" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(217,255,192,0.4086426807050946) 100%);">
+            <a class="text-decoration-none text-dark" href="#">
+                <img src="~/images/category-fiber.png" class="img-fluid w-100 h-50" />
+                <p class="fw-bold fs-4 pt-4 text-success">Fiber</p>
+            </a>
+        </div>
+        <div class="mx-5 shadow-sm rounded-4 col-md-2 col-sm-6" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%);">
+            <a class="text-decoration-none text-dark" href="#">
+                <img src="~/images/category-fat.webp" class="img-fluid w-100 h-50" />
+                <p class="fw-bold fs-4 pt-4 text-info">Fat</p>
+            </a>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="col-md-12 mt-5 mb-5 h-auto">
+    <figure class="text-center mb-5">
+        <blockquote class="blockquote">
+            <h1>Recipes</h1>
+        </blockquote>
+        <figcaption class="blockquote-footer mt-1">
+            <cite title="Source Title">"Recipes are the threads that weave together the tapestry of flavors, connecting us through the joy of shared meals and the timeless traditions of the kitchen."</cite>
+        </figcaption>
+    </figure>
+    <div class="row">
+        <div class="card col-md-3 col-sm-6 mx-5 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%);">
+            <img src="~/images/burger.jpg" class="img-fluid card-img-top h-60" alt="Food">
+            <div class="card-body pb-1 pt-3">
+                <h4 class="card-title" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">West Virginia Burger</h4>
+            </div>
+            <div class="d-flex ms-3">
+                <button type="button" class="btn rounded-5 mb-3">
+                    <i class="fa-solid fa-clock"></i> <span class="text-dark">30 minutes</span>
+                </button>
+                <button type="button" class="btn rounded-5 mb-3">
+                    <i class="fa-solid fa-utensils"></i> <span class="text-dark">Fast food</span>
+                </button>
+            </div>
+        </div>
+        <div class="card col-md-3 col-sm-6 mx-5 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%);">
+            <img src="~/images/burger.jpg" class="img-fluid card-img-top h-60" alt="Food">
+            <div class="card-body pb-1 pt-3">
+                <h4 class="card-title" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">West Virginia Burger</h4>
+            </div>
+            <div class="d-flex ms-3">
+                <button type="button" class="btn rounded-5 mb-3">
+                    <i class="fa-solid fa-clock"></i> <span class="text-dark">30 minutes</span>
+                </button>
+                <button type="button" class="btn rounded-5 mb-3">
+                    <i class="fa-solid fa-utensils"></i> <span class="text-dark">Fast food</span>
+                </button>
+            </div>
+        </div>
+        <div class="card col-md-3 col-sm-6 mx-5 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%);">
+            <img src="~/images/burger.jpg" class="img-fluid card-img-top h-60" alt="Food">
+            <div class="card-body pb-1 pt-3">
+                <h4 class="card-title" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">West Virginia Burger</h4>
+            </div>
+            <div class="d-flex ms-3">
+                <button type="button" class="btn rounded-5 mb-3">
+                    <i class="fa-solid fa-clock"></i> <span class="text-dark">30 minutes</span>
+                </button>
+                <button type="button" class="btn rounded-5 mb-3">
+                    <i class="fa-solid fa-utensils"></i> <span class="text-dark">Fast food</span>
+                </button>
+            </div>
+        </div>
+        <div class="card col-md-3 col-sm-6 mx-5 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%);">
+            <img src="~/images/burger.jpg" class="img-fluid card-img-top h-60" alt="Food">
+            <div class="card-body pb-1 pt-3">
+                <h4 class="card-title" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">West Virginia Burger</h4>
+            </div>
+            <div class="d-flex ms-3">
+                <button type="button" class="btn rounded-5 mb-3">
+                    <i class="fa-solid fa-clock"></i> <span class="text-dark">30 minutes</span>
+                </button>
+                <button type="button" class="btn rounded-5 mb-3">
+                    <i class="fa-solid fa-utensils"></i> <span class="text-dark">Fast food</span>
+                </button>
+            </div>
+        </div>
+        <div class="card col-md-3 col-sm-6 mx-5 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%);">
+            <img src="~/images/burger.jpg" class="img-fluid card-img-top h-60" alt="Food">
+            <div class="card-body pb-1 pt-3">
+                <h4 class="card-title" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">West Virginia Burger</h4>
+            </div>
+            <div class="d-flex ms-3">
+                <button type="button" class="btn rounded-5 mb-3">
+                    <i class="fa-solid fa-clock"></i> <span class="text-dark">30 minutes</span>
+                </button>
+                <button type="button" class="btn rounded-5 mb-3">
+                    <i class="fa-solid fa-utensils"></i> <span class="text-dark">Fast food</span>
+                </button>
+            </div>
+        </div>
+        <div class="card col-md-3 col-sm-6 mx-5 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%);">
+            <img src="~/images/burger.jpg" class="img-fluid card-img-top h-60" alt="Food">
+            <div class="card-body pb-1 pt-3">
+                <h4 class="card-title" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">West Virginia Burger</h4>
+            </div>
+            <div class="d-flex ms-3">
+                <button type="button" class="btn rounded-5 mb-3">
+                    <i class="fa-solid fa-clock"></i> <span class="text-dark">30 minutes</span>
+                </button>
+                <button type="button" class="btn rounded-5 mb-3">
+                    <i class="fa-solid fa-utensils"></i> <span class="text-dark">Fast food</span>
+                </button>
+            </div>
+        </div>
+        <div class="card col-md-3 col-sm-6 mx-5 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%);">
+            <img src="~/images/burger.jpg" class="img-fluid card-img-top h-60" alt="Food">
+            <div class="card-body pb-1 pt-3">
+                <h4 class="card-title" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">West Virginia Burger</h4>
+            </div>
+            <div class="d-flex ms-3">
+                <button type="button" class="btn rounded-5 mb-3">
+                    <i class="fa-solid fa-clock"></i> <span class="text-dark">30 minutes</span>
+                </button>
+                <button type="button" class="btn rounded-5 mb-3">
+                    <i class="fa-solid fa-utensils"></i> <span class="text-dark">Fast food</span>
+                </button>
+            </div>
+        </div>
+        <div class="card col-md-3 col-sm-6 mx-5 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%);">
+            <img src="~/images/burger.jpg" class="img-fluid card-img-top h-60" alt="Food">
+            <div class="card-body pb-1 pt-3">
+                <h4 class="card-title" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">West Virginia Burger</h4>
+            </div>
+            <div class="d-flex ms-3">
+                <button type="button" class="btn rounded-5 mb-3">
+                    <i class="fa-solid fa-clock"></i> <span class="text-dark">30 minutes</span>
+                </button>
+                <button type="button" class="btn rounded-5 mb-3">
+                    <i class="fa-solid fa-utensils"></i> <span class="text-dark">Fast food</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
