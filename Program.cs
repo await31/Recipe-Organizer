@@ -10,6 +10,9 @@ builder.Services.AddDbContext<RecipeOrganizerContext>(options => options.UseSqlS
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<RecipeOrganizerContext>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -26,7 +29,7 @@ app.UseRouting();
 app.UseAuthentication();;
 
 app.UseAuthorization();
-
+app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
