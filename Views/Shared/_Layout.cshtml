@@ -24,6 +24,7 @@
     }
 </style>
 <body>
+    @RenderSection("scripts", required: false)
     <header class="text-bg-light">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
@@ -40,8 +41,7 @@
                 </ul>
                 <div class="text-end">
                     <a class="btn btn-outline-dark me-2" asp-area="" asp-controller="RecipeCategory" asp-action="Index">Test Admin</a>
-                    <button class="btn btn-outline-dark me-2">Sign in</button>
-                    <button class="btn btn-dark">Sign up</button>
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </div>
