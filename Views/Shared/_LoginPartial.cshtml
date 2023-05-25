@@ -2,26 +2,33 @@
 
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
+<style>
+    hr {
+        color: black;
+    }
+</style>
+@if (SignInManager.IsSignedIn(User)) {
+    <li class="nav-item dropdown">
+        <a class="btn btn-dark btn-lg dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Manage
+        </a>
+        <ul class="dropdown-menu">
+            <li class="ms-3">
+                <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">My Profile</a>
+            </li>
+            <li><hr class="dropdown-divider text-dark"></li>
+            <li>
+                <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button id="logout" type="submit" class="btn btn-link text-dark text-decoration-none">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </li>
+    <img src="~/images/avatar.jpeg" class="img-fluid rounded-circle ms-2" style="width: 40px; height: 40px;" alt="avatar">
+    @*Hello @UserManager.GetUserName(User)!*@
+} else {
+    <a class="btn btn-outline-dark me-2" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+    <a class="btn btn-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+}
 
-<ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
-{
-    <li class="nav-item">
-        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
-    </li>
-    <li class="nav-item">
-        <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-        </form>
-    </li>
-}
-else
-{
-    <li class="nav-item">
-        <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
-}
-</ul>
+

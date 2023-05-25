@@ -31,7 +31,7 @@ public partial class RecipeOrganizerContext : IdentityDbContext
     public virtual DbSet<RecipeFeedback> RecipeFeedbacks { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server= DESKTOP-MQ8F714\\SQLEXPRESS; Database = RecipeOrganizer; Trusted_Connection=True;TrustServerCertificate=True;");
+        => optionsBuilder.UseSqlServer("Server= KhoaLab; Database = RecipeOrganizer; Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
