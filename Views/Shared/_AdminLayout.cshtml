@@ -23,12 +23,12 @@
                            aria-current="true">
                             <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Main dashboard</span>
                         </a>
-                        <a href="#"
-                           class="list-group-item list-group-item-action py-2 ripple active">
-                            <i class="fas fa-chart-area fa-fw me-3"></i><span>Recipe Category</span>
+                        <a asp-controller="RecipeCategory" asp-action="Index"
+                           class="list-group-item list-group-item-action py-2 ripple">
+                            <i class="fas fa-chart-area fa-fw me-3"></i><span>Recipes Category</span>
                         </a>
-                        <a href="#"
-                           class="list-group-item list-group-item-action py-2 ripple"><i class="fas fa-lock fa-fw me-3"></i><span>Recipe Pending</span></a>
+                        <a asp-controller="IngredientCategory" asp-action="Index"
+                           class="list-group-item list-group-item-action py-2 ripple"><i class="fas fa-lock fa-fw me-3"></i><span>Ingredients Category</span></a>
                         <a href="#"
                            class="list-group-item list-group-item-action py-2 ripple">
                             <i class="fas fa-chart-line fa-fw me-3"></i><span>Analytics</span>
@@ -82,14 +82,30 @@
             </header>
             <partial name="_Notification" />
             @RenderBody()
-        </div>
+        </div>  
     </div>
-    <script type="text/javascript">
+    <script src="~/lib/jquery-3.7.0.min.js"></script>
+    <script>
         $(document).ready(function () {
-            $('ul li a').click(function () {
-                $('li a').removeClass("active");
-                $(this).addClass("active");
-            });
+            var currentUrl = document.location.pathname;
+
+            var elementLevelZero = $('.nav-main a[href="' + currentUrl + '"]');
+            $(elementLevelZero).addClass('active');
+
+            var elementLevelZeroList = $(elementLevelZero).closest('ul');
+
+            var elementLevelOne = $(elementLevelZeroList).prev("a");
+            $(elementLevelOne).addClass('active');
+
+            var elementLevelOneList = $($(elementLevelOne).parent()).closest('ul');
+
+            var elementLevelTwo = $(elementLevelOneList).prev("a");
+            $(elementLevelTwo).addClass('active');
+
+            var elementLevelTwoList = $($(elementLevelTwo).parent()).closest('ul');
+
+            var elementLevelThree = $(elementLevelTwoList).prev("a");
+            $(elementLevelThree).addClass('active');
         });
     </script>
 </body>
