@@ -22,6 +22,10 @@
         clear: both;
         visibility: hidden;
     }
+
+    li {
+        list-style: none;
+    }
 </style>
 <body>
     @RenderSection("scripts", required: false)
@@ -39,8 +43,7 @@
                     <li><a href="#" class="nav-link px-2 text-white">About</a></li>
                     *@
                 </ul>
-                <div class="text-end">
-                    <a class="btn btn-outline-dark me-2" asp-area="" asp-controller="RecipeCategory" asp-action="Index">Test Admin</a>
+                <div class="text-end d-flex">
                     <partial name="_LoginPartial" />
                 </div>
             </div>
@@ -73,6 +76,8 @@
     </footer>
 
     <!-- Footer -->
+    <script src="/lib/jquery-3.7.0.min.js"></script>
     <script src="~/lib/bootstrap-5.3.0/js/bootstrap.min.js"></script>
+    <script src="~/lib/bootstrap-5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

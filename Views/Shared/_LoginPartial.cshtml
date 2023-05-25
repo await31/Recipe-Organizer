@@ -3,25 +3,30 @@
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
-<ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
-{
-    <li class="nav-item">
-        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
+@if (SignInManager.IsSignedIn(User)) {
+    <li class="nav-item dropdown">
+        <a class="btn btn-lg dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="~/images/avatar.jpeg" class="img-fluid rounded-circle ms-2" style="width: 40px; height: 40px;" alt="avatar">
+            @UserManager.GetUserName(User)
+        </a>
+        <ul class="dropdown-menu">
+            <li class="ms-3">
+                <a class="text-dark text-decoration-none" asp-area="" asp-controller="RecipeCategory" asp-action="Index">Dashboard &nbsp;<i class="fa-solid fa-chart-line"></i></a>
+            </li>
+            <li class="ms-3 mt-2">
+                <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">My Profile &nbsp; <i class="fa-solid fa-user"></i></a>
+            </li>
+            <li class="ms-1">    
+                <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button id="logout" type="submit" class="btn btn-link text-dark text-decoration-none">Logout &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa-solid fa-arrow-right-from-bracket text-end"></i> </button>
+                </form>
+            </li>
+        </ul>
     </li>
-    <li class="nav-item">
-        <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-        </form>
-    </li>
+    @*Hello !*@
+} else {
+    <a class="btn btn-outline-dark me-2" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+    <a class="btn btn-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
 }
-else
-{
-    <li class="nav-item">
-        <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
-}
-</ul>
+
+
