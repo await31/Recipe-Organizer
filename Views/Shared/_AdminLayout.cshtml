@@ -1,5 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var currentController = ViewContext.RouteData.Values["Controller"] as string;
+    var currentAction = ViewContext.RouteData.Values["Action"] as string;
+}
 
+<!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
@@ -24,11 +28,12 @@
                             <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Main dashboard</span>
                         </a>
                         <a asp-controller="RecipeCategory" asp-action="Index"
-                           class="list-group-item list-group-item-action py-2 ripple">
+                           class="list-group-item list-group-item-action py-2 ripple @(currentController == "RecipeCategory" ? "active" : "")">
                             <i class="fas fa-chart-area fa-fw me-3"></i><span>Recipes Category</span>
                         </a>
                         <a asp-controller="IngredientCategory" asp-action="Index"
-                           class="list-group-item list-group-item-action py-2 ripple"><i class="fas fa-lock fa-fw me-3"></i><span>Ingredients Category</span></a>
+                           class="list-group-item list-group-item-action py-2 ripple @(currentController == "IngredientCategory" ? "active" : "")">
+                           <i class="fas fa-lock fa-fw me-3"></i><span>Ingredients Category</span></a>
                         <a href="#"
                            class="list-group-item list-group-item-action py-2 ripple">
                             <i class="fas fa-chart-line fa-fw me-3"></i><span>Analytics</span>
