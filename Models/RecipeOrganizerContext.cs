@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using CapstoneProject.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CapstoneProject.Models;
 
-public partial class RecipeOrganizerContext : IdentityDbContext
+public partial class RecipeOrganizerContext : IdentityDbContext<ApplicationUser>
 {
+    
     public RecipeOrganizerContext()
     {
     }
@@ -36,7 +39,16 @@ public partial class RecipeOrganizerContext : IdentityDbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfiguration(new ApplicationUserEntityConfiguration());
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
+public class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<ApplicationUser>
+{
+    public void Configure(EntityTypeBuilder<ApplicationUser> builder)
+    {
+        builder.Property(u => u.Name).HasMaxLength(128);
+    }
+}
+
