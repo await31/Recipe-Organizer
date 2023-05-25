@@ -1,5 +1,8 @@
 ﻿@model RecipeCategory
-
+@{
+    ViewBag.Title = "Delete recipe category";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
 <form method="post" asp-action="Delete">
     <input asp-for="Id" hidden/>
     <div class="border p-3 mt-4">
