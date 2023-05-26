@@ -3,12 +3,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CapstoneProject.Models;
 
-public partial class RecipeOrganizerContext : IdentityDbContext {
-    public RecipeOrganizerContext() {
+public partial class RecipeOrganizerContext : IdentityDbContext
+{
+    public RecipeOrganizerContext()
+    {
     }
 
     public RecipeOrganizerContext(DbContextOptions<RecipeOrganizerContext> options)
-        : base(options) {
+        : base(options)
+    {
     }
 
     public virtual DbSet<Account> Accounts { get; set; }
@@ -28,9 +31,20 @@ public partial class RecipeOrganizerContext : IdentityDbContext {
     public virtual DbSet<RecipeFeedback> RecipeFeedbacks { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server= KhoaLab; Database = RecipeOrganizer; Trusted_Connection=True;TrustServerCertificate=True;");
+    {
+        // Create a configuration object
+        var configuration = new ConfigurationBuilder()
+          .SetBasePath(AppDomain.CurrentDomain.BaseDirectory) // Set the base path for the appsettings.json file
+          .AddJsonFile("appsettings.json") // Load the appsettings.json file
+          .Build();
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        // Get the connection string
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+        optionsBuilder.UseSqlServer(connectionString);
+    }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
         base.OnModelCreating(modelBuilder);
     }
 

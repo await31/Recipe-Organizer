@@ -1,9 +1,9 @@
 ﻿@page
 @model RegisterModel
+
 @{
     ViewData["Title"] = "Register";
 }
-
 
 <section class="vh-100">
     <div class="container h-100">
@@ -13,7 +13,7 @@
                     <div class="card-body p-md-5">
                         <div class="row justify-content-center">
                             <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
-                                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up</p>
+                                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Register</p>
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                 <form class="mx-1 mx-md-4" id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
                                     @*
@@ -53,9 +53,9 @@
                                     </div>
 
                                     <div class="form-check d-flex justify-content-center mb-3">
-                                        <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" />
+                                        <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" required/>
                                         <label class="form-check-label" for="form2Example3">
-                                            I agree all statements in <a href="#!" class="text-decoration-none">Terms of service</a>
+                                            I agree to the <a href="#!" class="text-decoration-none">Terms of service</a>
                                         </label>
                                     </div>
 
@@ -80,6 +80,7 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    
 }
 
 
