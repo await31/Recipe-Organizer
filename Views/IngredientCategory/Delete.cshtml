@@ -1,6 +1,6 @@
-﻿@model RecipeCategory
+﻿@model IngredientCategory
 @{
-    ViewBag.Title = "Delete recipe category";
+    ViewBag.Title = "Delete ingredient category";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 <form method="post" asp-action="Delete">
@@ -15,6 +15,6 @@
             <input asp-for="Name" class="form-control" disabled/>
         </div>
         <button type="submit" class="btn btn-danger" style="width: 10%;">Delete</button>
-        <a asp-controller="RecipeCategory" asp-action="Index" class="btn btn-warning" style="width: 10%;">Back to list</a>
+        <a asp-controller="IngredientCategory" asp-action="Index" class="btn btn-warning" style="width: 10%;">Back to list</a>
     </div>
 </form>
