@@ -28,9 +28,9 @@
                             <p class="text-secondary mb-0">20 May 2023</p>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-dark btn-lg rounded-3">
+                    <a type="button" class="btn btn-dark btn-lg rounded-3" href="\Home\RecipeDetail">
                         <span class="text-light">View Detail</span>
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -169,33 +169,92 @@
                 </button>
             </div>
         </div>
-        <div class="card col-md-3 col-sm-6 mx-5 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%);">
-            <img src="~/images/burger.jpg" class="img-fluid card-img-top h-60" alt="Food">
-            <div class="card-body pb-1 pt-3">
-                <h4 class="card-title" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">West Virginia Burger</h4>
-            </div>
-            <div class="d-flex ms-3">
-                <button type="button" class="btn rounded-5 mb-3">
-                    <i class="fa-solid fa-clock"></i> <span class="text-dark">30 minutes</span>
-                </button>
-                <button type="button" class="btn rounded-5 mb-3">
-                    <i class="fa-solid fa-utensils"></i> <span class="text-dark">Fast food</span>
-                </button>
-            </div>
-        </div>
-        <div class="card col-md-3 col-sm-6 mx-5 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%);">
-            <img src="~/images/burger.jpg" class="img-fluid card-img-top h-60" alt="Food">
-            <div class="card-body pb-1 pt-3">
-                <h4 class="card-title" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">West Virginia Burger</h4>
-            </div>
-            <div class="d-flex ms-3">
-                <button type="button" class="btn rounded-5 mb-3">
-                    <i class="fa-solid fa-clock"></i> <span class="text-dark">30 minutes</span>
-                </button>
-                <button type="button" class="btn rounded-5 mb-3">
-                    <i class="fa-solid fa-utensils"></i> <span class="text-dark">Fast food</span>
-                </button>
-            </div>
-        </div>
     </div>
-</div>
+</div
+
+ <!-- Contact Form -->
+    <div class="container" style="margin-bottom: 80px;">
+        <h1 class="text-center" style="margin-top: 80px; margin-bottom: 40px;">Contact us</h1>
+        <form>
+            <div class="row">
+                <div class="col-4">
+                    <img src="https://images.unsplash.com/photo-1583394293214-28ded15ee548?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGNoZWZ8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
+                        alt="" class="img-fluid">
+                </div>
+                <div class="col-8">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-6">
+                                <h6
+                                    style="font-weight: normal; color: #00000060; letter-spacing: 0.1em; font-size: 14px;">
+                                    NAME</h6>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="floatingInput" placeholder="John Smith">
+                                    <label style="font-size:14px; font-weight: normal; color: #00000060;"
+                                        for="floatingInput">Enter your name...</label>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h6
+                                    style="font-weight: normal; color: #00000060; letter-spacing: 0.1em; font-size: 14px;">
+                                    EMAIL ADDRESS</h6>
+                                <div class="form-floating mb-3">
+                                    <input type="email" class="form-control" id="floatingInput"
+                                        placeholder="name@example.com">
+                                    <label style="font-size:14px; font-weight: normal; color: #00000060;"
+                                        for="floatingInput">Your email address...</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <h6
+                                    style="font-weight: normal; color: #00000060; letter-spacing: 0.1em; font-size: 14px;">
+                                    SUBJECT</h6>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="floatingInput" placeholder="John Smith">
+                                    <label style="font-size:14px; font-weight: normal; color: #00000060;"
+                                        for="floatingInput">Enter subject...</label>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h6
+                                    style="font-weight: normal; color: #00000060; letter-spacing: 0.1em; font-size: 14px;">
+                                    ENQUIRY TYPE</h6>
+                                <div class="form-floating">
+                                    <select class="form-select" id="floatingSelect"
+                                        aria-label="Floating label select example">
+                                        <option selected>Open this select menu</option>
+                                        <option value="1">One</option>
+                                        <option value="2">Two</option>
+                                        <option value="3">Three</option>
+                                    </select>
+                                    <label for="floatingSelect">Advertising</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <h6
+                                    style="font-weight: normal; color: #00000060; letter-spacing: 0.1em; font-size: 14px;">
+                                    MESSAGE</h6>
+                                <div class="form-floating">
+                                    <textarea class="form-control" placeholder="Leave a comment here"
+                                        id="floatingTextarea2" style="height: 192px"></textarea>
+                                    <label for="floatingTextarea2" style="color: #00000060;">Enter your
+                                        message...</label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 40px;">
+                    <div class="col-4"></div>
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-primary float-end"
+                            style="background: black; border: none; height: 60px; width: 120px;">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
