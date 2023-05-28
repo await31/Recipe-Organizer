@@ -1,7 +1,9 @@
 ﻿using CapstoneProject.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CapstoneProject.Controllers {
+    [Authorize]
     public class RecipeCategoryController : Controller {
 
         private readonly RecipeOrganizerContext _context;

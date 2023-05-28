@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace CapstoneProject.Models;
 
 public partial class RecipeOrganizerContext : IdentityDbContext
-{
+    {
     public RecipeOrganizerContext()
     {
     }

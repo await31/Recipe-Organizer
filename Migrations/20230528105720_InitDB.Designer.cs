@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CapstoneProject.Migrations
 {
     [DbContext(typeof(RecipeOrganizerContext))]
-    [Migration("20230524120933_IdentityTables")]
-    partial class IdentityTables
+    [Migration("20230528105720_InitDB")]
+    partial class InitDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,45 +24,6 @@ namespace CapstoneProject.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("CapstoneProject.Models.Account", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImgPath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("Role")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("Status")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Accounts");
-                });
 
             modelBuilder.Entity("CapstoneProject.Models.Favourite", b =>
                 {
@@ -75,9 +36,12 @@ namespace CapstoneProject.Migrations
                     b.Property<int?>("FkUserId")
                         .HasColumnType("int");
 
+                    b.Property<string>("FkUserId1")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("FkUserId");
+                    b.HasIndex("FkUserId1");
 
                     b.ToTable("Favourites");
                 });
@@ -140,12 +104,15 @@ namespace CapstoneProject.Migrations
                     b.Property<int?>("FkUserId")
                         .HasColumnType("int");
 
+                    b.Property<string>("FkUserId1")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime?>("PlannedDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FkUserId");
+                    b.HasIndex("FkUserId1");
 
                     b.ToTable("MealPlans");
                 });
@@ -176,6 +143,9 @@ namespace CapstoneProject.Migrations
                     b.Property<int?>("FkUserId")
                         .HasColumnType("int");
 
+                    b.Property<string>("FkUserId1")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("ImgPath")
                         .HasColumnType("nvarchar(max)");
 
@@ -195,7 +165,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("FkRecipeId");
 
-                    b.HasIndex("FkUserId");
+                    b.HasIndex("FkUserId1");
 
                     b.ToTable("Recipes");
                 });
@@ -240,11 +210,14 @@ namespace CapstoneProject.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserId1")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("RecipeId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId1");
 
                     b.ToTable("RecipeFeedbacks");
                 });
@@ -358,6 +331,10 @@ namespace CapstoneProject.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -409,6 +386,10 @@ namespace CapstoneProject.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -496,11 +477,28 @@ namespace CapstoneProject.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CapstoneProject.Models.Account", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImgPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("Status")
+                        .HasColumnType("bit");
+
+                    b.HasDiscriminator().HasValue("Account");
+                });
+
             modelBuilder.Entity("CapstoneProject.Models.Favourite", b =>
                 {
                     b.HasOne("CapstoneProject.Models.Account", "FkUser")
                         .WithMany("Favourites")
-                        .HasForeignKey("FkUserId");
+                        .HasForeignKey("FkUserId1");
 
                     b.Navigation("FkUser");
                 });
@@ -518,7 +516,7 @@ namespace CapstoneProject.Migrations
                 {
                     b.HasOne("CapstoneProject.Models.Account", "FkUser")
                         .WithMany("MealPlans")
-                        .HasForeignKey("FkUserId");
+                        .HasForeignKey("FkUserId1");
 
                     b.Navigation("FkUser");
                 });
@@ -535,7 +533,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasOne("CapstoneProject.Models.Account", "FkUser")
                         .WithMany("Recipes")
-                        .HasForeignKey("FkUserId");
+                        .HasForeignKey("FkUserId1");
 
                     b.Navigation("FkRecipe");
 
@@ -552,7 +550,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasOne("CapstoneProject.Models.Account", "User")
                         .WithMany("RecipeFeedbacks")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("Recipe");
 
@@ -655,17 +653,6 @@ namespace CapstoneProject.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CapstoneProject.Models.Account", b =>
-                {
-                    b.Navigation("Favourites");
-
-                    b.Navigation("MealPlans");
-
-                    b.Navigation("RecipeFeedbacks");
-
-                    b.Navigation("Recipes");
-                });
-
             modelBuilder.Entity("CapstoneProject.Models.IngredientCategory", b =>
                 {
                     b.Navigation("Ingredients");
@@ -680,6 +667,17 @@ namespace CapstoneProject.Migrations
 
             modelBuilder.Entity("CapstoneProject.Models.RecipeCategory", b =>
                 {
+                    b.Navigation("Recipes");
+                });
+
+            modelBuilder.Entity("CapstoneProject.Models.Account", b =>
+                {
+                    b.Navigation("Favourites");
+
+                    b.Navigation("MealPlans");
+
+                    b.Navigation("RecipeFeedbacks");
+
                     b.Navigation("Recipes");
                 });
 #pragma warning restore 612, 618

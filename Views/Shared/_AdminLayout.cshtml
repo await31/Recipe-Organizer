@@ -13,6 +13,17 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <link rel="icon" type="image/x-icon" href="\images\logo.png">
     <script src="https://kit.fontawesome.com/08194921a9.js" crossorigin="anonymous"></script>
+    <style>
+        hr {
+            clear: both;
+            visibility: hidden;
+        }
+
+        li {
+            list-style: none;
+        }
+
+    </style>
 </head>
 <body>
 
@@ -34,9 +45,9 @@
                         <a asp-controller="IngredientCategory" asp-action="Index"
                            class="list-group-item list-group-item-action py-2 ripple @(currentController == "IngredientCategory" ? "active" : "")">
                            <i class="fas fa-lock fa-fw me-3"></i><span>Ingredients Category</span></a>
-                        <a href="#"
-                           class="list-group-item list-group-item-action py-2 ripple">
-                            <i class="fas fa-chart-line fa-fw me-3"></i><span>Analytics</span>
+                        <a asp-controller="AppRoles" asp-action="Index"
+                           class="list-group-item list-group-item-action py-2 ripple @(currentController == "AppRoles" ? "active" : "")">
+                            <i class="fas fa-chart-line fa-fw me-3"></i><span>Roles</span>
                         </a>
                         <a href="#"
                            class="list-group-item list-group-item-action py-2 ripple">
@@ -90,6 +101,8 @@
         </div>  
     </div>
     <script src="~/lib/jquery-3.7.0.min.js"></script>
+    <script src="~/lib/bootstrap-5.3.0/js/bootstrap.min.js"></script>
+    <script src="~/lib/bootstrap-5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function () {
             var currentUrl = document.location.pathname;

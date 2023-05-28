@@ -16,16 +16,14 @@
                                 <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Register</p>
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                 <form class="mx-1 mx-md-4" id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                                    @*
                                     <div class="d-flex flex-row align-items-center mb-4">
-                                    <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                                    <div class="form-outline flex-fill mb-0">
-                                    <input asp-for="Input.Username" id="form3Example1c" class="form-control" placeholder="Your username"/>
-                                    <label asp-for="Input.Username" class="form-label d-none" for="form3Example1c">Your Username</label>
-                                    <span asp-validation-for="Input.Username" class="text-danger"></span>
+                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <div class="form-outline flex-fill mb-0">
+                                            <input asp-for="Input.Username" id="form3Example1c" class="form-control" placeholder="Your username" />
+                                            <label asp-for="Input.Username" class="form-label d-none" for="form3Example1c">Your Username</label>
+                                            <span asp-validation-for="Input.Username" class="text-danger"></span>
+                                        </div>
                                     </div>
-                                    </div>
-                                    *@
                                     <div class="d-flex flex-row align-items-center mb-4">
                                         <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
@@ -51,9 +49,17 @@
                                             <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                                         </div>
                                     </div>
-
+                                    <div class="d-none flex-row align-items-center mb-4">
+                                        <i class="fas fa-key fa-lg me-3 fa-fw"></i>
+                                        <div class="form-outline flex-fill mb-0">
+                                            <select asp-for="Input.Role" asp-items="@Model.Input.RoleList" id="form3Example4cd" class="form-control">
+                                             <option disabled selected>Select Role</option>
+                                        </select>
+                                        <span asp-validation-for="Input.Role"></span>
+                                        </div>
+                                    </div>
                                     <div class="form-check d-flex justify-content-center mb-3">
-                                        <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" required/>
+                                        <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" required />
                                         <label class="form-check-label" for="form2Example3">
                                             I agree to the <a href="#!" class="text-decoration-none">Terms of service</a>
                                         </label>
@@ -80,7 +86,7 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    
+
 }
 
 

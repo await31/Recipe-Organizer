@@ -12,8 +12,14 @@ builder.Services.AddDbContext<RecipeOrganizerContext>(options => options.UseSqlS
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true;
+})
+    .AddDefaultTokenProviders()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<RecipeOrganizerContext>();
+
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Default Password settings.
