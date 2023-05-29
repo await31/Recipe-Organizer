@@ -17,8 +17,6 @@
                 <tr>
                     <th>#</th>
                     <th>@Html.DisplayNameFor(model=>model.Name)</th>
-                    <th></th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -26,8 +24,6 @@
                     <tr>
                         <td class="w-25">@Html.DisplayFor(modelObj=>obj.Id)</td>
                         <td class="w-25">@Html.DisplayFor(modelObj=>obj.Name)</td>
-                        <td style="width:3%"><a class="text-decoration-none text-light btn btn-warning" asp-controller="AppRoles" asp-action="Edit" asp-route-id="@obj.Id"><i class="fa-solid fa-pen-to-square"></i> Edit</a></td>
-                        <td style="width:3%"><a class="text-decoration-none text-light btn btn-danger" asp-controller="AppRoles" asp-action="Delete" asp-route-id="@obj.Id"><i class="fa-solid fa-trash-can"></i> Delete</a></td>
                     </tr>
                 }
             </tbody>

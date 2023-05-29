@@ -113,6 +113,10 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
             public string ConfirmPassword { get; set; }
             public string? Role { get; set; }
 
+            [Required]
+            [RegularExpression("True", ErrorMessage = "You must agree to our terms of service to continue register")]
+            public bool AgreeTerms { get; set; }
+
             [ValidateNever]
             public IEnumerable<SelectListItem> RoleList { get; set; }
         }
@@ -135,7 +139,7 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid) {
                 var user = CreateUser();
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                await _userStore.SetUserNameAsync(user, Input.Username, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
                 user.Status = true;

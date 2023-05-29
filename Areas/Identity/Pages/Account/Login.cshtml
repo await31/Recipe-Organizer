@@ -17,10 +17,10 @@
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                 <form class="mx-1 mx-md-4" id="account" method="post">
                                     <div class="d-flex flex-row align-items-center mb-4">
-                                        <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
-                                            <input asp-for="Input.Email" id="form3Example3c" class="form-control" placeholder="Enter your email" />
-                                            <label asp-for="Input.Email" class="form-label d-none" for="form3Example3c">Your Email</label>
+                                            <input asp-for="Input.Email" id="form3Example3c" class="form-control" placeholder="Your username" />
+                                            <label asp-for="Input.Email" class="form-label d-none" for="form3Example3c">Your Username</label>
                                             <span asp-validation-for="Input.Email" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -28,7 +28,7 @@
                                     <div class="d-flex flex-row align-items-center mb-4">
                                         <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
-                                            <input asp-for="Input.Password" type="password" id="form3Example4c" class="form-control" placeholder="Enter your password" />
+                                            <input asp-for="Input.Password" type="password" id="form3Example4c" class="form-control" placeholder="Your password" />
                                             <label asp-for="Input.Password" class="form-label d-none" for="form3Example4c">Password</label>
                                             <span asp-validation-for="Input.Password" class="text-danger"></span>
                                         </div>

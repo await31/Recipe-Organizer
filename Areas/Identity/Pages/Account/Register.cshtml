@@ -59,9 +59,10 @@
                                         </div>
                                     </div>
                                     <div class="form-check d-flex justify-content-center mb-3">
-                                        <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" required />
-                                        <label class="form-check-label" for="form2Example3">
-                                            I agree to the <a href="/Home/Privacy" class="text-decoration-none" target="_blank">Terms of service</a>
+                                        <input asp-for="Input.AgreeTerms" class="form-check-input me-2" type="checkbox" id="form2Example3c" required/>
+                                        <label asp-for="Input.AgreeTerms" class="form-check-label" for="form2Example3">
+                                            I agree to all statements in <a href="/Home/Privacy" class="text-decoration-none">Terms of service</a><br />
+                                            <span asp-validation-for="Input.AgreeTerms" class="text-danger"></span>
                                         </label>
                                     </div>
 
