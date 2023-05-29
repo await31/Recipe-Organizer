@@ -6,13 +6,13 @@
 @if (SignInManager.IsSignedIn(User)) {
     <li class="nav-item dropdown">
         <a class="btn btn-lg dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="~/images/avatar.jpeg" class="img-fluid rounded-circle ms-2" style="width: 40px; height: 40px;" alt="avatar">
+            <img src="~/images/avatar.png" class="img-fluid rounded-circle ms-2" style="width: 40px; height: 40px;" alt="avatar">
             @UserManager.GetUserName(User)
         </a>
         <ul class="dropdown-menu">
             @if (UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "Admin").Result) {
                 <li class="ms-3">
-                    <a class="text-dark text-decoration-none" asp-area="" asp-controller="RecipeCategory" asp-action="Index">Dashboard &nbsp;<i class="fa-solid fa-chart-line"></i></a>
+                    <a class="text-dark text-decoration-none" asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard &nbsp;<i class="fa-solid fa-chart-line"></i></a>
                 </li>
             }
             <li class="ms-3 mt-2">

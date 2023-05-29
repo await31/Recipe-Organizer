@@ -6,8 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CapstoneProject.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace CapstoneProject.Controllers {
+
+
+    [Authorize(Roles = "Admin")]
     public class RecipesController : Controller {
         private readonly RecipeOrganizerContext _context;
 

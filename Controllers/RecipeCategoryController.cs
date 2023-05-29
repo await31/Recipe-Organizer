@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CapstoneProject.Controllers {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class RecipeCategoryController : Controller {
 
         private readonly RecipeOrganizerContext _context;

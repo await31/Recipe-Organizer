@@ -35,7 +35,7 @@ public partial class Recipe
     public virtual RecipeCategory? FkRecipeCategory { get; set; }
 
     public virtual Account? FkUser { get; set; }
-
+        
     public virtual ICollection<Recipe> InverseFkRecipe { get; set; } = new List<Recipe>();
 
     public virtual ICollection<RecipeFeedback> RecipeFeedbacks { get; set; } = new List<RecipeFeedback>();

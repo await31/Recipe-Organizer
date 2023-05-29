@@ -1,0 +1,98 @@
+﻿@model IEnumerable<Recipe>
+
+@{
+    ViewBag.Title = "Create recipe";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="px-0">
+        <br />
+        <div class="col-5">
+            <a asp-controller="Recipes" asp-action="Create" class="btn btn-success fw-bold text-light mt-2"><i class="fa-solid fa-folder-plus"></i> New Recipes</a>
+        </div>
+        <br />
+        <table class="table table-bordered table-striped w-100">
+            <thead class="table-dark">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ImgPath)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Description)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Nutrition)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PrepTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Difficult)
+                    </th>
+                    <th>
+                        RecipeOwner
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.CreatedDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FkRecipe)
+                    </th>
+                    <th>
+                        RecipeCategory
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model) {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ImgPath)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Nutrition)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PrepTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Difficult)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FkUserId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FkRecipe.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FkRecipeCategory.Name)
+                        </td>
+                        <td>
+                            <a asp-controller="Recipes" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        </td>
+                        <td>
+                            <a asp-controller="Recipes" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        </td>
+                        <td>
+                            <a asp-controller="Recipes" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

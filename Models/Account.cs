@@ -12,8 +12,7 @@ public partial class Account : IdentityUser
 
     public bool? Status { get; set; }
 
-    [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-    public DateTime? CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
     public virtual ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();
 

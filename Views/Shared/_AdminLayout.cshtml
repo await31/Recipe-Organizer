@@ -28,33 +28,35 @@
 <body>
 
     <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-2 pe-0">
             <nav id="sidebarMenu"
                  class="collapse d-lg-block sidebar collapse bg-white">
                 <div class="position-sticky">
                     <div class="list-group list-group-flush mx-3 mt-4">
-                        <a href="#"
-                           class="list-group-item list-group-item-action py-2 ripple"
+                        <a asp-controller="Dashboard" asp-action="Index"
+                           class="list-group-item list-group-item-action py-2 ripple @(currentController == "Dashboard" ? "active" : "")"
                            aria-current="true">
-                            <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Main dashboard</span>
+                            <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Dashboard</span>
+                        </a>
+                        <a asp-controller="Recipes" asp-action="Index"
+                           class="list-group-item list-group-item-action py-2 ripple @(currentController == "Recipes" ? "active" : "")">
+                            <i class="fas fa-chart-area fa-fw me-3"></i><span>Recipes</span>
                         </a>
                         <a asp-controller="RecipeCategory" asp-action="Index"
                            class="list-group-item list-group-item-action py-2 ripple @(currentController == "RecipeCategory" ? "active" : "")">
-                            <i class="fas fa-chart-area fa-fw me-3"></i><span>Recipes Category</span>
+                            <i class="fas fa-chart-area fa-fw me-3"></i><span>Recipe Categories</span>
                         </a>
                         <a asp-controller="IngredientCategory" asp-action="Index"
                            class="list-group-item list-group-item-action py-2 ripple @(currentController == "IngredientCategory" ? "active" : "")">
-                           <i class="fas fa-lock fa-fw me-3"></i><span>Ingredients Category</span></a>
+                           <i class="fas fa-lock fa-fw me-3"></i><span>Ingredient Categories</span></a>
                         <a asp-controller="AppRoles" asp-action="Index"
                            class="list-group-item list-group-item-action py-2 ripple @(currentController == "AppRoles" ? "active" : "")">
                             <i class="fas fa-chart-line fa-fw me-3"></i><span>Roles</span>
                         </a>
                         <a href="#"
                            class="list-group-item list-group-item-action py-2 ripple">
-                            <i class="fas fa-chart-pie fa-fw me-3"></i><span>SEO</span>
-                        </a>
-                        <a href="#"
-                           class="list-group-item list-group-item-action py-2 ripple"><i class="fas fa-chart-bar fa-fw me-3"></i><span>Orders</span></a>
+                           <i class="fas fa-chart-bar fa-fw me-3"></i><span>Orders</span>
+                       </a>
                         <a href="#"
                            class="list-group-item list-group-item-action py-2 ripple">
                             <i class="fas fa-globe fa-fw me-3"></i><span>International</span>
@@ -103,6 +105,11 @@
     <script src="~/lib/jquery-3.7.0.min.js"></script>
     <script src="~/lib/bootstrap-5.3.0/js/bootstrap.min.js"></script>
     <script src="~/lib/bootstrap-5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="~/lib/vendor/chart.js/Chart.min.js"></script>
+    <script src="~/lib/vendor/chart.js/Chart.bundle.min.js"></script>
+    <script src="~/js/chart/chart-area-demo.js"></script>
+    <script src="~/js/chart/chart-pie-demo.js"></script>
     <script>
         $(document).ready(function () {
             var currentUrl = document.location.pathname;
