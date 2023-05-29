@@ -3,8 +3,29 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using CapstoneProject.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Facebook;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+IConfigurationSection facebookAuthNSection = builder.Configuration.GetSection("Authentication:Facebook");
+
+builder.Services.AddAuthentication()
+    .AddGoogle(googleOptions =>
+    {
+        googleOptions.ClientId = googleAuthNSection["ClientId"];
+        googleOptions.ClientSecret = googleAuthNSection["ClientSecret"];
+        googleOptions.CallbackPath = "/signin-google";
+
+    })
+    .AddFacebook(facebookOptions => 
+    {
+        facebookOptions.AppId = facebookAuthNSection["AppId"];
+        facebookOptions.AppSecret = facebookAuthNSection["AppSecret"];
+        facebookOptions.CallbackPath = "/signin-facebook";
+    });
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -31,6 +52,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredUniqueChars = 1;
 });
 
+
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 var app = builder.Build();
 
@@ -40,7 +62,10 @@ if (!app.Environment.IsDevelopment()) {
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+app.UseCookiePolicy(new CookiePolicyOptions()
+{
+    MinimumSameSitePolicy = SameSiteMode.Lax
+});
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
