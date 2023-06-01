@@ -21,6 +21,7 @@ builder.Services.AddAuthentication()
     .AddFacebook(facebookOptions => {
         facebookOptions.AppId = facebookAuthNSection["AppId"];
         facebookOptions.AppSecret = facebookAuthNSection["AppSecret"];
+        facebookOptions.Scope.Remove("email");
         facebookOptions.CallbackPath = "/signin-facebook";
     });
 
@@ -48,9 +49,9 @@ builder.Services.Configure<IdentityOptions>(options => {
     options.Password.RequiredUniqueChars = 1;
 });
 
-
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment()) {
