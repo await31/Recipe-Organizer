@@ -7,9 +7,16 @@ using Microsoft.AspNetCore.Authorization;
 using Firebase.Auth;
 using Firebase.Storage;
 using System.IO;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Formats.Webp;
+using Libwebp.Standard;
+using Microsoft.AspNetCore.WebUtilities;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
 
 namespace CapstoneProject.Controllers {
-
 
     [Authorize(Roles = "Admin")]
     public class IngredientsController : Controller {
@@ -40,9 +47,9 @@ namespace CapstoneProject.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Ingredient model) {
-            IFormFile file = model.file;
             if (ModelState.IsValid) {
-                if (file != null && file.Length > 0) {
+                if (model.file != null && model.file.Length > 0) {
+                    IFormFile file = model.file;
                     // Generate a unique file name
                     string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
 
@@ -57,7 +64,7 @@ namespace CapstoneProject.Controllers {
             return View(model);
         }
 
-        public static async Task<string> Upload(Stream stream, string fileName) {
+       /* public static async Task<string> Upload(Stream stream, string fileName) {
 
             string imageFromFirebaseStorage = "";
 
@@ -87,6 +94,95 @@ namespace CapstoneProject.Controllers {
                 Console.WriteLine("Exception was thrown: {0}", ex);
                 return null;
             }
+        }
+       */
+
+        public static async Task<string> Upload(Stream stream, string fileName) {
+            string imageFromFirebaseStorage = "";
+
+            using (Image image = Image.Load(stream)) {
+
+                // Resize the image to a smaller size if needed
+                int maxWidth = 800; // Set your desired maximum width here
+                int maxHeight = 800; // Set your desired maximum height here
+                if (image.Width > maxWidth || image.Height > maxHeight) {
+                    image.Mutate(x => x.Resize(new ResizeOptions {
+                        Size = new Size(maxWidth, maxHeight),
+                        Mode = ResizeMode.Max
+                    }));
+                }
+
+                // Compress the image
+                IImageEncoder imageEncoder;
+                string fileExtension = Path.GetExtension(fileName).ToLower();
+                if (fileExtension == ".png") {
+                    imageEncoder = new PngEncoder { CompressionLevel = PngCompressionLevel.BestCompression };
+                } else if (fileExtension == ".webp") {
+                    imageEncoder = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder { Quality = 80 }; // Adjust the quality level as needed
+                } else {
+                    imageEncoder = new JpegEncoder { Quality = 80 }; // Adjust the quality level as needed
+                }
+
+                using (MemoryStream webpStream = new MemoryStream()) {
+                    image.Save(webpStream, new SixLabors.ImageSharp.Formats.Webp.WebpEncoder());
+
+                    webpStream.Position = 0;
+
+                    FirebaseAuthProvider firebaseConfiguration = new(new FirebaseConfig(ApiKey));
+
+                    FirebaseAuthLink authConfiguration = await firebaseConfiguration
+                        .SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                    CancellationTokenSource cancellationToken = new();
+
+                    FirebaseStorageTask storageManager = new FirebaseStorage(
+                        Bucket,
+                        new FirebaseStorageOptions {
+                            AuthTokenAsyncFactory = () => Task.FromResult(authConfiguration.FirebaseToken),
+                            ThrowOnCancel = true
+                        })
+                        .Child("images")
+                        .Child("ingredients")
+                        .Child(fileName)
+                        .PutAsync(webpStream, cancellationToken.Token);
+
+                    try {
+                        imageFromFirebaseStorage = await storageManager;
+                        firebaseConfiguration.Dispose();
+                        return imageFromFirebaseStorage;
+                    } catch (Exception ex) {
+                        Console.WriteLine("Exception was thrown: {0}", ex);
+                        return null;
+                    }
+                }
+            }
+        }
+
+        //GET
+        public IActionResult Delete(int? id) {
+            if (id == null || id == 0) {
+                return NotFound();
+            }
+            var ingredientFromDb = _context.Ingredients.Find(id);
+            if (ingredientFromDb == null) {
+                return NotFound();
+            }
+            return View(ingredientFromDb);
+        }
+
+        //POST
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePOST(int? id) {
+
+            var obj = _context.Ingredients.Find(id);
+            if (obj == null) {
+                return NotFound();
+            }
+            _context.Ingredients.Remove(obj);
+            _context.SaveChanges();
+            TempData["success"] = "Category deleted successfully";
+            return RedirectToAction("Index");
         }
     }
 }
