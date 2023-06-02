@@ -46,6 +46,10 @@
                            class="list-group-item list-group-item-action py-2 ripple @(currentController == "RecipeCategory" ? "active" : "")">
                             <i class="fas fa-chart-area fa-fw me-3"></i><span>Recipe Categories</span>
                         </a>
+                        <a asp-controller="Ingredients" asp-action="Index"
+                           class="list-group-item list-group-item-action py-2 ripple @(currentController == "Ingredients" ? "active" : "")">
+                            <i class="fas fa-lock fa-fw me-3"></i><span>Ingredients</span>
+                        </a>
                         <a asp-controller="IngredientCategory" asp-action="Index"
                            class="list-group-item list-group-item-action py-2 ripple @(currentController == "IngredientCategory" ? "active" : "")">
                            <i class="fas fa-lock fa-fw me-3"></i><span>Ingredient Categories</span></a>
