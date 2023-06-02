@@ -15,6 +15,8 @@ using Libwebp.Standard;
 using Microsoft.AspNetCore.WebUtilities;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
+using MailKit;
+using System.Text.RegularExpressions;
 
 namespace CapstoneProject.Controllers {
 
@@ -54,57 +56,25 @@ namespace CapstoneProject.Controllers {
                     string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
 
                     // Upload the file to Firebase Storage
-                    string imageUrl = await Upload(file.OpenReadStream(), uniqueFileName);
+                    string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
                     model.ImgPath = imageUrl;
                     _context.Ingredients.Add(model);
                     await _context.SaveChangesAsync();
+                    TempData["success"] = "Ingredient created successfully";
                     return RedirectToAction("Index");
                 }
             }
             return View(model);
         }
 
-       /* public static async Task<string> Upload(Stream stream, string fileName) {
-
-            string imageFromFirebaseStorage = "";
-
-            FirebaseAuthProvider firebaseConfiguration = new(new FirebaseConfig(ApiKey));
-
-            FirebaseAuthLink authConfiguration = await firebaseConfiguration
-                .SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
-
-            CancellationTokenSource cancellationToken = new();
-
-            FirebaseStorageTask storageManager = new FirebaseStorage(
-                Bucket,
-                new FirebaseStorageOptions {
-                    AuthTokenAsyncFactory = () => Task.FromResult(authConfiguration.FirebaseToken),
-                    ThrowOnCancel = true
-                })
-                .Child("images")
-                .Child("ingredients")
-                .Child(fileName)
-                .PutAsync(stream, cancellationToken.Token);
-
-            try {
-                imageFromFirebaseStorage = await storageManager;
-                firebaseConfiguration.Dispose();
-                return imageFromFirebaseStorage;
-            } catch (Exception ex) {
-                Console.WriteLine("Exception was thrown: {0}", ex);
-                return null;
-            }
-        }
-       */
-
-        public static async Task<string> Upload(Stream stream, string fileName) {
+        public static async Task<string> UploadFirebase(Stream stream, string fileName) {
             string imageFromFirebaseStorage = "";
 
             using (Image image = Image.Load(stream)) {
 
                 // Resize the image to a smaller size if needed
-                int maxWidth = 800; // Set your desired maximum width here
-                int maxHeight = 800; // Set your desired maximum height here
+                int maxWidth = 1000; // Set your desired maximum width here
+                int maxHeight = 1000; // Set your desired maximum height here
                 if (image.Width > maxWidth || image.Height > maxHeight) {
                     image.Mutate(x => x.Resize(new ResizeOptions {
                         Size = new Size(maxWidth, maxHeight),
@@ -118,7 +88,7 @@ namespace CapstoneProject.Controllers {
                 if (fileExtension == ".png") {
                     imageEncoder = new PngEncoder { CompressionLevel = PngCompressionLevel.BestCompression };
                 } else if (fileExtension == ".webp") {
-                    imageEncoder = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder { Quality = 80 }; // Adjust the quality level as needed
+                    imageEncoder = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder { Quality = 100 }; // Adjust the quality level as needed
                 } else {
                     imageEncoder = new JpegEncoder { Quality = 80 }; // Adjust the quality level as needed
                 }
@@ -170,20 +140,56 @@ namespace CapstoneProject.Controllers {
             return View(ingredientFromDb);
         }
 
-        //POST
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeletePOST(int? id) {
-
+        public async Task<IActionResult> DeletePOST(int? id) {
             var obj = _context.Ingredients.Find(id);
             if (obj == null) {
                 return NotFound();
             }
+
+            await DeleteFromFirebaseStorage(obj.ImgPath);
+
             _context.Ingredients.Remove(obj);
             _context.SaveChanges();
-            TempData["success"] = "Category deleted successfully";
+            TempData["success"] = "Ingredient deleted successfully";
             return RedirectToAction("Index");
         }
+
+
+        private async Task DeleteFromFirebaseStorage(string fileName) {
+            if (!string.IsNullOrEmpty(fileName)) {
+                string exactFileName = GetImageNameFromUrl(fileName);
+                FirebaseAuthProvider firebaseConfiguration = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                FirebaseAuthLink authConfiguration = await firebaseConfiguration
+                    .SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                FirebaseStorage storage = new FirebaseStorage(
+                    Bucket,
+                    new FirebaseStorageOptions {
+                        AuthTokenAsyncFactory = () => Task.FromResult(authConfiguration.FirebaseToken),
+                        ThrowOnCancel = true
+                    });
+
+                await storage
+                    .Child("images")
+                    .Child("ingredients")
+                    .Child(exactFileName) // Use the fileName directly as the child reference
+                    .DeleteAsync();
+
+                firebaseConfiguration.Dispose();
+            }
+        }
+
+        public static string GetImageNameFromUrl(string url) {
+            int lastSeparatorIndex = url.LastIndexOf("%2F"); // Get the index of the last "%2F"
+
+            int startIndex = lastSeparatorIndex + 3; // Start index of the desired string
+            int endIndex = url.IndexOf("?alt", startIndex); // End index of the desired string
+            string extractedString = url.Substring(startIndex, endIndex - startIndex); // Extract the string between the last "%2F" and before "?alt"
+            return extractedString;
+        }
+
     }
 }
 
