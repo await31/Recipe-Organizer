@@ -45,7 +45,15 @@
                     <th>
                         RecipeCategory
                     </th>
-                    <th></th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Status)
+                    </th>
+                    <th colspan="3">
+                        Action
+                    </th>
+                    <th colspan="2">
+                        Approve
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -58,7 +66,7 @@
                             @Html.DisplayFor(modelItem => item.ImgPath)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Description)
+                            @Html.Raw(item.Description)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Nutrition)
@@ -82,14 +90,36 @@
                             @Html.DisplayFor(modelItem => item.FkRecipeCategory.Name)
                         </td>
                         <td>
-                            <a asp-controller="Recipes" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            @if (item.Status == false) {
+                                @Html.Raw("Deny");
+                            }
+                            else
+                            {
+                                @Html.Raw("Approved");
+                            }
                         </td>
                         <td>
-                            <a asp-controller="Recipes" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-controller="Recipes" asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
+                        </td>
+                        <td>
+                            <a asp-controller="Recipes" asp-action="Details" asp-route-id="@item.Id">Details</a>
                         </td>
                         <td>
                             <a asp-controller="Recipes" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                         </td>
+                        <td>
+                            <form method="post" asp-controller="Recipes" asp-action="Approve">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-link">Approve</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="post" asp-controller="Recipes" asp-action="Deny">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-link">Deny</button>
+                            </form>
+                        </td>
+
                     </tr>
                 }
             </tbody>

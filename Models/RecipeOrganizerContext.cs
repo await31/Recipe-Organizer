@@ -4,16 +4,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CapstoneProject.Models;
 
-public partial class RecipeOrganizerContext : IdentityDbContext
-    {
-    public RecipeOrganizerContext()
-    {
+public partial class RecipeOrganizerContext : IdentityDbContext {
+    public RecipeOrganizerContext() {
     }
 
     public RecipeOrganizerContext(DbContextOptions<RecipeOrganizerContext> options)
-        : base(options)
-    {
+        : base(options) {
     }
+
 
     public virtual DbSet<Account> Accounts { get; set; }
 
@@ -31,8 +29,7 @@ public partial class RecipeOrganizerContext : IdentityDbContext
 
     public virtual DbSet<RecipeFeedback> RecipeFeedbacks { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
         // Create a configuration object
         var configuration = new ConfigurationBuilder()
           .SetBasePath(AppDomain.CurrentDomain.BaseDirectory) // Set the base path for the appsettings.json file
@@ -44,8 +41,7 @@ public partial class RecipeOrganizerContext : IdentityDbContext
 
         optionsBuilder.UseSqlServer(connectionString);
     }
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
+    protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
     }
 
