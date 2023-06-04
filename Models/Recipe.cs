@@ -4,13 +4,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CapstoneProject.Models;
 
-public partial class Recipe
-{
+public partial class Recipe {
 
     [Key]
     public int Id { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string Name { get; set; }
 
     public string? ImgPath { get; set; }
 
@@ -20,13 +19,15 @@ public partial class Recipe
 
     public int? FkRecipeId { get; set; }
 
-    public int? Nutrition { get; set; }
+    public string? Nutrition { get; set; }
 
     public int? PrepTime { get; set; }
 
     public int? Difficult { get; set; }
 
     public int? FkUserId { get; set; }
+
+    public Boolean? Status { get; set; }
 
     public DateTime? CreatedDate { get; set; }
 
@@ -35,7 +36,7 @@ public partial class Recipe
     public virtual RecipeCategory? FkRecipeCategory { get; set; }
 
     public virtual Account? FkUser { get; set; }
-        
+
     public virtual ICollection<Recipe> InverseFkRecipe { get; set; } = new List<Recipe>();
 
     public virtual ICollection<RecipeFeedback> RecipeFeedbacks { get; set; } = new List<RecipeFeedback>();

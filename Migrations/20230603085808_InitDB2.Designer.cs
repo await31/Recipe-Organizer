@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CapstoneProject.Migrations
 {
     [DbContext(typeof(RecipeOrganizerContext))]
-    [Migration("20230529090105_InitDB")]
-    partial class InitDB
+    [Migration("20230603085808_InitDB2")]
+    partial class InitDB2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -153,11 +153,14 @@ namespace CapstoneProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Nutrition")
-                        .HasColumnType("int");
+                    b.Property<string>("Nutrition")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("PrepTime")
                         .HasColumnType("int");
+
+                    b.Property<bool?>("Status")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -482,7 +485,6 @@ namespace CapstoneProject.Migrations
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
                     b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ImgPath")
