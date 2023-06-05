@@ -6,7 +6,7 @@ using System.Data;
 
 namespace CapstoneProject.Controllers {
 
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class DashboardController : Controller {
 
         private readonly RecipeOrganizerContext _context;

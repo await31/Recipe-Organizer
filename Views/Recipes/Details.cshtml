@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = "Create recipe";
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    //Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <h2>Details</h2>
@@ -21,7 +21,7 @@
             @Html.DisplayNameFor(model => model.ImgPath)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.ImgPath)
+            <img src="@Model.ImgPath" alt="Image" />
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Description)

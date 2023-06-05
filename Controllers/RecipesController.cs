@@ -1,13 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using CapstoneProject.Models;
 using Microsoft.AspNetCore.Authorization;
-using System.Data;
+using Firebase.Auth;
+using Firebase.Storage;
+using System.IO;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Formats.Webp;
+using Libwebp.Standard;
+using Microsoft.AspNetCore.WebUtilities;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
+using MailKit;
+using System.Text.RegularExpressions;
 
 namespace CapstoneProject.Controllers {
 
@@ -15,6 +24,11 @@ namespace CapstoneProject.Controllers {
     [Authorize]
     public class RecipesController : Controller {
         private readonly RecipeOrganizerContext _context;
+
+        public static string ApiKey = "AIzaSyDIXdDdvo8NguMgxLvn4DWMNS-vXkUxoag";
+        public static string Bucket = "cookez-cloud.appspot.com";
+        public static string AuthEmail = "cookez.mail@gmail.com";
+        public static string AuthPassword = "cookez";
 
         public RecipesController(RecipeOrganizerContext context) {
             _context = context;
@@ -64,25 +78,36 @@ namespace CapstoneProject.Controllers {
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,ImgPath,Description,FkRecipeCategoryId,FkRecipeId,Nutrition,PrepTime,Difficult,FkUserId,Status,CreatedDate")] Recipe recipe) {
+        public async Task<IActionResult> Create( Recipe recipe) {
             if (ModelState.IsValid) {
-                recipe.Status = false;
-                int calories = Int32.Parse(Request.Form["Calories"]);
-                int fat = Int32.Parse(Request.Form["Fat"]);
-                int protein = Int32.Parse(Request.Form["Protein"]);
-                int carbohydrate = Int32.Parse(Request.Form["Carbohydrate"]);
-                int cholesterol = Int32.Parse(Request.Form["Cholesterol"]);
-                recipe.Nutrition = $"Calories: {calories}kcal, Fat: {fat}g, Protein: {protein}g, Carbohydrate: {carbohydrate}g, Cholesterol: {cholesterol}mg";
+                if(recipe.file != null && recipe.file.Length > 0)
+                {
+                    IFormFile file = recipe.file;
+                    // Generate a unique file name
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
 
-                _context.Add(recipe);
+                    // Upload the file to Firebase Storage
+                    string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
+                    recipe.ImgPath = imageUrl;
+
+                    recipe.Status = false;
+
+                }
+                else
+                {
+                    recipe.ImgPath = "untitle.jpg";
+                }
+
+                _context.Recipes.Add(recipe);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
+
             }
             ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id", recipe.FkRecipeId);
             ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.FkRecipeCategoryId);
             return View(recipe);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         // GET: Recipes/Edit/5
         public async Task<IActionResult> Edit(int? id) {
             if (id == null || _context.Recipes == null) {
@@ -97,7 +122,7 @@ namespace CapstoneProject.Controllers {
             ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.FkRecipeCategoryId);
             return View(recipe);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         // POST: Recipes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -125,7 +150,7 @@ namespace CapstoneProject.Controllers {
             ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.FkRecipeCategoryId);
             return View(recipe);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         // GET: Recipes/Delete/5
         public async Task<IActionResult> Delete(int? id) {
             if (id == null || _context.Recipes == null) {
@@ -142,7 +167,7 @@ namespace CapstoneProject.Controllers {
 
             return View(recipe);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         // POST: Recipes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -152,7 +177,9 @@ namespace CapstoneProject.Controllers {
             }
             var recipe = await _context.Recipes.FindAsync(id);
             if (recipe != null) {
+                await DeleteFromFirebaseStorage(recipe.ImgPath);
                 _context.Recipes.Remove(recipe);
+
             }
 
             await _context.SaveChangesAsync();
@@ -162,7 +189,7 @@ namespace CapstoneProject.Controllers {
         private bool RecipeExists(int id) {
             return (_context.Recipes?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize]
 
         // POST: Recipes/Approve
         [HttpPost]
@@ -178,7 +205,7 @@ namespace CapstoneProject.Controllers {
 
             return RedirectToAction(nameof(Index));
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         // POST: Recipes/Deny
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -192,6 +219,119 @@ namespace CapstoneProject.Controllers {
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
+        }
+
+
+        //firebase
+        public static async Task<string> UploadFirebase(Stream stream, string fileName)
+        {
+            string imageFromFirebaseStorage = "";
+
+            using (Image image = Image.Load(stream))
+            {
+
+                // Resize the image to a smaller size if needed
+                int maxWidth = 1000; // Set your desired maximum width here
+                int maxHeight = 1000; // Set your desired maximum height here
+                if (image.Width > maxWidth || image.Height > maxHeight)
+                {
+                    image.Mutate(x => x.Resize(new ResizeOptions
+                    {
+                        Size = new Size(maxWidth, maxHeight),
+                        Mode = ResizeMode.Max
+                    }));
+                }
+
+                // Compress the image
+                IImageEncoder imageEncoder;
+                string fileExtension = Path.GetExtension(fileName).ToLower();
+                if (fileExtension == ".png")
+                {
+                    imageEncoder = new PngEncoder { CompressionLevel = PngCompressionLevel.BestCompression };
+                }
+                else if (fileExtension == ".webp")
+                {
+                    imageEncoder = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder { Quality = 100 }; // Adjust the quality level as needed
+                }
+                else
+                {
+                    imageEncoder = new JpegEncoder { Quality = 80 }; // Adjust the quality level as needed
+                }
+
+                using (MemoryStream webpStream = new MemoryStream())
+                {
+                    image.Save(webpStream, new SixLabors.ImageSharp.Formats.Webp.WebpEncoder());
+
+                    webpStream.Position = 0;
+
+                    FirebaseAuthProvider firebaseConfiguration = new(new FirebaseConfig(ApiKey));
+
+                    FirebaseAuthLink authConfiguration = await firebaseConfiguration
+                        .SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                    CancellationTokenSource cancellationToken = new();
+
+                    FirebaseStorageTask storageManager = new FirebaseStorage(
+                        Bucket,
+                        new FirebaseStorageOptions
+                        {
+                            AuthTokenAsyncFactory = () => Task.FromResult(authConfiguration.FirebaseToken),
+                            ThrowOnCancel = true
+                        })
+                        .Child("images")
+                        .Child("recipes")
+                        .Child(fileName)
+                        .PutAsync(webpStream, cancellationToken.Token);
+
+                    try
+                    {
+                        imageFromFirebaseStorage = await storageManager;
+                        firebaseConfiguration.Dispose();
+                        return imageFromFirebaseStorage;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Exception was thrown: {0}", ex);
+                        return null;
+                    }
+                }
+            }
+        }
+
+        private async Task DeleteFromFirebaseStorage(string fileName)
+        {
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                string exactFileName = GetImageNameFromUrl(fileName);
+                FirebaseAuthProvider firebaseConfiguration = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                FirebaseAuthLink authConfiguration = await firebaseConfiguration
+                    .SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                FirebaseStorage storage = new FirebaseStorage(
+                    Bucket,
+                    new FirebaseStorageOptions
+                    {
+                        AuthTokenAsyncFactory = () => Task.FromResult(authConfiguration.FirebaseToken),
+                        ThrowOnCancel = true
+                    });
+
+                await storage
+                    .Child("images")
+                    .Child("recipes")
+                    .Child(exactFileName) // Use the fileName directly as the child reference
+                    .DeleteAsync();
+
+                firebaseConfiguration.Dispose();
+            }
+        }
+
+        public static string GetImageNameFromUrl(string url)
+        {
+            int lastSeparatorIndex = url.LastIndexOf("%2F"); // Get the index of the last "%2F"
+            int startIndex = lastSeparatorIndex + 3; // Start index of the desired string
+            int endIndex = url.IndexOf("?alt", startIndex); // End index of the desired string
+            string extractedString = url.Substring(startIndex, endIndex - startIndex); // Extract the string between the last "%2F" and before "?alt"
+            return extractedString;
         }
 
 

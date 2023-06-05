@@ -20,7 +20,7 @@ using System.Text.RegularExpressions;
 
 namespace CapstoneProject.Controllers {
 
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class IngredientsController : Controller {
 
         private readonly RecipeOrganizerContext _context;
