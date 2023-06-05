@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CapstoneProject.Models;
 
 public partial class Recipe {
+    [NotMapped]
+    public IFormFile? file { get; set; }
 
     [Key]
     public int Id { get; set; }
