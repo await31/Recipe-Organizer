@@ -10,7 +10,7 @@ public partial class Favourite
     [Key]
     public int Id { get; set; }
 
-    public int? FkUserId { get; set; }
+    public string? FkUserId { get; set; }
 
     public virtual Account? FkUser { get; set; }
 

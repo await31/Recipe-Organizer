@@ -28,7 +28,7 @@ public partial class Recipe {
 
     public int? Difficult { get; set; }
 
-    public int? FkUserId { get; set; }
+    public string? FkUserId { get; set; }
 
     public Boolean? Status { get; set; }
 

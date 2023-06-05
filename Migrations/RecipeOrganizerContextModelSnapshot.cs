@@ -30,15 +30,12 @@ namespace CapstoneProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("FkUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FkUserId1")
+                    b.Property<string>("FkUserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FkUserId1");
+                    b.HasIndex("FkUserId");
 
                     b.ToTable("Favourites");
                 });
@@ -98,10 +95,7 @@ namespace CapstoneProject.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("FkUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FkUserId1")
+                    b.Property<string>("FkUserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("PlannedDate")
@@ -109,7 +103,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FkUserId1");
+                    b.HasIndex("FkUserId");
 
                     b.ToTable("MealPlans");
                 });
@@ -137,10 +131,7 @@ namespace CapstoneProject.Migrations
                     b.Property<int?>("FkRecipeId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("FkUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FkUserId1")
+                    b.Property<string>("FkUserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ImgPath")
@@ -165,7 +156,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("FkRecipeId");
 
-                    b.HasIndex("FkUserId1");
+                    b.HasIndex("FkUserId");
 
                     b.ToTable("Recipes");
                 });
@@ -207,17 +198,14 @@ namespace CapstoneProject.Migrations
                     b.Property<int?>("RecipeId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId1")
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RecipeId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("RecipeFeedbacks");
                 });
@@ -500,7 +488,7 @@ namespace CapstoneProject.Migrations
                 {
                     b.HasOne("CapstoneProject.Models.Account", "FkUser")
                         .WithMany()
-                        .HasForeignKey("FkUserId1");
+                        .HasForeignKey("FkUserId");
 
                     b.Navigation("FkUser");
                 });
@@ -518,7 +506,7 @@ namespace CapstoneProject.Migrations
                 {
                     b.HasOne("CapstoneProject.Models.Account", "FkUser")
                         .WithMany("MealPlans")
-                        .HasForeignKey("FkUserId1");
+                        .HasForeignKey("FkUserId");
 
                     b.Navigation("FkUser");
                 });
@@ -535,7 +523,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasOne("CapstoneProject.Models.Account", "FkUser")
                         .WithMany("Recipes")
-                        .HasForeignKey("FkUserId1");
+                        .HasForeignKey("FkUserId");
 
                     b.Navigation("FkRecipe");
 
@@ -552,7 +540,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasOne("CapstoneProject.Models.Account", "User")
                         .WithMany("RecipeFeedbacks")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Recipe");
 

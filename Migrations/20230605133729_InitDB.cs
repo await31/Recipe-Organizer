@@ -25,6 +25,9 @@ namespace CapstoneProject.Migrations
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
                 });
 
+            migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) VALUES ('1', 'Admin', 'ADMIN')");
+            migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) VALUES ('2', 'Cooker', 'COOKER')");
+
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
@@ -193,15 +196,14 @@ namespace CapstoneProject.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FkUserId = table.Column<int>(type: "int", nullable: true),
-                    FkUserId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    FkUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Favourites", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Favourites_AspNetUsers_FkUserId1",
-                        column: x => x.FkUserId1,
+                        name: "FK_Favourites_AspNetUsers_FkUserId",
+                        column: x => x.FkUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                 });
@@ -212,17 +214,16 @@ namespace CapstoneProject.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FkUserId = table.Column<int>(type: "int", nullable: true),
+                    FkUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     PlannedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    FkUserId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MealPlans", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MealPlans_AspNetUsers_FkUserId1",
-                        column: x => x.FkUserId1,
+                        name: "FK_MealPlans_AspNetUsers_FkUserId",
+                        column: x => x.FkUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                 });
@@ -262,17 +263,16 @@ namespace CapstoneProject.Migrations
                     Nutrition = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PrepTime = table.Column<int>(type: "int", nullable: true),
                     Difficult = table.Column<int>(type: "int", nullable: true),
-                    FkUserId = table.Column<int>(type: "int", nullable: true),
+                    FkUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Status = table.Column<bool>(type: "bit", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    FkUserId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Recipes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Recipes_AspNetUsers_FkUserId1",
-                        column: x => x.FkUserId1,
+                        name: "FK_Recipes_AspNetUsers_FkUserId",
+                        column: x => x.FkUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -366,18 +366,17 @@ namespace CapstoneProject.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RecipeId = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Rating = table.Column<int>(type: "int", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UserId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RecipeFeedbacks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RecipeFeedbacks_AspNetUsers_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_RecipeFeedbacks_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -432,9 +431,9 @@ namespace CapstoneProject.Migrations
                 column: "RecipesId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Favourites_FkUserId1",
+                name: "IX_Favourites_FkUserId",
                 table: "Favourites",
-                column: "FkUserId1");
+                column: "FkUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_IngredientRecipe_RecipesId",
@@ -452,9 +451,9 @@ namespace CapstoneProject.Migrations
                 column: "RecipesId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MealPlans_FkUserId1",
+                name: "IX_MealPlans_FkUserId",
                 table: "MealPlans",
-                column: "FkUserId1");
+                column: "FkUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RecipeFeedbacks_RecipeId",
@@ -462,9 +461,9 @@ namespace CapstoneProject.Migrations
                 column: "RecipeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RecipeFeedbacks_UserId1",
+                name: "IX_RecipeFeedbacks_UserId",
                 table: "RecipeFeedbacks",
-                column: "UserId1");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Recipes_FkRecipeCategoryId",
@@ -477,9 +476,9 @@ namespace CapstoneProject.Migrations
                 column: "FkRecipeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Recipes_FkUserId1",
+                name: "IX_Recipes_FkUserId",
                 table: "Recipes",
-                column: "FkUserId1");
+                column: "FkUserId");
         }
 
         /// <inheritdoc />
