@@ -7,12 +7,12 @@ namespace CapstoneProject.Models;
 
 public partial class Account : IdentityUser
 {
-
     public string? ImgPath { get; set; }
 
     public bool? Status { get; set; }
 
     public DateTime CreatedDate { get; set; }
+
 
     public virtual ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();
 

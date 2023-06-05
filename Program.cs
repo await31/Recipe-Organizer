@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using System.Configuration;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
@@ -16,6 +18,22 @@ builder.Services.AddAuthentication()
         googleOptions.ClientId = googleAuthNSection["ClientId"];
         googleOptions.ClientSecret = googleAuthNSection["ClientSecret"];
         googleOptions.CallbackPath = "/signin-google";
+        googleOptions.Scope.Add("https://www.googleapis.com/auth/userinfo.email");
+        googleOptions.SaveTokens = true;
+        googleOptions.Events.OnCreatingTicket = ctx =>
+        {
+            List<AuthenticationToken> tokens = ctx.Properties.GetTokens().ToList();
+
+            tokens.Add(new AuthenticationToken()
+            {
+                Name = "TicketCreated",
+                Value = DateTime.UtcNow.ToString()
+            });
+
+            ctx.Properties.StoreTokens(tokens);
+
+            return Task.CompletedTask;
+        };
 
     })
     .AddFacebook(facebookOptions => {
