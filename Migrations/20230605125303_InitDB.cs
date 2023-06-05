@@ -3,34 +3,38 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace CapstoneProject.Migrations {
+namespace CapstoneProject.Migrations
+{
     /// <inheritdoc />
-    public partial class InitDB2 : Migration {
+    public partial class InitDB : Migration
+    {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder) {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
                 });
 
-            migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) VALUES ('1', 'Admin', 'ADMIN')");
-            migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) VALUES ('2', 'Cooker', 'COOKER')");
-
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImgPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<bool>(type: "bit", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    FkFavouriteId = table.Column<int>(type: "int", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -46,42 +50,49 @@ namespace CapstoneProject.Migrations {
                     LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
                     AccessFailedCount = table.Column<int>(type: "int", nullable: false)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "IngredientCategories",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_IngredientCategories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "RecipeCategories",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_RecipeCategories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
                     table.ForeignKey(
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
@@ -93,14 +104,16 @@ namespace CapstoneProject.Migrations {
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
                     table.ForeignKey(
                         name: "FK_AspNetUserClaims_AspNetUsers_UserId",
@@ -112,13 +125,15 @@ namespace CapstoneProject.Migrations {
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserLogins",
-                columns: table => new {
+                columns: table => new
+                {
                     LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     ProviderKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
                     table.ForeignKey(
                         name: "FK_AspNetUserLogins_AspNetUsers_UserId",
@@ -130,11 +145,13 @@ namespace CapstoneProject.Migrations {
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserRoles",
-                columns: table => new {
+                columns: table => new
+                {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
@@ -152,13 +169,15 @@ namespace CapstoneProject.Migrations {
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
-                columns: table => new {
+                columns: table => new
+                {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
@@ -170,13 +189,15 @@ namespace CapstoneProject.Migrations {
 
             migrationBuilder.CreateTable(
                 name: "Favourites",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FkUserId = table.Column<int>(type: "int", nullable: true),
                     FkUserId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_Favourites", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Favourites_AspNetUsers_FkUserId1",
@@ -187,7 +208,8 @@ namespace CapstoneProject.Migrations {
 
             migrationBuilder.CreateTable(
                 name: "MealPlans",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FkUserId = table.Column<int>(type: "int", nullable: true),
@@ -195,7 +217,8 @@ namespace CapstoneProject.Migrations {
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     FkUserId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_MealPlans", x => x.Id);
                     table.ForeignKey(
                         name: "FK_MealPlans_AspNetUsers_FkUserId1",
@@ -206,7 +229,8 @@ namespace CapstoneProject.Migrations {
 
             migrationBuilder.CreateTable(
                 name: "Ingredients",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -214,7 +238,8 @@ namespace CapstoneProject.Migrations {
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FkCategoryId = table.Column<int>(type: "int", nullable: true)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_Ingredients", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Ingredients_IngredientCategories_FkCategoryId",
@@ -225,7 +250,8 @@ namespace CapstoneProject.Migrations {
 
             migrationBuilder.CreateTable(
                 name: "Recipes",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -241,7 +267,8 @@ namespace CapstoneProject.Migrations {
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     FkUserId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_Recipes", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Recipes_AspNetUsers_FkUserId1",
@@ -262,11 +289,13 @@ namespace CapstoneProject.Migrations {
 
             migrationBuilder.CreateTable(
                 name: "FavouriteRecipe",
-                columns: table => new {
+                columns: table => new
+                {
                     FavouritesId = table.Column<int>(type: "int", nullable: false),
                     RecipesId = table.Column<int>(type: "int", nullable: false)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_FavouriteRecipe", x => new { x.FavouritesId, x.RecipesId });
                     table.ForeignKey(
                         name: "FK_FavouriteRecipe_Favourites_FavouritesId",
@@ -284,11 +313,13 @@ namespace CapstoneProject.Migrations {
 
             migrationBuilder.CreateTable(
                 name: "IngredientRecipe",
-                columns: table => new {
+                columns: table => new
+                {
                     IngredientsId = table.Column<int>(type: "int", nullable: false),
                     RecipesId = table.Column<int>(type: "int", nullable: false)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_IngredientRecipe", x => new { x.IngredientsId, x.RecipesId });
                     table.ForeignKey(
                         name: "FK_IngredientRecipe_Ingredients_IngredientsId",
@@ -306,11 +337,13 @@ namespace CapstoneProject.Migrations {
 
             migrationBuilder.CreateTable(
                 name: "MealPlanRecipe",
-                columns: table => new {
+                columns: table => new
+                {
                     MealplansId = table.Column<int>(type: "int", nullable: false),
                     RecipesId = table.Column<int>(type: "int", nullable: false)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_MealPlanRecipe", x => new { x.MealplansId, x.RecipesId });
                     table.ForeignKey(
                         name: "FK_MealPlanRecipe_MealPlans_MealplansId",
@@ -328,7 +361,8 @@ namespace CapstoneProject.Migrations {
 
             migrationBuilder.CreateTable(
                 name: "RecipeFeedbacks",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RecipeId = table.Column<int>(type: "int", nullable: true),
@@ -338,7 +372,8 @@ namespace CapstoneProject.Migrations {
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_RecipeFeedbacks", x => x.Id);
                     table.ForeignKey(
                         name: "FK_RecipeFeedbacks_AspNetUsers_UserId1",
@@ -448,7 +483,8 @@ namespace CapstoneProject.Migrations {
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder) {
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

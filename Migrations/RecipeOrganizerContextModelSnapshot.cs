@@ -484,6 +484,9 @@ namespace CapstoneProject.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("FkFavouriteId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ImgPath")
                         .HasColumnType("nvarchar(max)");
 
@@ -496,7 +499,7 @@ namespace CapstoneProject.Migrations
             modelBuilder.Entity("CapstoneProject.Models.Favourite", b =>
                 {
                     b.HasOne("CapstoneProject.Models.Account", "FkUser")
-                        .WithMany("Favourites")
+                        .WithMany()
                         .HasForeignKey("FkUserId1");
 
                     b.Navigation("FkUser");
@@ -671,8 +674,6 @@ namespace CapstoneProject.Migrations
 
             modelBuilder.Entity("CapstoneProject.Models.Account", b =>
                 {
-                    b.Navigation("Favourites");
-
                     b.Navigation("MealPlans");
 
                     b.Navigation("RecipeFeedbacks");

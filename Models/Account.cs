@@ -14,7 +14,7 @@ public partial class Account : IdentityUser
 
     public DateTime CreatedDate { get; set; }
 
-    public virtual ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();
+    public int? FkFavouriteId { get; set; }
 
     public virtual ICollection<MealPlan> MealPlans { get; set; } = new List<MealPlan>();
 

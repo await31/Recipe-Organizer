@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Ingredient>
+
+@{
+    ViewBag.Title = "View Ingredient";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .card-text {
+        display: -webkit-box;
+        -webkit-line-clamp: 3; /* Maximum number of lines to show */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .card img {
+        transition: 0.5s ease;
+    }
+
+        .card img:hover {
+            -webkit-transform: scale(1.1);
+            -ms-transform: scale(1.1);
+            transform: scale(1.1);
+            transition: 0.5s ease;
+        }
+
+    div.card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+</style>
+
+<div class="col-md-12">
+    <div class="row">
+        @foreach (var obj in Model) {
+            @if(obj.FkCategoryId == @ViewBag.Id) {
+                <div class="card col-md-2 px-0 mx-3 my-4 round-5 overflow-hidden" style="height: 365px;">
+                    <img src="@obj.ImgPath" class="card-img-top img-fluid h-50" alt="Ingredient image">
+                    <div class="card-body h-50 mb-1">
+                        <h5 class="card-title">@obj.Name</h5>
+                        <p class="card-text">@obj.Description</p>
+                        <a href="#" class="btn btn-dark text-light float-end" data-mdb-ripple-color="dark"><i class="fa-solid fa-file-lines"></i></a>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
