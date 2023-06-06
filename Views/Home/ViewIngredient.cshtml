@@ -2,8 +2,6 @@
 
 @{
     ViewBag.Title = "View Ingredient";
-    int categoryId = (int)ViewData["CategoryId"];
-
     Pager pager = new Pager();
     int pageNo = 0;
     if(ViewBag.Pager != null) {
@@ -49,7 +47,6 @@
 <div class="col-md-12">
     <div class="row">
         @foreach (var obj in Model) {
-           // @if(obj.FkCategoryId == categoryId) {
                 <div class="card col-md-2 px-0 mx-3 my-4 round-5 overflow-hidden" style="height: 365px;">
                     <img src="@obj.ImgPath" class="card-img-top img-fluid h-50" alt="Ingredient image">
                     <div class="card-body h-50 mb-1">
@@ -58,8 +55,8 @@
                         <a href="#" class="btn btn-dark text-light float-end" data-mdb-ripple-color="dark"><i class="fa-solid fa-file-lines"></i></a>
                     </div>
                 </div>
-           // }
         }
+        <hr>
         <partial name="_Pager" model="@pager"/>
     </div>
 </div>

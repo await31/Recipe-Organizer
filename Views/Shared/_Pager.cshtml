@@ -1,5 +1,17 @@
 ﻿@model CapstoneProject.Models.Pager
 
+<style>
+    .pagination .active a {
+        background-color: black !important;
+        color: white !important;
+    }
+    
+    .pagination a {
+        background-color: white !important;
+        color: black !important;
+    }
+</style>
+
 @if (Model.TotalPages > 0) {
     <ul class="pagination justify-content-end">
         @if (Model.CurrentPage > 1) {

@@ -17,6 +17,7 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using MailKit;
 using System.Text.RegularExpressions;
+using SmartBreadcrumbs.Attributes;
 
 namespace CapstoneProject.Controllers {
 
@@ -34,12 +35,15 @@ namespace CapstoneProject.Controllers {
             _context = context;
         }
 
+        [Breadcrumb("Ingredients Management")]
         public IActionResult Index() {
             IEnumerable<Ingredient> objIngredient = _context.Ingredients.ToList();
             return View(objIngredient);
         }
 
         // GET
+        [Breadcrumb("Create", FromAction = "Index", FromController = typeof(IngredientsController))]
+
         public IActionResult Create() {
             ViewData["FkCategoryId"] = new SelectList(_context.IngredientCategories, "Id", "Name");
             return View();
@@ -129,6 +133,8 @@ namespace CapstoneProject.Controllers {
         }
 
         //GET
+        [Breadcrumb("Delete", FromAction = "Index", FromController = typeof(IngredientsController))]
+
         public IActionResult Delete(int? id) {
             if (id == null || id == 0) {
                 return NotFound();

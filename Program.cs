@@ -8,10 +8,20 @@ using Microsoft.AspNetCore.Authentication.Facebook;
 using System.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication;
+using System.Reflection;
+using SmartBreadcrumbs.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
 IConfigurationSection facebookAuthNSection = builder.Configuration.GetSection("Authentication:Facebook");
+
+builder.Services.AddBreadcrumbs(Assembly.GetExecutingAssembly(), options => {
+    options.TagName = "nav";
+    options.TagClasses = "";
+    options.OlClasses = "breadcrumb";
+    options.LiClasses = "breadcrumb-item";
+    options.ActiveLiClasses = "breadcrumb-item active";
+});
 
 builder.Services.AddAuthentication()
     .AddGoogle(googleOptions => {

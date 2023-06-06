@@ -28,6 +28,15 @@
         list-style: none;
     }
 
+    .breadcrumb a {
+        text-decoration: none;
+        font-weight: bold;
+        color: cadetblue;
+    }
+
+    .breadcrumb {
+        margin-bottom: 0;
+    }
 </style>
 <body style="background-color: rgb(248,246,242);">
     @RenderSection("scripts", required: false)
@@ -54,6 +63,7 @@
     <div class="container">
         <main role="main" class="pb-3 pt-3">
             <partial name="_Notification" />
+            <breadcrumb></breadcrumb>
             @RenderBody()
         </main>
     </div>

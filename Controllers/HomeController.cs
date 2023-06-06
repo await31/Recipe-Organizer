@@ -1,9 +1,13 @@
 ﻿using CapstoneProject.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SmartBreadcrumbs.Attributes;
 using System.Diagnostics;
 
+
 namespace CapstoneProject.Controllers {
+
+    [DefaultBreadcrumb]
     public class HomeController : Controller {
 
         private readonly ILogger<HomeController> _logger;
@@ -19,17 +23,18 @@ namespace CapstoneProject.Controllers {
             return View();
         }
 
+        [Breadcrumb("Privacy", FromAction = "Index", FromController = typeof(HomeController))]
         public IActionResult Privacy() {
             return View();
         }
 
+        [Breadcrumb("Recipe Detail", FromAction = "Index", FromController = typeof(HomeController))]
         public IActionResult RecipeDetail() {
             return View();
         }
 
+        [Breadcrumb("View Ingredients", FromAction = "Index", FromController = typeof(HomeController))]
         public IActionResult ViewIngredient(int id, int pg=1) {
-
-            ViewData["CategoryId"] = id;
 
             IEnumerable<Ingredient> obj = _context.Ingredients.Where(i => i.FkCategoryId == id).ToList();
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using SmartBreadcrumbs.Attributes;
 
 namespace CapstoneProject.Controllers {
 
@@ -15,12 +16,14 @@ namespace CapstoneProject.Controllers {
         }
 
         //List all the roles created by Users
+        [Breadcrumb("Roles Management")]
         public IActionResult Index() {
             var roles = _roleManager.Roles;
             return View(roles);
         }
 
         [HttpGet]
+        [Breadcrumb("Create", FromAction ="Index", FromController = typeof(AppRolesController))]
         public IActionResult Create() {
             return View();
         }

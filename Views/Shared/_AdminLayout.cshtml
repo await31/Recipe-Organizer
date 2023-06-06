@@ -23,6 +23,19 @@
             list-style: none;
         }
 
+        .list-group-flush .active {
+            background-color: black !important;
+        }
+
+        .breadcrumb a {
+            text-decoration: none;
+            font-weight: bold;
+            color: cadetblue;
+        }
+
+        .breadcrumb {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 <body>
@@ -103,6 +116,7 @@
                 </div>
             </header>
             <partial name="_Notification" />
+            <breadcrumb class="mt-3 mb-0"></breadcrumb>
             @RenderBody()
         </div>  
     </div>

@@ -17,6 +17,7 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using MailKit;
 using System.Text.RegularExpressions;
+using SmartBreadcrumbs.Attributes;
 
 namespace CapstoneProject.Controllers {
 
@@ -35,6 +36,7 @@ namespace CapstoneProject.Controllers {
         }
 
         // GET: Recipes
+        [Breadcrumb("Recipes Management")]
         public IActionResult Index(string SearchString) {
             //var recipeOrganizerContext = _context.Recipes.Include(r => r.FkRecipe).Include(r => r.FkRecipeCategory);
             //return View(await recipeOrganizerContext.ToListAsync());

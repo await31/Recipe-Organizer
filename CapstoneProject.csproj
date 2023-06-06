@@ -27,6 +27,7 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.13" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
+		<PackageReference Include="SmartBreadcrumbs" Version="3.6.1" />
 	</ItemGroup>
 
   <ItemGroup>

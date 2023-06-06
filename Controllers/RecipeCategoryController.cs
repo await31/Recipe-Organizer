@@ -1,6 +1,7 @@
 ﻿using CapstoneProject.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SmartBreadcrumbs.Attributes;
 
 namespace CapstoneProject.Controllers {
     [Authorize(Roles = "Admin")]
@@ -12,6 +13,7 @@ namespace CapstoneProject.Controllers {
             _context = context;
         }
 
+        [Breadcrumb("Recipe Categories Management")]
         public IActionResult Index() {
             IEnumerable<RecipeCategory> objRecipeCategoryList = _context.RecipeCategories.ToList();
             return View(objRecipeCategoryList);
@@ -19,6 +21,7 @@ namespace CapstoneProject.Controllers {
 
 
         //GET
+        [Breadcrumb("Create", FromAction = "Index", FromController = typeof(RecipeCategoryController))]
         public IActionResult Create() {
             return View();
         }
@@ -37,6 +40,7 @@ namespace CapstoneProject.Controllers {
         }
 
         //GET
+        [Breadcrumb("Edit", FromAction = "Index", FromController = typeof(RecipeCategoryController))]
         public IActionResult Edit(int? id) {
             if (id == null || id == 0) {
                 return NotFound();
@@ -62,6 +66,7 @@ namespace CapstoneProject.Controllers {
         }
 
         //GET
+        [Breadcrumb("Delete", FromAction = "Index", FromController = typeof(RecipeCategoryController))]
         public IActionResult Delete(int? id) {
             if (id == null || id == 0) {
                 return NotFound();
