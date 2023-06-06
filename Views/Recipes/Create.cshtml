@@ -28,25 +28,76 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <!-- Ingredient -->
-            <div class="form-group">
-                <label for="IngredientId">Ingredient:</label>
-                <select class="form-control" id="IngredientId" name="IngredientId">
-                    <option value="">Select Ingredient</option>
-                    @foreach (var item in (SelectList)ViewData["Ingredients"])
-                    {
-                        <option value="@item.Value">@item.Text</option>
-                    }
-                </select>
+            <div id="ingredient-container">
+                <!-- Initial ingredient select element -->
+                <div class="form-group">
+                    <label for="IngredientId">Ingredient:</label>
+                    <select class="form-control" id="IngredientId" name="IngredientIds[]">
+                        <option value="">Select Ingredient</option>
+                        @foreach (var item in (SelectList)ViewData["Ingredients"])
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
             </div>
 
+            <button type="button" onclick="addIngredient()" class="btn btn-primary">Add</button>
+
+            <script>
+                function addIngredient() {
+                    var container = document.getElementById('ingredient-container');
+                    var originalFormGroup = container.querySelector('.form-group');
+
+                    var newFormGroup = originalFormGroup.cloneNode(true);
+                    var newSelect = newFormGroup.querySelector('select');
+
+                    // Clear the selected option in the new select element
+                    newSelect.value = '';
+
+                    // Add the new form group to the container
+                    container.appendChild(newFormGroup);
+                }
+
+                // Submit event handler
+                document.getElementById('recipe-form').addEventListener('submit', function (event) {
+                    // Prevent the form from submitting
+                    event.preventDefault();
+
+                    // Get all the select elements within the container
+                    var selectElements = document.querySelectorAll('#ingredient-container select');
+
+                    // Create a hidden input for each ingredient ID
+                    var hiddenInputsContainer = document.getElementById('hidden-inputs-container');
+                    hiddenInputsContainer.innerHTML = ''; // Clear any existing hidden inputs
+
+                    // Iterate over the select elements and create hidden inputs for each selected ID
+                    selectElements.forEach(function (select) {
+                        var selectedId = select.value;
+                        if (selectedId !== '') {
+                            var hiddenInput = document.createElement('input');
+                            hiddenInput.type = 'hidden';
+                            hiddenInput.name = 'IngredientIds[]';
+                            hiddenInput.value = selectedId;
+                            hiddenInputsContainer.appendChild(hiddenInput);
+                        }
+                    });
+
+                    // Submit the form
+                    this.submit();
+                });
+            </script>
+
+
+            <div id="hidden-inputs-container"></div>
 
             <div class="form-group">
                 <label asp-for="FkRecipeCategoryId" class="control-label"></label>
-                <select asp-for="FkRecipeCategoryId" class ="form-control" asp-items="ViewBag.FkRecipeCategoryId"></select>
+                <select asp-for="FkRecipeCategoryId" class="form-control" asp-items="ViewBag.FkRecipeCategoryId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="FkRecipeId" class="control-label"></label>
-                <select asp-for="FkRecipeId" class ="form-control" asp-items="ViewBag.FkRecipeId"></select>
+                <select asp-for="FkRecipeId" class="form-control" asp-items="ViewBag.FkRecipeId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Nutrition" class="control-label"></label>
@@ -85,5 +136,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

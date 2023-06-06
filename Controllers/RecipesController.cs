@@ -17,6 +17,7 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using MailKit;
 using System.Text.RegularExpressions;
+using NuGet.Packaging;
 
 namespace CapstoneProject.Controllers {
 
@@ -84,7 +85,7 @@ namespace CapstoneProject.Controllers {
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( Recipe recipe , int ingredientId) {
+        public async Task<IActionResult> Create( Recipe recipe , int[] IngredientIds) {
             if (ModelState.IsValid) {
                 if(recipe.file != null && recipe.file.Length > 0)
                 {
@@ -99,10 +100,16 @@ namespace CapstoneProject.Controllers {
                     recipe.Status = false;
 
                     // Save ingredient, recipe to IngredientRecipe
-                    var recipeTempId = recipe.Id;
+                    // Save ingredient IDs to recipe
+                    if (IngredientIds != null && IngredientIds.Length > 0)
+                    {
+                        var ingredients = _context.Ingredients.Where(i => IngredientIds.Contains(i.Id)).ToList();
+                        recipe.Ingredients.AddRange(ingredients);
+                    }
+                    /*var recipeTempId = recipe.Id;
                     var ingredientTempId = ingredientId;
                     var ingredient = _context.Ingredients.Find(ingredientTempId);
-                    recipe.Ingredients.Add(ingredient);
+                    recipe.Ingredients.Add(ingredient);*/
 
 
                 }
