@@ -27,6 +27,19 @@
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+            <!-- Ingredient -->
+            <div class="form-group">
+                <label for="IngredientId">Ingredient:</label>
+                <select class="form-control" id="IngredientId" name="IngredientId">
+                    <option value="">Select Ingredient</option>
+                    @foreach (var item in (SelectList)ViewData["Ingredients"])
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </div>
+
+
             <div class="form-group">
                 <label asp-for="FkRecipeCategoryId" class="control-label"></label>
                 <select asp-for="FkRecipeCategoryId" class ="form-control" asp-items="ViewBag.FkRecipeCategoryId"></select>

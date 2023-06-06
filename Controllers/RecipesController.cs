@@ -33,12 +33,12 @@ namespace CapstoneProject.Controllers {
         public RecipesController(RecipeOrganizerContext context) {
             _context = context;
         }
-
+        
         // GET: Recipes
         public IActionResult Index(string SearchString) {
             //var recipeOrganizerContext = _context.Recipes.Include(r => r.FkRecipe).Include(r => r.FkRecipeCategory);
             //return View(await recipeOrganizerContext.ToListAsync());
-            ViewData["CurrentFilter"] = SearchString;
+            ViewData["CurrentFilter"] = SearchString;   
             var recipes = from b in _context.Recipes
                           select b;
             if (!String.IsNullOrEmpty(SearchString)) {
@@ -70,6 +70,12 @@ namespace CapstoneProject.Controllers {
         public IActionResult Create() {
             ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id");
             ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name");
+
+            // lay danh sach ingredient tu database
+            var ingredients = _context.Ingredients.ToList();
+
+            ViewData["Ingredients"] = new SelectList(ingredients, "Id", "Name"); // truyen qua view create
+
             return View();
         }
 
@@ -78,7 +84,7 @@ namespace CapstoneProject.Controllers {
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( Recipe recipe) {
+        public async Task<IActionResult> Create( Recipe recipe , int ingredientId) {
             if (ModelState.IsValid) {
                 if(recipe.file != null && recipe.file.Length > 0)
                 {
@@ -91,6 +97,13 @@ namespace CapstoneProject.Controllers {
                     recipe.ImgPath = imageUrl;
 
                     recipe.Status = false;
+
+                    // Save ingredient, recipe to IngredientRecipe
+                    var recipeTempId = recipe.Id;
+                    var ingredientTempId = ingredientId;
+                    var ingredient = _context.Ingredients.Find(ingredientTempId);
+                    recipe.Ingredients.Add(ingredient);
+
 
                 }
                 else
