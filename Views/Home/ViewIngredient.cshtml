@@ -2,6 +2,14 @@
 
 @{
     ViewBag.Title = "View Ingredient";
+    int categoryId = (int)ViewData["CategoryId"];
+
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if(ViewBag.Pager != null) {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -9,6 +17,14 @@
     .card-text {
         display: -webkit-box;
         -webkit-line-clamp: 3; /* Maximum number of lines to show */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .card-title {
+        display: -webkit-box;
+        -webkit-line-clamp: 1; /* Maximum number of lines to show */
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -33,7 +49,7 @@
 <div class="col-md-12">
     <div class="row">
         @foreach (var obj in Model) {
-            @if(obj.FkCategoryId == @ViewBag.Id) {
+           // @if(obj.FkCategoryId == categoryId) {
                 <div class="card col-md-2 px-0 mx-3 my-4 round-5 overflow-hidden" style="height: 365px;">
                     <img src="@obj.ImgPath" class="card-img-top img-fluid h-50" alt="Ingredient image">
                     <div class="card-body h-50 mb-1">
@@ -42,7 +58,8 @@
                         <a href="#" class="btn btn-dark text-light float-end" data-mdb-ripple-color="dark"><i class="fa-solid fa-file-lines"></i></a>
                     </div>
                 </div>
-            }
+           // }
         }
+        <partial name="_Pager" model="@pager"/>
     </div>
 </div>

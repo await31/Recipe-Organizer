@@ -27,11 +27,28 @@ namespace CapstoneProject.Controllers {
             return View();
         }
 
-        [Route("Home/ViewIngredient/{id}")]
-        public IActionResult ViewIngredient(int id) {
-            ViewBag.Id = id;
-            IEnumerable<Ingredient> obj = _context.Ingredients.ToList();
-            return View(obj);
+        public IActionResult ViewIngredient(int id, int pg=1) {
+
+            ViewData["CategoryId"] = id;
+
+            IEnumerable<Ingredient> obj = _context.Ingredients.Where(i => i.FkCategoryId == id).ToList();
+
+            const int pageSize = 10; // Number of ingredients in 1 page
+            
+            if (pg < 1) 
+                pg = 1;
+
+            int recsCount = obj.Count();
+
+            var pager = new Pager(recsCount,pg, pageSize);
+
+            int recSkip = (pg - 1) * pageSize;
+
+            var data= obj.Skip(recSkip).Take(pager.PageSize).ToList();
+
+            this.ViewBag.Pager = pager;
+
+            return View(data);   
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
