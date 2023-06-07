@@ -5,12 +5,40 @@
 @{
     ViewData["Title"] = "Register";
 }
+<style>
+    .custom-file-input::-webkit-file-upload-button {
+        visibility: hidden;
+    }
 
+    .custom-file-input::before {
+        content: 'Your profile image';
+        display: inline-block;
+        background: White;
+        border: 1px solid #999;
+        border-radius: 3px;
+        padding: 5px 8px;
+        outline: none;
+        white-space: nowrap;
+        -webkit-user-select: none;
+        cursor: pointer;
+        text-shadow: 1px 1px #fff;
+        font-weight: 500;
+        font-size: 16pt;
+    }
+
+    .custom-file-input:hover::before {
+        border-color: black;
+    }
+
+    .custom-file-input:active::before {
+        background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+    }
+</style>
 <div style="margin: 15% 0;">
     <div class="container h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-md-7">
-                <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                     @if(Model.ProviderDisplayName != "Google")
@@ -40,6 +68,13 @@
                         <span class="input-group-text" id="basic-addon1"><i class="fa fa-user"></i></span>
                         <input asp-for="Input.Username" type="text" class="form-control form-control-lg" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
                         <span asp-validation-for="Input.Username" class="text-danger ms-3 mt-1"></span>
+                    </div>
+                    <div class="input-group d-flex flex-row align-items-center mb-4">
+                        <span class="input-group-text" id="basic-addon1" style="height: 44px;"><i class="fas fa-camera"></i></span>
+                        <div class="form-outline flex-fill mb-0">
+                            <input asp-for="Input.File" class="custom-file-input" placeholder="Your profile image" type="file" accept="image/png, image/jpeg" required />
+                            <span asp-validation-for="Input.File" class="text-danger"></span>
+                        </div>
                     </div>
 
                     <div class="text-center">    

@@ -14,24 +14,37 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using CapstoneProject.Models;
+using Firebase.Auth;
+using Firebase.Storage;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Formats;
 
 namespace CapstoneProject.Areas.Identity.Pages.Account {
     [AllowAnonymous]
     public class ExternalLoginModel : PageModel {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<Models.Account> _signInManager;
+        private readonly UserManager<Models.Account> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
+        private readonly RecipeOrganizerContext _context;
+
+        public static string ApiKey = "AIzaSyDIXdDdvo8NguMgxLvn4DWMNS-vXkUxoag";
+        public static string Bucket = "cookez-cloud.appspot.com";
+        public static string AuthEmail = "cookez.mail@gmail.com";
+        public static string AuthPassword = "cookez";
 
         public ExternalLoginModel(
-            SignInManager<IdentityUser> signInManager,
-            UserManager<IdentityUser> userManager,
+            SignInManager<Models.Account> signInManager,
+            UserManager<Models.Account> userManager,
             ILogger<ExternalLoginModel> logger,
-            IEmailSender emailSender) {
+            IEmailSender emailSender,
+            RecipeOrganizerContext context) {
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context = context;
         }
 
         [BindProperty]
@@ -55,6 +68,10 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
          ErrorMessage = "Username must contain only lowercase letter and digit.")]
             [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 5)]
             public string Username { get; set; }
+
+            [Required]
+            [Display(Name = "Profile image")]
+            public IFormFile File { get; set; }
         }
 
         public IActionResult OnGetAsync() {
@@ -117,8 +134,16 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
                 //var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
 
                 var user = new CapstoneProject.Models.Account { UserName = Input.Username, Email = Input.Email };
+                IFormFile file = Input.File;
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
+                var up = new Favourite();
+                _context.Favourites.Add(up);
+                await _context.SaveChangesAsync();
+
+                user.FavouriteId = up.FavouriteId;
                 user.Status = true;
-                user.ImgPath = null;
+                user.ImgPath = imageUrl;
                 user.CreatedDate = DateTime.UtcNow;
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded) {
@@ -152,9 +177,13 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
 
                         return LocalRedirect(returnUrl);
                     }
-                }
-                foreach (var error in result.Errors) {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                } else {
+                    // Registration failed, remove the added favourite
+                    _context.Favourites.Remove(up);
+                    await _context.SaveChangesAsync();
+                    foreach (var error in result.Errors) {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                 }
             }
 
@@ -162,5 +191,69 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
             ReturnUrl = returnUrl;
             return Page();
         }
+
+
+        public static async Task<string> UploadFirebase(Stream stream, string fileName) {
+            string imageFromFirebaseStorage = "";
+
+            using (Image image = Image.Load(stream)) {
+
+                // Resize the image to a smaller size if needed
+                int maxWidth = 1000; // Set your desired maximum width here
+                int maxHeight = 1000; // Set your desired maximum height here
+                if (image.Width > maxWidth || image.Height > maxHeight) {
+                    image.Mutate(x => x.Resize(new ResizeOptions {
+                        Size = new Size(maxWidth, maxHeight),
+                        Mode = ResizeMode.Max
+                    }));
+                }
+
+                // Compress the image
+                IImageEncoder imageEncoder;
+                string fileExtension = Path.GetExtension(fileName).ToLower();
+                if (fileExtension == ".png") {
+                    imageEncoder = new PngEncoder { CompressionLevel = PngCompressionLevel.BestCompression };
+                } else if (fileExtension == ".webp") {
+                    imageEncoder = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder { Quality = 100 }; // Adjust the quality level as needed
+                } else {
+                    imageEncoder = new JpegEncoder { Quality = 80 }; // Adjust the quality level as needed
+                }
+
+                using (MemoryStream webpStream = new MemoryStream()) {
+                    image.Save(webpStream, new SixLabors.ImageSharp.Formats.Webp.WebpEncoder());
+
+                    webpStream.Position = 0;
+
+                    FirebaseAuthProvider firebaseConfiguration = new(new FirebaseConfig(ApiKey));
+
+                    FirebaseAuthLink authConfiguration = await firebaseConfiguration
+                        .SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                    CancellationTokenSource cancellationToken = new();
+
+                    FirebaseStorageTask storageManager = new FirebaseStorage(
+                        Bucket,
+                        new FirebaseStorageOptions {
+                            AuthTokenAsyncFactory = () => Task.FromResult(authConfiguration.FirebaseToken),
+                            ThrowOnCancel = true
+                        })
+                        .Child("images")
+                        .Child("avatar")
+                        .Child(fileName)
+                        .PutAsync(webpStream, cancellationToken.Token);
+
+                    try {
+                        imageFromFirebaseStorage = await storageManager;
+                        firebaseConfiguration.Dispose();
+                        return imageFromFirebaseStorage;
+                    } catch (Exception ex) {
+                        Console.WriteLine("Exception was thrown: {0}", ex);
+                        return null;
+                    }
+                }
+            }
+        }
+
+
     }
 }
