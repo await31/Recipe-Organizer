@@ -5,13 +5,15 @@ using System.Diagnostics;
 namespace CapstoneProject.Controllers {
     public class HomeController : Controller {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger) {
+        private readonly RecipeOrganizerContext _context;
+        public HomeController(ILogger<HomeController> logger, RecipeOrganizerContext context) {
             _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index() {
-            return View();
+            var recipes = _context.Recipes.ToList();
+            return View(recipes);
         }
 
         public IActionResult Privacy() {

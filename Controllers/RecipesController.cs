@@ -104,7 +104,7 @@ namespace CapstoneProject.Controllers {
                     recipe.ImgPath = imageUrl;
 
                     recipe.Status = false;
-
+                    recipe.CreatedDate = DateTime.Now;
                     // Save ingredient, recipe to IngredientRecipe
                     // Save ingredient IDs to recipe
                     if (IngredientIds != null && IngredientIds.Length > 0)

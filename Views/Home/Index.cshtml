@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Cookez - A place to store and create delicious and nutritious recipes for everyone";
 }
+@model List<Recipe>
 <div class="card col-md-12 rounded-5 overflow-hidden border-0 mb-5">
     <div class="row g-0">
         <div class="col-md-6" style="background-color: #e7f9fd;">
@@ -80,6 +81,18 @@
         <a type="button" class="col-md-2 btn btn-lg rounded-3 float-end" style="background-color: #e7f9fd;">
             <span class="text-dark fw-semibold">All recipes</span> &nbsp; <i class="fa-solid fa-list"></i>
         </a>
+    </div>
+    <!--Recipe-->
+    <div class="row">
+        <h2>Recipe List</h2>
+        @foreach (var recipe in Model)
+    {
+        <div>
+            <h3>@recipe.Name</h3>
+            <p>@recipe.Description</p>
+            <!-- Display other recipe properties as needed -->
+        </div>
+    }
     </div>
     <div class="row">
         <div class="card col-md-3 col-sm-6 mx-5 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%);">

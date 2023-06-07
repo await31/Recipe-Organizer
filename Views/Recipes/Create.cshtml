@@ -24,9 +24,10 @@
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+                <textarea asp-for="Description" class="form-control ckeditor"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+
             <!-- Ingredient -->
             <div id="ingredient-container">
                 <!-- Initial ingredient select element -->
@@ -95,10 +96,10 @@
                 <label asp-for="FkRecipeCategoryId" class="control-label"></label>
                 <select asp-for="FkRecipeCategoryId" class="form-control" asp-items="ViewBag.FkRecipeCategoryId"></select>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="FkRecipeId" class="control-label"></label>
                 <select asp-for="FkRecipeId" class="form-control" asp-items="ViewBag.FkRecipeId"></select>
-            </div>
+            </div>*@
             <div class="form-group">
                 <label asp-for="Nutrition" class="control-label"></label>
                 <input asp-for="Nutrition" class="form-control" />
@@ -114,16 +115,16 @@
                 <input asp-for="Difficult" class="form-control" />
                 <span asp-validation-for="Difficult" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="FkUserId" class="control-label"></label>
                 <input asp-for="FkUserId" class="form-control" />
                 <span asp-validation-for="FkUserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+            </div>*@
+            @*<div class="form-group">
                 <label asp-for="CreatedDate" class="control-label"></label>
                 <input asp-for="CreatedDate" class="form-control" />
                 <span asp-validation-for="CreatedDate" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-default" />
             </div>
@@ -137,6 +138,10 @@
 
 @section Scripts {
     @{
+        <script src="~/ckeditor/ckeditor.js"></script>
+        <script>
+            CKEDITOR.replace('Description');
+        </script>
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
