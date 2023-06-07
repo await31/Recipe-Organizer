@@ -34,20 +34,26 @@ namespace CapstoneProject.Controllers {
         public RecipesController(RecipeOrganizerContext context) {
             _context = context;
         }
-        
-        // GET: Recipes
-        public IActionResult Index(string SearchString) {
-            //var recipeOrganizerContext = _context.Recipes.Include(r => r.FkRecipe).Include(r => r.FkRecipeCategory);
-            //return View(await recipeOrganizerContext.ToListAsync());
-            ViewData["CurrentFilter"] = SearchString;   
+
+        // GET/POST: Recipes
+        public async Task<IActionResult> Index(string searchString, int? pageNumber)
+        {
+            ViewData["CurrentFilter"] = searchString;
             var recipes = from b in _context.Recipes
                           select b;
-            if (!String.IsNullOrEmpty(SearchString)) {
-                recipes = recipes.Where(b => b.Name.Contains(SearchString));
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                recipes = recipes.Where(b => b.Name.Contains(searchString));
             }
 
-            return View(recipes);
+            int pageSize = 3;
+            var paginatedRecipes = await PaginatedList<Recipe>.CreateAsync(recipes.AsNoTracking(), pageNumber ?? 1, pageSize);
+
+            return View(paginatedRecipes);
         }
+
+
 
         // GET: Recipes/Details/5
         public async Task<IActionResult> Details(int? id) {

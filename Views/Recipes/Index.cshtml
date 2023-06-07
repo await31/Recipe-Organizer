@@ -1,5 +1,5 @@
-﻿@model IEnumerable<Recipe>
-
+﻿
+@model PaginatedList<CapstoneProject.Models.Recipe>
 @{
     ViewBag.Title = "Create recipe";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -16,37 +16,46 @@
             <thead class="table-dark">
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.Name)
+                        @*@Html.DisplayNameFor(model => model.Name)*@
+                        Name
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.ImgPath)
+                        @*@Html.DisplayNameFor(model => model.ImgPath)*@
+                        ImgPath
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Description)
+                        @*@Html.DisplayNameFor(model => model.Description)*@
+                        Description
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Nutrition)
+                        @*@Html.DisplayNameFor(model => model.Nutrition)*@
+                        Nutrition
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.PrepTime)
+                        @*@Html.DisplayNameFor(model => model.PrepTime)*@
+                        PrepTime
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Difficult)
+                        @*@Html.DisplayNameFor(model => model.Difficult)*@
+                        Difficult
                     </th>
                     <th>
                         RecipeOwner
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.CreatedDate)
+                        @*@Html.DisplayNameFor(model => model.CreatedDate)*@
+                        CreatedDate
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.FkRecipe)
+                        @*@Html.DisplayNameFor(model => model.FkRecipe)*@
+                        FkRecipe
                     </th>
                     <th>
                         RecipeCategory
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Status)
+                        @*@Html.DisplayNameFor(model => model.Status)*@
+                        Status
                     </th>
                     <th colspan="3">
                         Action
@@ -124,5 +133,26 @@
                 }
             </tbody>
         </table>
+
+        @{
+            var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+            var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+        }
+
+        <a asp-action="Index"
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-pageNumber="@(Model.PageIndex - 1)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="btn btn-default @prevDisabled">
+            Previous
+        </a>
+        <a asp-action="Index"
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-pageNumber="@(Model.PageIndex + 1)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="btn btn-default @nextDisabled">
+            Next
+        </a>
+
     </div>
 </div>
