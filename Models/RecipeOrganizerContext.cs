@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CapstoneProject.Models;
 
-public partial class RecipeOrganizerContext : IdentityDbContext {
+public partial class RecipeOrganizerContext : IdentityDbContext<Account> {
     public RecipeOrganizerContext() {
     }
 

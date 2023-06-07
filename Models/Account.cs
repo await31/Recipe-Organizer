@@ -7,14 +7,19 @@ namespace CapstoneProject.Models;
 
 public partial class Account : IdentityUser
 {
-
     public string? ImgPath { get; set; }
 
     public bool? Status { get; set; }
 
+    [NotMapped]
+    public IFormFile File { get; set; }
+
     public DateTime CreatedDate { get; set; }
 
-    public int? FkFavouriteId { get; set; }
+    [ForeignKey("Favourite")]
+    public int FavouriteId { get; set; }
+
+    public virtual Favourite Favourites { get; set; }
 
     public virtual ICollection<MealPlan> MealPlans { get; set; } = new List<MealPlan>();
 

@@ -25,32 +25,44 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Firebase.Auth;
+using Firebase.Storage;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Formats;
 
 namespace CapstoneProject.Areas.Identity.Pages.Account {
     public class RegisterModel : PageModel {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly IUserStore<IdentityUser> _userStore;
-        private readonly IUserEmailStore<IdentityUser> _emailStore;
+        private readonly SignInManager<Models.Account> _signInManager;
+        private readonly UserManager<Models.Account> _userManager;
+        private readonly IUserStore<Models.Account> _userStore;
+        private readonly IUserEmailStore<Models.Account> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RecipeOrganizerContext _context;
 
+        public static string ApiKey = "AIzaSyDIXdDdvo8NguMgxLvn4DWMNS-vXkUxoag";
+        public static string Bucket = "cookez-cloud.appspot.com";
+        public static string AuthEmail = "cookez.mail@gmail.com";
+        public static string AuthPassword = "cookez";
 
         public RegisterModel(
-            UserManager<IdentityUser> userManager,
-            IUserStore<IdentityUser> userStore,
-            SignInManager<IdentityUser> signInManager,
+            UserManager<Models.Account> userManager,
+            IUserStore<Models.Account> userStore,
+            SignInManager<Models.Account> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            RoleManager<IdentityRole> roleManager) {
+            RoleManager<IdentityRole> roleManager,
+            RecipeOrganizerContext context) {
             _userManager = userManager;
             _userStore = userStore;
-            _emailStore = GetEmailStore();
+            _emailStore = (IUserEmailStore<Models.Account>)GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
             _roleManager = roleManager;
+            _context = context;
         }
 
         /// <summary>
@@ -113,6 +125,11 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
             public string ConfirmPassword { get; set; }
             public string? Role { get; set; }
 
+
+            [Required]
+            [Display(Name = "Profile image")]
+            public IFormFile File { get; set; }
+
             [Required]
             [RegularExpression("True", ErrorMessage = "You must agree to our terms of service to continue register")]
             public bool AgreeTerms { get; set; }
@@ -138,20 +155,29 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid) {
-                var user = CreateUser();
-                await _userStore.SetUserNameAsync(user, Input.Username, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                MailAddress address = new MailAddress(Input.Email);
+                IFormFile file = Input.File;
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
 
-                user.Status = true;
-                user.ImgPath = null;
-                user.CreatedDate = DateTime.UtcNow;
+                var up = new Favourite();
+                _context.Favourites.Add(up);
+                await _context.SaveChangesAsync();
+
+                var user = new Models.Account {
+                    UserName = Input.Username,
+                    Email = Input.Email,
+                    ImgPath = imageUrl,
+                    FavouriteId = up.FavouriteId,
+                    Status = true,
+                    CreatedDate = DateTime.UtcNow
+                };
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded) {
-                    _logger.LogInformation("User created a new account with password.");
-
                     await _userManager.AddToRoleAsync(user, "Cooker");
+
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -176,9 +202,13 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
-                }
-                foreach (var error in result.Errors) {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                } else {
+                    // Registration failed, remove the added favourite
+                    _context.Favourites.Remove(up);
+                    await _context.SaveChangesAsync();
+                    foreach (var error in result.Errors) {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                 }
             }
 
@@ -190,17 +220,78 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
             try {
                 return Activator.CreateInstance<Models.Account>();
             } catch {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(IdentityUser)}'. " +
-                    $"Ensure that '{nameof(IdentityUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(Models.Account)}'. " +
+                    $"Ensure that '{nameof(Models.Account)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
         }
 
-        private IUserEmailStore<IdentityUser> GetEmailStore() {
+        private IUserEmailStore<Models.Account> GetEmailStore() {
             if (!_userManager.SupportsUserEmail) {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<IdentityUser>)_userStore;
+            return (IUserEmailStore<Models.Account>)_userStore;
+        }
+
+        public static async Task<string> UploadFirebase(Stream stream, string fileName) {
+            string imageFromFirebaseStorage = "";
+
+            using (Image image = Image.Load(stream)) {
+
+                // Resize the image to a smaller size if needed
+                int maxWidth = 1000; // Set your desired maximum width here
+                int maxHeight = 1000; // Set your desired maximum height here
+                if (image.Width > maxWidth || image.Height > maxHeight) {
+                    image.Mutate(x => x.Resize(new ResizeOptions {
+                        Size = new Size(maxWidth, maxHeight),
+                        Mode = ResizeMode.Max
+                    }));
+                }
+
+                // Compress the image
+                IImageEncoder imageEncoder;
+                string fileExtension = Path.GetExtension(fileName).ToLower();
+                if (fileExtension == ".png") {
+                    imageEncoder = new PngEncoder { CompressionLevel = PngCompressionLevel.BestCompression };
+                } else if (fileExtension == ".webp") {
+                    imageEncoder = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder { Quality = 100 }; // Adjust the quality level as needed
+                } else {
+                    imageEncoder = new JpegEncoder { Quality = 80 }; // Adjust the quality level as needed
+                }
+
+                using (MemoryStream webpStream = new MemoryStream()) {
+                    image.Save(webpStream, new SixLabors.ImageSharp.Formats.Webp.WebpEncoder());
+
+                    webpStream.Position = 0;
+
+                    FirebaseAuthProvider firebaseConfiguration = new(new FirebaseConfig(ApiKey));
+
+                    FirebaseAuthLink authConfiguration = await firebaseConfiguration
+                        .SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                    CancellationTokenSource cancellationToken = new();
+
+                    FirebaseStorageTask storageManager = new FirebaseStorage(
+                        Bucket,
+                        new FirebaseStorageOptions {
+                            AuthTokenAsyncFactory = () => Task.FromResult(authConfiguration.FirebaseToken),
+                            ThrowOnCancel = true
+                        })
+                        .Child("images")
+                        .Child("avatar")
+                        .Child(fileName)
+                        .PutAsync(webpStream, cancellationToken.Token);
+
+                    try {
+                        imageFromFirebaseStorage = await storageManager;
+                        firebaseConfiguration.Dispose();
+                        return imageFromFirebaseStorage;
+                    } catch (Exception ex) {
+                        Console.WriteLine("Exception was thrown: {0}", ex);
+                        return null;
+                    }
+                }
+            }
         }
     }
 }

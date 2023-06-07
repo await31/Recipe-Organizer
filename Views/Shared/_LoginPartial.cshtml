@@ -1,12 +1,12 @@
 ﻿﻿@using Microsoft.AspNetCore.Identity
 
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<Account> SignInManager
+@inject UserManager<Account> UserManager
 
 @if (SignInManager.IsSignedIn(User)) {
     <li class="nav-item dropdown">
         <a class="btn btn-lg dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="~/images/avatar.png" class="img-fluid rounded-circle ms-2" style="width: 40px; height: 40px;" alt="avatar">
+            <img src="@UserManager.GetUserAsync(User).Result.ImgPath" class="img-fluid rounded-circle ms-2" style="width: 40px; height: 40px;" alt="avatar">
             @UserManager.GetUserName(User)
         </a>
         <ul class="dropdown-menu">

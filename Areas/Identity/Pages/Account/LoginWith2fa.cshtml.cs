@@ -16,13 +16,13 @@ namespace CapstoneProject.Areas.Identity.Pages.Account
 {
     public class LoginWith2faModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<Models.Account> _signInManager;
+        private readonly UserManager<Models.Account> _userManager;
         private readonly ILogger<LoginWith2faModel> _logger;
 
         public LoginWith2faModel(
-            SignInManager<IdentityUser> signInManager,
-            UserManager<IdentityUser> userManager,
+            SignInManager<Models.Account> signInManager,
+            UserManager<Models.Account> userManager,
             ILogger<LoginWith2faModel> logger)
         {
             _signInManager = signInManager;

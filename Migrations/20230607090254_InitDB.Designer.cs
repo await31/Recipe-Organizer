@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CapstoneProject.Migrations
 {
     [DbContext(typeof(RecipeOrganizerContext))]
-    [Migration("20230605133729_InitDB")]
+    [Migration("20230607090254_InitDB")]
     partial class InitDB
     {
         /// <inheritdoc />
@@ -25,20 +25,95 @@ namespace CapstoneProject.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CapstoneProject.Models.Favourite", b =>
+            modelBuilder.Entity("CapstoneProject.Models.Account", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FkUserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("FavouriteId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImgPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FkUserId");
+                    b.HasIndex("FavouriteId")
+                        .IsUnique();
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("CapstoneProject.Models.Favourite", b =>
+                {
+                    b.Property<int>("FavouriteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FavouriteId"));
+
+                    b.HasKey("FavouriteId");
 
                     b.ToTable("Favourites");
                 });
@@ -215,13 +290,13 @@ namespace CapstoneProject.Migrations
 
             modelBuilder.Entity("FavouriteRecipe", b =>
                 {
-                    b.Property<int>("FavouritesId")
+                    b.Property<int>("FavouritesFavouriteId")
                         .HasColumnType("int");
 
                     b.Property<int>("RecipesId")
                         .HasColumnType("int");
 
-                    b.HasKey("FavouritesId", "RecipesId");
+                    b.HasKey("FavouritesFavouriteId", "RecipesId");
 
                     b.HasIndex("RecipesId");
 
@@ -310,79 +385,6 @@ namespace CapstoneProject.Migrations
                     b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
-
-                    b.UseTphMappingStrategy();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -411,12 +413,10 @@ namespace CapstoneProject.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -453,12 +453,10 @@ namespace CapstoneProject.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -470,30 +468,13 @@ namespace CapstoneProject.Migrations
 
             modelBuilder.Entity("CapstoneProject.Models.Account", b =>
                 {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+                    b.HasOne("CapstoneProject.Models.Favourite", "Favourites")
+                        .WithOne("Account")
+                        .HasForeignKey("CapstoneProject.Models.Account", "FavouriteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("FkFavouriteId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImgPath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("Status")
-                        .HasColumnType("bit");
-
-                    b.HasDiscriminator().HasValue("Account");
-                });
-
-            modelBuilder.Entity("CapstoneProject.Models.Favourite", b =>
-                {
-                    b.HasOne("CapstoneProject.Models.Account", "FkUser")
-                        .WithMany()
-                        .HasForeignKey("FkUserId");
-
-                    b.Navigation("FkUser");
+                    b.Navigation("Favourites");
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.Ingredient", b =>
@@ -554,7 +535,7 @@ namespace CapstoneProject.Migrations
                 {
                     b.HasOne("CapstoneProject.Models.Favourite", null)
                         .WithMany()
-                        .HasForeignKey("FavouritesId")
+                        .HasForeignKey("FavouritesFavouriteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -606,7 +587,7 @@ namespace CapstoneProject.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("CapstoneProject.Models.Account", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -615,7 +596,7 @@ namespace CapstoneProject.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("CapstoneProject.Models.Account", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -630,7 +611,7 @@ namespace CapstoneProject.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("CapstoneProject.Models.Account", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -639,10 +620,25 @@ namespace CapstoneProject.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("CapstoneProject.Models.Account", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CapstoneProject.Models.Account", b =>
+                {
+                    b.Navigation("MealPlans");
+
+                    b.Navigation("RecipeFeedbacks");
+
+                    b.Navigation("Recipes");
+                });
+
+            modelBuilder.Entity("CapstoneProject.Models.Favourite", b =>
+                {
+                    b.Navigation("Account")
                         .IsRequired();
                 });
 
@@ -660,15 +656,6 @@ namespace CapstoneProject.Migrations
 
             modelBuilder.Entity("CapstoneProject.Models.RecipeCategory", b =>
                 {
-                    b.Navigation("Recipes");
-                });
-
-            modelBuilder.Entity("CapstoneProject.Models.Account", b =>
-                {
-                    b.Navigation("MealPlans");
-
-                    b.Navigation("RecipeFeedbacks");
-
                     b.Navigation("Recipes");
                 });
 #pragma warning restore 612, 618

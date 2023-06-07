@@ -1,5 +1,7 @@
 ﻿@page
+
 @model ExternalLoginModel
+
 @{
     ViewData["Title"] = "Register";
 }
@@ -8,24 +10,42 @@
     <div class="container h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-md-7">
-                <h3 class="text-center mb-5">Please choose a username to continue registration. </h3>
                 <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div>
-                        <div class="form-group d-none">
-                            <label asp-for="Input.Email"></label>
-                            <input asp-for="Input.Email" class="form-control" readonly />
+
+                    @if(Model.ProviderDisplayName != "Google")
+                    {
+                        <h3 id="external-login-description">
+                            You've successfully authenticated with <strong>@Model.ProviderDisplayName</strong>.
+                            Please enter an email address for this site below and click the Register button to finish
+                            logging in.
+                        </h3>
+                        <div class="input-group mb-3 d-flex">
+                            <span class="input-group-text" id="basic-addon1"><i class="fa fa-envelope"></i></span>
+                            <input asp-for="Input.Email" type="text" class="form-control form-control-lg" placeholder="Email" aria-label="Username" aria-describedby="basic-addon1" />
                             <span asp-validation-for="Input.Email" class="text-danger"></span>
                         </div>
-                        <div class="input-group mb-3 d-flex">
-                            <span class="input-group-text" id="basic-addon1"><i class="fa fa-user"></i></span>
-                            <input asp-for="Input.Username" type="text" class="form-control form-control-lg" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-                            <button type="submit" class="btn btn-dark flex-end rounded-2 ms-2">Choose</button>
-                        </div>
+                    }
+                    @if(Model.ProviderDisplayName == "Google")
+                    {
+                       <h3 id="external-login-description" class="text-center mb-5" >Please choose a username to continue registration. </h3>
+                       <div class="input-group mb-3 d-flex">
+                            <span class="input-group-text" id="basic-addon1"><i class="fa fa-envelope"></i></span>
+                            <input asp-for="Input.Email" type="text" class="form-control form-control-lg" placeholder="Email" aria-label="Username" aria-describedby="basic-addon1" readonly />
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                       </div>
+                    }
+                        
+                    <div class="input-group mb-3 d-flex">
+                        <span class="input-group-text" id="basic-addon1"><i class="fa fa-user"></i></span>
+                        <input asp-for="Input.Username" type="text" class="form-control form-control-lg" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
                         <span asp-validation-for="Input.Username" class="text-danger ms-3 mt-1"></span>
                     </div>
+
+                    <div class="text-center">    
+                        <button type="submit" class="btn btn-dark btn-lg flex-end rounded-2 ms-2">Register</button>
+                    </div>
                 </form>
-                <h1>@ViewData["GgEmail"]</h1>
             </div>
         </div>
     </div>

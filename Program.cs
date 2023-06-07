@@ -55,9 +55,10 @@ builder.Services.AddDbContext<RecipeOrganizerContext>(options => options.UseSqlS
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => {
+builder.Services.AddIdentity<Account, IdentityRole>(options => {
     options.SignIn.RequireConfirmedAccount = true;
 })
+    .AddDefaultUI()
     .AddDefaultTokenProviders()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<RecipeOrganizerContext>();
