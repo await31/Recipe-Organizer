@@ -11,13 +11,13 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
 {
     public class ResetAuthenticatorModel : PageModel
     {
-        UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        UserManager<Models.Account> _userManager;
+        private readonly SignInManager<Models.Account> _signInManager;
         ILogger<ResetAuthenticatorModel> _logger;
 
         public ResetAuthenticatorModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
+            UserManager<Models.Account> userManager,
+            SignInManager<Models.Account> signInManager,
             ILogger<ResetAuthenticatorModel> logger)
         {
             _userManager = userManager;

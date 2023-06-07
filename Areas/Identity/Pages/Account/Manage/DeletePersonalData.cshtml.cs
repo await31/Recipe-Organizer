@@ -10,13 +10,13 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
 {
     public class DeletePersonalDataModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<Models.Account> _userManager;
+        private readonly SignInManager<Models.Account> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
 
         public DeletePersonalDataModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
+            UserManager<Models.Account> userManager,
+            SignInManager<Models.Account> signInManager,
             ILogger<DeletePersonalDataModel> logger)
         {
             _userManager = userManager;
