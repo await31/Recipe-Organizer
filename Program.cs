@@ -57,6 +57,7 @@ builder.Services.AddDbContext<RecipeOrganizerContext>(options => options.UseSqlS
 
 builder.Services.AddIdentity<Account, IdentityRole>(options => {
     options.SignIn.RequireConfirmedAccount = true;
+    options.User.RequireUniqueEmail = true;
 })
     .AddDefaultUI()
     .AddDefaultTokenProviders()
