@@ -1,7 +1,13 @@
 ﻿@model IEnumerable<Recipe>
 
 @{
-    ViewBag.Title = "Create recipe";
+    ViewBag.Title = "View Recipe";
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if (ViewBag.Pager != null) {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -16,37 +22,46 @@
             <thead class="table-dark">
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.Name)
+                        @*@Html.DisplayNameFor(model => model.Name)*@
+                        Name
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.ImgPath)
+                        @*@Html.DisplayNameFor(model => model.ImgPath)*@
+                        ImgPath
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Description)
+                        @*@Html.DisplayNameFor(model => model.Description)*@
+                        Description
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Nutrition)
+                        @*@Html.DisplayNameFor(model => model.Nutrition)*@
+                        Nutrition
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.PrepTime)
+                        @*@Html.DisplayNameFor(model => model.PrepTime)*@
+                        PrepTime
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Difficult)
+                        @*@Html.DisplayNameFor(model => model.Difficult)*@
+                        Difficult
                     </th>
                     <th>
                         RecipeOwner
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.CreatedDate)
+                        @*@Html.DisplayNameFor(model => model.CreatedDate)*@
+                        CreatedDate
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.FkRecipe)
+                        @*@Html.DisplayNameFor(model => model.FkRecipe)*@
+                        FkRecipe
                     </th>
                     <th>
                         RecipeCategory
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Status)
+                        @*@Html.DisplayNameFor(model => model.Status)*@
+                        Status
                     </th>
                     <th colspan="3">
                         Action
@@ -91,15 +106,15 @@
                         </td>
                         <td>
                             @if (item.Status == false) {
-                                @Html.Raw("Deny");
-                            }
-                            else
-                            {
-                                @Html.Raw("Approved");
+                                @Html.Raw("Deny")
+                                ;
+                            } else {
+                                @Html.Raw("Approved")
+                                ;
                             }
                         </td>
                         <td>
-                            <a asp-controller="Recipes" asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
+                            <a asp-controller="Recipes" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                         </td>
                         <td>
                             <a asp-controller="Recipes" asp-action="Details" asp-route-id="@item.Id">Details</a>
@@ -124,5 +139,8 @@
                 }
             </tbody>
         </table>
+
+        
+        <partial name="_Pager" model="@pager" />
     </div>
 </div>

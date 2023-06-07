@@ -17,6 +17,7 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using MailKit;
 using System.Text.RegularExpressions;
+using NuGet.Packaging;
 using SmartBreadcrumbs.Attributes;
 
 namespace CapstoneProject.Controllers {
@@ -35,20 +36,36 @@ namespace CapstoneProject.Controllers {
             _context = context;
         }
 
-        // GET: Recipes
+        // GET/POST: Recipes
         [Breadcrumb("Recipes Management")]
-        public IActionResult Index(string SearchString) {
-            //var recipeOrganizerContext = _context.Recipes.Include(r => r.FkRecipe).Include(r => r.FkRecipeCategory);
-            //return View(await recipeOrganizerContext.ToListAsync());
-            ViewData["CurrentFilter"] = SearchString;
+
+        public async Task<IActionResult> Index(string searchString, int pg =1) {
+            ViewData["CurrentFilter"] = searchString;
             var recipes = from b in _context.Recipes
                           select b;
-            if (!String.IsNullOrEmpty(SearchString)) {
-                recipes = recipes.Where(b => b.Name.Contains(SearchString));
+
+            if (!String.IsNullOrEmpty(searchString)) {
+                recipes = recipes.Where(b => b.Name.Contains(searchString));
             }
 
-            return View(recipes);
+            const int pageSize = 10; // Number of recipes in 1 page
+
+            if (pg < 1)
+                pg = 1;
+
+            int recsCount = recipes.Count();
+
+            var pager = new Pager(recsCount, pg, pageSize);
+
+            int recSkip = (pg - 1) * pageSize;
+
+            var data = recipes.Skip(recSkip).Take(pager.PageSize).ToList();
+
+            this.ViewBag.Pager = pager;
+
+            return View(data);
         }
+
 
         // GET: Recipes/Details/5
         public async Task<IActionResult> Details(int? id) {
@@ -72,6 +89,12 @@ namespace CapstoneProject.Controllers {
         public IActionResult Create() {
             ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id");
             ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name");
+
+            // lay danh sach ingredient tu database
+            var ingredients = _context.Ingredients.ToList();
+
+            ViewData["Ingredients"] = new SelectList(ingredients, "Id", "Name"); // truyen qua view create
+
             return View();
         }
 
@@ -80,10 +103,9 @@ namespace CapstoneProject.Controllers {
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( Recipe recipe) {
+        public async Task<IActionResult> Create(Recipe recipe, int[] IngredientIds) {
             if (ModelState.IsValid) {
-                if(recipe.file != null && recipe.file.Length > 0)
-                {
+                if (recipe.file != null && recipe.file.Length > 0) {
                     IFormFile file = recipe.file;
                     // Generate a unique file name
                     string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
@@ -94,9 +116,20 @@ namespace CapstoneProject.Controllers {
 
                     recipe.Status = false;
 
-                }
-                else
-                {
+                    recipe.CreatedDate = DateTime.Now;
+                    // Save ingredient, recipe to IngredientRecipe
+                    // Save ingredient IDs to recipe
+                    if (IngredientIds != null && IngredientIds.Length > 0) {
+                        var ingredients = _context.Ingredients.Where(i => IngredientIds.Contains(i.Id)).ToList();
+                        recipe.Ingredients.AddRange(ingredients);
+                    }
+                    /*var recipeTempId = recipe.Id;
+                    var ingredientTempId = ingredientId;
+                    var ingredient = _context.Ingredients.Find(ingredientTempId);
+                    recipe.Ingredients.Add(ingredient);*/
+
+
+                } else {
                     recipe.ImgPath = "untitle.jpg";
                 }
 
@@ -109,6 +142,8 @@ namespace CapstoneProject.Controllers {
             ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.FkRecipeCategoryId);
             return View(recipe);
         }
+
+
         [Authorize]
         // GET: Recipes/Edit/5
         public async Task<IActionResult> Edit(int? id) {
@@ -225,20 +260,16 @@ namespace CapstoneProject.Controllers {
 
 
         //firebase
-        public static async Task<string> UploadFirebase(Stream stream, string fileName)
-        {
+        public static async Task<string> UploadFirebase(Stream stream, string fileName) {
             string imageFromFirebaseStorage = "";
 
-            using (Image image = Image.Load(stream))
-            {
+            using (Image image = Image.Load(stream)) {
 
                 // Resize the image to a smaller size if needed
                 int maxWidth = 1000; // Set your desired maximum width here
                 int maxHeight = 1000; // Set your desired maximum height here
-                if (image.Width > maxWidth || image.Height > maxHeight)
-                {
-                    image.Mutate(x => x.Resize(new ResizeOptions
-                    {
+                if (image.Width > maxWidth || image.Height > maxHeight) {
+                    image.Mutate(x => x.Resize(new ResizeOptions {
                         Size = new Size(maxWidth, maxHeight),
                         Mode = ResizeMode.Max
                     }));
@@ -247,21 +278,15 @@ namespace CapstoneProject.Controllers {
                 // Compress the image
                 IImageEncoder imageEncoder;
                 string fileExtension = Path.GetExtension(fileName).ToLower();
-                if (fileExtension == ".png")
-                {
+                if (fileExtension == ".png") {
                     imageEncoder = new PngEncoder { CompressionLevel = PngCompressionLevel.BestCompression };
-                }
-                else if (fileExtension == ".webp")
-                {
+                } else if (fileExtension == ".webp") {
                     imageEncoder = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder { Quality = 100 }; // Adjust the quality level as needed
-                }
-                else
-                {
+                } else {
                     imageEncoder = new JpegEncoder { Quality = 80 }; // Adjust the quality level as needed
                 }
 
-                using (MemoryStream webpStream = new MemoryStream())
-                {
+                using (MemoryStream webpStream = new MemoryStream()) {
                     image.Save(webpStream, new SixLabors.ImageSharp.Formats.Webp.WebpEncoder());
 
                     webpStream.Position = 0;
@@ -275,8 +300,7 @@ namespace CapstoneProject.Controllers {
 
                     FirebaseStorageTask storageManager = new FirebaseStorage(
                         Bucket,
-                        new FirebaseStorageOptions
-                        {
+                        new FirebaseStorageOptions {
                             AuthTokenAsyncFactory = () => Task.FromResult(authConfiguration.FirebaseToken),
                             ThrowOnCancel = true
                         })
@@ -285,14 +309,11 @@ namespace CapstoneProject.Controllers {
                         .Child(fileName)
                         .PutAsync(webpStream, cancellationToken.Token);
 
-                    try
-                    {
+                    try {
                         imageFromFirebaseStorage = await storageManager;
                         firebaseConfiguration.Dispose();
                         return imageFromFirebaseStorage;
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         Console.WriteLine("Exception was thrown: {0}", ex);
                         return null;
                     }
@@ -300,10 +321,8 @@ namespace CapstoneProject.Controllers {
             }
         }
 
-        private async Task DeleteFromFirebaseStorage(string fileName)
-        {
-            if (!string.IsNullOrEmpty(fileName))
-            {
+        private async Task DeleteFromFirebaseStorage(string fileName) {
+            if (!string.IsNullOrEmpty(fileName)) {
                 string exactFileName = GetImageNameFromUrl(fileName);
                 FirebaseAuthProvider firebaseConfiguration = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
                 FirebaseAuthLink authConfiguration = await firebaseConfiguration
@@ -311,8 +330,7 @@ namespace CapstoneProject.Controllers {
 
                 FirebaseStorage storage = new FirebaseStorage(
                     Bucket,
-                    new FirebaseStorageOptions
-                    {
+                    new FirebaseStorageOptions {
                         AuthTokenAsyncFactory = () => Task.FromResult(authConfiguration.FirebaseToken),
                         ThrowOnCancel = true
                     });
@@ -327,8 +345,7 @@ namespace CapstoneProject.Controllers {
             }
         }
 
-        public static string GetImageNameFromUrl(string url)
-        {
+        public static string GetImageNameFromUrl(string url) {
             int lastSeparatorIndex = url.LastIndexOf("%2F"); // Get the index of the last "%2F"
             int startIndex = lastSeparatorIndex + 3; // Start index of the desired string
             int endIndex = url.IndexOf("?alt", startIndex); // End index of the desired string
