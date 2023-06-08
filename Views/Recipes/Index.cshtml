@@ -84,7 +84,26 @@
                             @Html.DisplayFor(modelItem => item.PrepTime)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Difficult)
+                            @{
+                                string difficulty = "";
+                                switch (item.Difficult)
+                                {
+                                    case 0 :
+                                        difficulty = "Nothing";
+                                        break;
+                                    case 1 :
+                                        difficulty = "Easy";
+                                        break;
+                                    case 2 :
+                                        difficulty = "Medium";
+                                        break;
+                                    case 3:
+                                        difficulty = "Hard";
+                                        break;
+                                
+                                }
+                                }
+                            @difficulty
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.FkUserId)

@@ -112,7 +112,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="Difficult" class="control-label"></label>
-                <input asp-for="Difficult" class="form-control" />
+                <select asp-for="Difficult" class="form-control">
+                    <option value="0">--Please choose an option--</option>
+                    <option value="1">Easy</option>
+                    <option value="2">Medium</option>
+                    <option value="3">Hard</option>
+                </select>
                 <span asp-validation-for="Difficult" class="text-danger"></span>
             </div>
             @*<div class="form-group">
@@ -141,6 +146,8 @@
         <script src="~/ckeditor/ckeditor.js"></script>
         <script>
             CKEDITOR.replace('Description');
+            CKEDITOR.config.filebrowserUploadUrl = '/your-upload-endpoint';
+
         </script>
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
