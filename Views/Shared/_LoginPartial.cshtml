@@ -3,7 +3,13 @@
 @inject SignInManager<Account> SignInManager
 @inject UserManager<Account> UserManager
 
+
 @if (SignInManager.IsSignedIn(User)) {
+    <div class="mt-3">
+        <a class="text-decoration-none btn btn-success text-light btn-sm me-1" asp-controller="Recipes" asp-action="Create"><i class="fa-solid fa-plus"></i> New recipe</a>
+        <a class="text-decoration-none btn btn-warning text-light btn-sm me-1" asp-controller="Recipes" asp-action="Create"><i class="fa-solid fa-file-signature"></i> My recipes</a>
+        <a style="background-color: #FC6C85;" class="text-decoration-none btn text-light btn-sm" asp-controller="Recipes" asp-action="Create"><i class="fa-solid fa-heart"></i> My favourites</a>
+    </div>
     <li class="nav-item dropdown">
         <a class="btn btn-lg dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <img src="@UserManager.GetUserAsync(User).Result.ImgPath" class="img-fluid rounded-circle ms-2" style="width: 40px; height: 40px;" alt="avatar">
@@ -15,9 +21,6 @@
                     <a class="text-dark text-decoration-none" asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard &nbsp;<i class="fa-solid fa-chart-line"></i></a>
                 </li>
             }
-            <li class="ms-3 mt-2">
-                <a class="nav-link text-dark" asp-controller="Recipes" asp-action="Create">Create Recipe &nbsp; <i class="fa-solid fa-utensils"></i></a>
-            </li>
             <li class="ms-3 mt-2">
                 <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">My Profile &nbsp; <i class="fa-solid fa-user"></i></a>
             </li>
