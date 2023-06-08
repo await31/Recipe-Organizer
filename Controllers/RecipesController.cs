@@ -226,8 +226,8 @@ namespace CapstoneProject.Controllers {
         private bool RecipeExists(int id) {
             return (_context.Recipes?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-        [Authorize]
 
+        [Authorize]
         // POST: Recipes/Approve
         [HttpPost]
         [ValidateAntiForgeryToken]

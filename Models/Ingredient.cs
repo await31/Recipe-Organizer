@@ -17,7 +17,7 @@ public partial class Ingredient {
     public string? Description { get; set; }
 
     [NotMapped]
-    public IFormFile file { get; set; }
+    public IFormFile? file { get; set; }
     public int? FkCategoryId { get; set; }
 
     public virtual IngredientCategory? FkCategory { get; set; }

@@ -4,6 +4,16 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
+<style>
+    .card-text {
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* Maximum number of lines to show */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
 <div class="row">
     <div class="px-0">
         <br />
@@ -15,18 +25,17 @@
             <thead class="table-dark">
                 <tr>
                     <th style="width: 11%;">
-                        Ingredient Name
+                        Name
                     </th>
                     <th>
-                        Image Path
+                        Image
                     </th>
                     <th>
                         Description
                     </th>
                     <th style="width: 8%;">
-                        Category ID
+                        Category
                     </th>
-                    <th></th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -37,20 +46,17 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.Name)
                         </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.ImgPath)
+                        <td class="p-0">
+                            <img src="@Html.DisplayFor(modelItem => item.ImgPath)" style="width: 100px; height: 100px;">
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Description)
+                            <p class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.FkCategoryId)
+                            @Html.DisplayFor(modelItem => item.FkCategory.Name)
                         </td>
                         <td style="width: 1%;">
-                            <a style="" class="btn btn-warning text-light" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                        </td>
-                        <td style="width: 1%;">
-                            <a class="btn btn-info text-light" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                            <a class="btn btn-warning text-light" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                         </td>
                         <td style="width: 1%;">
                             <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
