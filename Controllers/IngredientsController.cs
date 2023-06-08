@@ -61,7 +61,9 @@ namespace CapstoneProject.Controllers {
 
                     // Upload the file to Firebase Storage
                     string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
-                    model.ImgPath = imageUrl;
+                    Uri imageUrlUri = new Uri(imageUrl);
+                    string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
+                    model.ImgPath = baseUrl;
                     _context.Ingredients.Add(model);
                     await _context.SaveChangesAsync();
                     TempData["success"] = "Ingredient created successfully";

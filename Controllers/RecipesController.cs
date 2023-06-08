@@ -112,7 +112,9 @@ namespace CapstoneProject.Controllers {
 
                     // Upload the file to Firebase Storage
                     string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
-                    recipe.ImgPath = imageUrl;
+                    Uri imageUrlUri = new(imageUrl);
+                    string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
+                    recipe.ImgPath = baseUrl;
 
                     recipe.Status = false;
 

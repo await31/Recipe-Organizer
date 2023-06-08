@@ -35,8 +35,7 @@
                     <label for="IngredientId">Ingredient:</label>
                     <select class="form-control" id="IngredientId" name="IngredientIds[]">
                         <option value="">Select Ingredient</option>
-                        @foreach (var item in (SelectList)ViewData["Ingredients"])
-                        {
+                        @foreach (var item in (SelectList)ViewData["Ingredients"]) {
                             <option value="@item.Value">@item.Text</option>
                         }
                     </select>
@@ -97,8 +96,8 @@
                 <select asp-for="FkRecipeCategoryId" class="form-control" asp-items="ViewBag.FkRecipeCategoryId"></select>
             </div>
             @*<div class="form-group">
-                <label asp-for="FkRecipeId" class="control-label"></label>
-                <select asp-for="FkRecipeId" class="form-control" asp-items="ViewBag.FkRecipeId"></select>
+            <label asp-for="FkRecipeId" class="control-label"></label>
+            <select asp-for="FkRecipeId" class="form-control" asp-items="ViewBag.FkRecipeId"></select>
             </div>*@
             <div class="form-group">
                 <label asp-for="Nutrition" class="control-label"></label>
@@ -111,19 +110,22 @@
                 <span asp-validation-for="PrepTime" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Difficult" class="control-label"></label>
-                <input asp-for="Difficult" class="form-control" />
-                <span asp-validation-for="Difficult" class="text-danger"></span>
+                <select asp-for="Difficult" class="form-control">
+                    <option value="0">--Please choose an option--</option>
+                    <option value="1">Easy</option>
+                    <option value="2">Medium</option>
+                    <option value="3">Hard</option>
+                </select>
             </div>
             @*<div class="form-group">
-                <label asp-for="FkUserId" class="control-label"></label>
-                <input asp-for="FkUserId" class="form-control" />
-                <span asp-validation-for="FkUserId" class="text-danger"></span>
+            <label asp-for="FkUserId" class="control-label"></label>
+            <input asp-for="FkUserId" class="form-control" />
+            <span asp-validation-for="FkUserId" class="text-danger"></span>
             </div>*@
             @*<div class="form-group">
-                <label asp-for="CreatedDate" class="control-label"></label>
-                <input asp-for="CreatedDate" class="form-control" />
-                <span asp-validation-for="CreatedDate" class="text-danger"></span>
+            <label asp-for="CreatedDate" class="control-label"></label>
+            <input asp-for="CreatedDate" class="form-control" />
+            <span asp-validation-for="CreatedDate" class="text-danger"></span>
             </div>*@
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-default" />
@@ -141,6 +143,7 @@
         <script src="~/ckeditor/ckeditor.js"></script>
         <script>
             CKEDITOR.replace('Description');
+            CKEDITOR.config.filebrowserUploadUrl = '/your-upload-endpoint';
         </script>
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

@@ -137,13 +137,15 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
                 IFormFile file = Input.File;
                 string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
                 string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
+                Uri imageUrlUri = new Uri(imageUrl);
+                string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
                 var up = new Favourite();
                 _context.Favourites.Add(up);
                 await _context.SaveChangesAsync();
 
                 user.FavouriteId = up.FavouriteId;
                 user.Status = true;
-                user.ImgPath = imageUrl;
+                user.ImgPath = baseUrl;
                 user.CreatedDate = DateTime.UtcNow;
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded) {

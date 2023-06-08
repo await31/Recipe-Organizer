@@ -1,0 +1,184 @@
+﻿@model IEnumerable<Recipe>
+
+@inject SignInManager<Account> SignInManager
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<Account> UserManager
+
+@*@if (SignInManager.IsSignedIn(User))
+{
+    <div>Hello @UserManager.GetUserName(User)!</div>
+}
+*@
+@{
+    ViewBag.Title = "Create recipe";
+}
+
+<div class="row">
+    <div class="px-0">
+        <br />
+        <div class="col-5">
+            <a asp-controller="UserRecipes" asp-action="Create" class="btn btn-success fw-bold text-light mt-2"><i class="fa-solid fa-folder-plus"></i> New Recipes</a>
+        </div>
+        <br />
+        <p>Recipes Found: @Model.Count()</p>
+        <div class="container row">
+            <div class="col-sm-2">
+                <form id="formFilter" name="formFilter" class="form-inline" asp-controller="UserRecipes" asp-action="Filter">
+                    
+                    <input class="form-control mr-sm-2" id="includeIngredients" name="includeIngredients" type="text" placeholder="Include Ingredients" />
+                    <label class="form-label d-none" for="includeIngredients">Include Ingredients:</label>
+
+                    <label for="recipeCategory" class="control-label">Recipe Category:</label>
+                    <select class="form-control" name="recipeCategory" asp-items="ViewBag.FkRecipeCategoryId" onchange="document.getElementById('btnSubmit').click();">
+                        <option value="All">All</option>
+                    </select>
+                    <label for="prepTime" class="form-label">PrepTime:</label>
+                    <select class="form-select" name="prepTime" onchange="document.getElementById('btnSubmit').click();">
+                        <option value="All">All</option>
+                        @for(var i=5;i<30;i+=5)
+                        {
+                            @if (!(String.IsNullOrEmpty(@ViewData["FilterPrepTime"].ToString())) &&(@ViewData["FilterPrepTime"].Equals(i.ToString())))
+                            {
+                                <option value = "@i" selected >0 - @i</option>
+                            }
+                            else
+                            {
+                                <option value="@i">0 - @i</option>
+                            }
+                        }
+                    </select>
+                    <label for="difficulty" class="form-label">Difficulty:</label>
+                    <select class="form-select" name="difficulty" onchange="document.getElementById('btnSubmit').click();">
+                        <option value="All">All</option>
+                        @for (var i = 1; i < 6; i++)
+                        {
+                            @if (!(String.IsNullOrEmpty(@ViewData["FilterDifficulty"].ToString())) && (@ViewData["FilterDifficulty"].Equals(i.ToString())))
+                            {
+                                <option value="@i.ToString()" selected>@i.ToString()</option>
+                            }
+                            else
+                            {
+                                <option value="@i.ToString()">@i.ToString()</option>
+                            }
+                        }
+                    </select>
+                    <input id="SearchString" name="searchString" type="hidden" value="@ViewData["FilterSearch"]" />
+                    <input type="submit" hidden id="btnSubmit" value="Filter" />
+                </form>
+            </div>
+            <div class="col-sm-10">
+
+                <div class="row col-md-4">
+                    <select form="formFilter" class="form-control" name="SortBy" asp-items="ViewBag.SortBy" onchange="document.getElementById('btnSubmit').click();">
+                    </select>
+                </div>
+                <table class="table table-bordered table-striped w-100">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.ImgPath)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Description)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Nutrition)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.PrepTime)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Difficult)
+                            </th>
+                            <th>
+                                RecipeOwner
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.CreatedDate)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FkRecipe)
+                            </th>
+                            <th>
+                                RecipeCategory
+                            </th>
+                            <th>
+                                Favorite
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ImgPath)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Description)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Nutrition)
+                                </td>
+                                <td>@*5*@
+                                    @Html.DisplayFor(modelItem => item.PrepTime)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Difficult)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FkUserId)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FkRecipe.Id)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FkRecipeCategory.Name)
+                                </td>
+                                <td>
+                                    @{
+                                        var parameters = string.IsNullOrEmpty(Context.Request.Path) ? "" : $"{Context.Request.QueryString.Value}";
+                                    }
+                                    @if (SignInManager.IsSignedIn(User))
+                                    {
+                                        <a asp-controller="UserRecipes" asp-route-returnUrl="@Context.Request.Path" asp-route-parameters="@parameters" asp-action="Favorite" asp-route-id="@item.Id">
+                                            @{
+                                                List<int> favoriteList = ViewBag.FavoriteList;
+                                            }
+                                            @if ((favoriteList!=null)&&(favoriteList.Contains(item.Id)))
+                                            {
+                                                <i class="fa fa-heart" style="font-size:48px;color:red"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa fa-heart-o" style="font-size:48px;color:red"></i>
+                                            }
+                                        </a>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-controller="UserRecipes" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                </td>
+                                <td>
+                                    <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                                </td>
+                                <td>
+                                    <a asp-controller="UserRecipes" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

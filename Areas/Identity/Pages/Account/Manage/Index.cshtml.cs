@@ -106,8 +106,9 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
 
             string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
             string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
-
-            user.ImgPath = imageUrl;
+            Uri imageUrlUri = new Uri(imageUrl);
+            string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
+            user.ImgPath = baseUrl;
             await _userManager.UpdateAsync(user);
 
             await _signInManager.RefreshSignInAsync(user);
