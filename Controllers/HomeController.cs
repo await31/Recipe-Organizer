@@ -20,7 +20,8 @@ namespace CapstoneProject.Controllers {
         }
 
         public IActionResult Index() {
-            return View();
+            var recipes = _context.Recipes.Include(r => r.FkRecipeCategory).ToList();
+            return View(recipes);
         }
 
         [Breadcrumb("Privacy", FromAction = "Index", FromController = typeof(HomeController))]

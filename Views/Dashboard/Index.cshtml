@@ -265,32 +265,36 @@
                     <h6 class="m-0 font-weight-bold text-primary">Pending Recipe</h6>
                 </div>
                 <div class="card-body">
-                    <table>
-                        <thead>
-                            <tr>Name</tr>
-                            <tr>User</tr>
-                            <tr>Detail</tr>
-                            <tr>Action</tr>
+                    <table class="table table-bordered table-striped w-100">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Name</th>
+                                <th>User</th>
+                                <th>Detail</th>
+                                <th>Action</th>
+                            </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model) {
-                                <tr>
-                                    <td>
-                                        @item.Name
-                                    </td>
-                                    <td>
-                                        @item.FkUser
-                                    </td>
-                                    <td>
-                                        <a asp-controller="Recipes" asp-action="Details" asp-route-id="@item.Id">Details</a>
-                                    </td>
-                                    <td>
-                                        <form method="post" asp-controller="Recipes" asp-action="Approve">
-                                            <input type="hidden" name="id" value="@item.Id" />
-                                            <button type="submit" class="btn btn-link">Approve</button>
-                                        </form>
-                                    </td>
-                                </tr>
+                                if (item.Status != null && item.Status == false) {
+                                    <tr>
+                                        <td>
+                                            @item.Name
+                                        </td>
+                                        <td>
+                                            @item.FkUser
+                                        </td>
+                                        <td>
+                                            <a asp-controller="Recipes" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                                        </td>
+                                        <td>
+                                            <form method="post" asp-controller="Recipes" asp-action="Approve">
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <button type="submit" class="btn btn-link">Approve</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
                             }
                         </tbody>
                     </table>
