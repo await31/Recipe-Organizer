@@ -24,11 +24,7 @@ builder.Services.AddBreadcrumbs(Assembly.GetExecutingAssembly(), options => {
     options.ActiveLiClasses = "breadcrumb-item active";
 });
 
-builder.Services.AddAuthentication(
-    options => {
-        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    })
-    .AddCookie()
+builder.Services.AddAuthentication()
     .AddGoogle(googleOptions => {
         googleOptions.ClientId = googleAuthNSection["ClientId"];
         googleOptions.ClientSecret = googleAuthNSection["ClientSecret"];
