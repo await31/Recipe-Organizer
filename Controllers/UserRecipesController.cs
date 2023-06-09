@@ -178,11 +178,13 @@ namespace CapstoneProject.Controllers {
             if (entity != null) {
                 var currentUser = await _userManager.GetUserAsync(User);
                 var favourite = _context.Favourites.Include(item => item.Recipes).FirstOrDefault(item => item.FavouriteId == currentUser.FavouriteId);
-                if (!favourite.Recipes.Contains(entity))
+                if (!favourite.Recipes.Contains(entity)) {
                     favourite.Recipes.Add(entity);
-                else
+                    TempData["success"] = "Add to favourites successfully";
+                } else {
                     favourite.Recipes.Remove(entity);
-
+                    TempData["success"] = "Removed from favourites successfully";
+                }
                 await _context.SaveChangesAsync();
             }
 
