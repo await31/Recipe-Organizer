@@ -11,6 +11,7 @@ using System.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.Collections;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CapstoneProject.Controllers {
 
@@ -29,16 +30,24 @@ namespace CapstoneProject.Controllers {
                  .ToList();
             return Json(result);
         }
+        [HttpPost]
+        public JsonResult IngredientsAutoComplete(string term) {
+            var result = (_context.Ingredients.Where(t => t.Name.ToLower().Contains(term.ToLower()))
+                 .Select(t => new { Name = t.Name }))
+                 .ToList();
+            return Json(result);
+        }
         // GET: Recipes
         public async Task<IActionResult> Index() {
-            var recipes = from b in _context.Recipes
-                          select b;
+            var recipes = _context.Recipes.Include(b => b.Ingredients).Select(b => b);
             if (recipes != null) {
-                string searchString = Request.Query["SearchString"];
-                string prepTime = Request.Query["PrepTime"];
-                string recipeCategory = Request.Query["RecipeCategory"];
-                string difficulty = Request.Query["Difficulty"];
-                string sortBy = Request.Query["SortBy"];
+                string? searchString = Request.Query["SearchString"];
+                string? prepTime = Request.Query["PrepTime"];
+                string? recipeCategory = Request.Query["RecipeCategory"];
+                string? difficulty = Request.Query["Difficulty"];
+                string? sortBy = Request.Query["SortBy"];
+                string? includeList = Request.Query["IncludeList"];
+                string? excludeList = Request.Query["ExcludeList"];
 
                 //Add all recipecategories
                 if (String.IsNullOrEmpty(prepTime))
@@ -60,9 +69,13 @@ namespace CapstoneProject.Controllers {
                 }
                 , "Value", "Text", sortBy);
 
+                //View Data
                 ViewData["FilterSearch"] = searchString;
                 ViewData["FilterPrepTime"] = prepTime;
                 ViewData["FilterDifficulty"] = difficulty;
+                ViewData["FilterIncludeList"] = includeList;
+                ViewData["FilterExcludeList"] = excludeList;
+                //Include Ingr
                 if (!prepTime.Equals("All")) {
                     recipes = recipes.Where(b => b.PrepTime <= int.Parse(prepTime));
                 }
@@ -75,6 +88,7 @@ namespace CapstoneProject.Controllers {
                 if (!String.IsNullOrEmpty(searchString)) {
                     recipes = recipes.Where(b => b.Name.ToLower().Contains(searchString.ToLower()));
                 }
+                //Sort
                 switch (sortBy) {
                     case "SortDate":
                         recipes = recipes.OrderBy(b => b.CreatedDate);
@@ -89,26 +103,75 @@ namespace CapstoneProject.Controllers {
                         recipes = recipes.OrderByDescending(b => b.ViewCount);
                         break;
                 }
+                if (!String.IsNullOrEmpty(includeList)) {
+                    var ingredientsList = includeList.Split(',');
+                    ViewBag.IncludeList = ingredientsList;
+                    foreach (var item in ingredientsList) {
+                        recipes = recipes.Where(b => b.Ingredients.Any(i => i.Name.Equals(item)));
+                    }
+                } else
+                    ViewBag.IncludeList = new List<String>();
+                //Exclude
+                if (!String.IsNullOrEmpty(excludeList)) {
+                    var ingredientsList = excludeList.Split(',');
+                    ViewBag.ExcludeList = ingredientsList;
+                    foreach (var item in ingredientsList) {
+                        recipes = recipes.Where(b => b.Ingredients.All(i => !i.Name.Equals(item)));
+                    }
+                } else
+                    ViewBag.ExcludeList = new List<String>();
+                //Favorite
+                var currentUser = await _userManager.GetUserAsync(User);
+                ViewBag.FavoriteList = null;
+                if (currentUser != null) {
+                    var favorite = _context.Favourites.Include(item => item.Recipes).FirstOrDefault(b => b.FavouriteId == currentUser.FavouriteId);
+                    List<int> favoriteList = null;
+                    if (favorite != null) {
+                        favoriteList = favorite.Recipes.Select(r => r.Id).ToList();
+                    }
+                    ViewBag.FavoriteList = favoriteList;
+                }
             }
-            //Favorite
-            var currentUser = await _userManager.GetUserAsync(User);
-            var favorite = _context.Favourites.Include(item => item.Recipes).FirstOrDefault(b => b.FavouriteId == currentUser.FavouriteId);
-            List<int> favoriteList = null;
-            if (favorite != null) {
-                favoriteList = favorite.Recipes.Select(r => r.Id).ToList();
-            }
-            ViewBag.FavoriteList = favoriteList;
             return View(recipes);
         }
         [HttpPost]
-        public IActionResult Filter(string searchString, string recipeCategory, string prepTime, string difficulty, string sortBy) {
-            return RedirectToAction("Index", new {
-                SearchString = searchString,
-                RecipeCategory = recipeCategory,
-                PrepTime = prepTime,
-                Difficulty = difficulty,
-                SortBy = sortBy
-            });
+        public IActionResult Filter(string searchString, string recipeCategory, string prepTime, string difficulty,
+            string sortBy, string includeIngredients, string includeIngredientsList, string excludeIngredients, string excludeIngredientsList) {
+            string? includeList = includeIngredientsList;
+            string? excludeList = excludeIngredientsList;
+            if (!String.IsNullOrEmpty(includeIngredients)) {
+                //Remove from exclude list if it has the include ingre inputed
+                if (!String.IsNullOrEmpty(excludeList)) {
+                    if (excludeList.IndexOf(includeIngredients, StringComparison.OrdinalIgnoreCase) != -1)
+                        excludeList = RemoveFromStringWithComma(includeIngredients, excludeList);
+                }
+                if (String.IsNullOrEmpty(includeList)) {
+                    includeList = includeIngredients.Trim();
+                } else
+                    includeList += "," + includeIngredients.Trim();
+            }
+            if (!String.IsNullOrEmpty(excludeIngredients)) {
+                //Remove from include list if it has the exclude ingre inputed
+                if (!String.IsNullOrEmpty(includeList)) {
+                    if (includeList.IndexOf(excludeIngredients, StringComparison.OrdinalIgnoreCase) != -1)
+                        includeList = RemoveFromStringWithComma(excludeIngredients, includeList);
+                }
+                if (String.IsNullOrEmpty(excludeList)) {
+                    excludeList = excludeIngredients.Trim();
+                } else
+                    excludeList += "," + excludeIngredients.Trim();
+            }
+            var parameter = new RouteValueDictionary
+            {
+                { "SearchString", searchString },
+                { "RecipeCategory", recipeCategory },
+                { "PrepTime", prepTime },
+                { "Difficulty", difficulty },
+                { "SortBy", sortBy },
+                { "IncludeList", includeList },
+                { "ExcludeList", excludeList }
+            };
+            return RedirectToAction("Index", parameter);
         }
         public async Task<IActionResult> Favorite(int? id, string returnUrl, string parameters) {
             var entity = _context.Recipes.FirstOrDefault(item => item.Id == id);
@@ -125,7 +188,12 @@ namespace CapstoneProject.Controllers {
 
             return LocalRedirect(returnUrl + parameters);
         }
-
+        private string RemoveFromStringWithComma(string remove, string full) {
+            full = full.Replace("," + remove, "");
+            full = full.Replace(remove + ",", "");
+            full = full.Replace(remove, "");
+            return full;
+        }
         // GET: Recipes/Details/5
         public async Task<IActionResult> Details(int? id) {
             var entity = _context.Recipes.FirstOrDefault(item => item.Id == id);

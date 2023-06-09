@@ -19,6 +19,7 @@ using MailKit;
 using System.Text.RegularExpressions;
 using NuGet.Packaging;
 using SmartBreadcrumbs.Attributes;
+using Microsoft.AspNetCore.Identity;
 
 namespace CapstoneProject.Controllers {
 
@@ -26,28 +27,97 @@ namespace CapstoneProject.Controllers {
     [Authorize]
     public class RecipesController : Controller {
         private readonly RecipeOrganizerContext _context;
+        private readonly UserManager<Account> _userManager;
 
         public static string ApiKey = "AIzaSyDIXdDdvo8NguMgxLvn4DWMNS-vXkUxoag";
         public static string Bucket = "cookez-cloud.appspot.com";
         public static string AuthEmail = "cookez.mail@gmail.com";
         public static string AuthPassword = "cookez";
 
-        public RecipesController(RecipeOrganizerContext context) {
+        public RecipesController(RecipeOrganizerContext context, UserManager<Account> userManager) {
             _context = context;
+            _userManager = userManager;
+        }
+
+        [HttpPost]
+        public JsonResult SearchAutoComplete(string term) {
+            var result = (_context.Recipes.Where(t => t.Name.ToLower().Contains(term.ToLower()))
+                 .Select(t => new { Name = t.Name }))
+                 .ToList();
+            return Json(result);
         }
 
         // GET/POST: Recipes
         [Breadcrumb("Recipes Management")]
 
-        public async Task<IActionResult> Index(string searchString, int pg =1) {
-            ViewData["CurrentFilter"] = searchString;
+        public async Task<IActionResult> Index(int pg =1) {
             var recipes = from b in _context.Recipes
                           select b;
+            if (recipes != null) {
+                string? searchString = Request.Query["SearchString"];
+                string? prepTime = Request.Query["PrepTime"];
+                string? recipeCategory = Request.Query["RecipeCategory"];
+                string? difficulty = Request.Query["Difficulty"];
+                string? sortBy = Request.Query["SortBy"];
 
-            if (!String.IsNullOrEmpty(searchString)) {
-                recipes = recipes.Where(b => b.Name.Contains(searchString));
+                //Add all recipecategories
+                if (String.IsNullOrEmpty(prepTime))
+                    prepTime = "All";
+                if (String.IsNullOrEmpty(difficulty))
+                    difficulty = "All";
+                if (String.IsNullOrEmpty(recipeCategory))
+                    recipeCategory = "All";
+                if (String.IsNullOrEmpty(sortBy))
+                    sortBy = "SortPopular";
+                ViewBag.FkRecipeCategoryId = new SelectList(_context.RecipeCategories, "Id", "Name", recipeCategory);
+                ViewBag.SortBy = new SelectList(
+                new List<SelectListItem>
+                {
+                new SelectListItem { Text = "Sort By Popularity", Value = "SortPopular"},
+                new SelectListItem { Text = "Sort By Name", Value = "SortName"},
+                new SelectListItem { Text = "Sort By Date", Value = "SortDate"},
+                new SelectListItem { Text = "Sort By PrepTime", Value = "SortPrepTime"},
+                }
+                , "Value", "Text", sortBy);
+
+                ViewData["FilterSearch"] = searchString;
+                ViewData["FilterPrepTime"] = prepTime;
+                ViewData["FilterDifficulty"] = difficulty;
+                if (!prepTime.Equals("All")) {
+                    recipes = recipes.Where(b => b.PrepTime <= int.Parse(prepTime));
+                }
+                if (!difficulty.Equals("All")) {
+                    recipes = recipes.Where(b => b.Difficult == int.Parse(difficulty));
+                }
+                if (!recipeCategory.Equals("All")) {
+                    recipes = recipes.Where(b => b.FkRecipeCategoryId == int.Parse(recipeCategory));
+                }
+                if (!String.IsNullOrEmpty(searchString)) {
+                    recipes = recipes.Where(b => b.Name.ToLower().Contains(searchString.ToLower()));
+                }
+                switch (sortBy) {
+                    case "SortDate":
+                        recipes = recipes.OrderBy(b => b.CreatedDate);
+                        break;
+                    case "SortPrepTime":
+                        recipes = recipes.OrderBy(b => b.PrepTime);
+                        break;
+                    case "SortName":
+                        recipes = recipes.OrderBy(b => b.Name);
+                        break;
+                    default: // Sort by most popular
+                        recipes = recipes.OrderByDescending(b => b.ViewCount);
+                        break;
+                }
             }
-
+            //Favorite
+            var currentUser = await _userManager.GetUserAsync(User);
+            var favorite = _context.Favourites.Include(item => item.Recipes).FirstOrDefault(b => b.FavouriteId == currentUser.FavouriteId);
+            List<int> favoriteList = null;
+            if (favorite != null) {
+                favoriteList = favorite.Recipes.Select(r => r.Id).ToList();
+            }
+            ViewBag.FavoriteList = favoriteList;
             const int pageSize = 10; // Number of recipes in 1 page
 
             if (pg < 1)
@@ -66,6 +136,31 @@ namespace CapstoneProject.Controllers {
             return View(data);
         }
 
+        [HttpPost]
+        public IActionResult Filter(string searchString, string recipeCategory, string prepTime, string difficulty, string sortBy) {
+            return RedirectToAction("Index", new {
+                SearchString = searchString,
+                RecipeCategory = recipeCategory,
+                PrepTime = prepTime,
+                Difficulty = difficulty,
+                SortBy = sortBy
+            });
+        }
+        public async Task<IActionResult> Favorite(int? id, string returnUrl, string parameters) {
+            var entity = _context.Recipes.FirstOrDefault(item => item.Id == id);
+            if (entity != null) {
+                var currentUser = await _userManager.GetUserAsync(User);
+                var favourite = _context.Favourites.Include(item => item.Recipes).FirstOrDefault(item => item.FavouriteId == currentUser.FavouriteId);
+                if (!favourite.Recipes.Contains(entity))
+                    favourite.Recipes.Add(entity);
+                else
+                    favourite.Recipes.Remove(entity);
+
+                await _context.SaveChangesAsync();
+            }
+
+            return LocalRedirect(returnUrl + parameters);
+        }
 
         // GET: Recipes/Details/5
         public async Task<IActionResult> Details(int? id) {
@@ -354,8 +449,5 @@ namespace CapstoneProject.Controllers {
             string extractedString = url.Substring(startIndex, endIndex - startIndex); // Extract the string between the last "%2F" and before "?alt"
             return extractedString;
         }
-
-
-
     }
 }

@@ -10,6 +10,9 @@
 }
 *@
 @{
+
+    var parameters = string.IsNullOrEmpty(Context.Request.Path) ? "" : $"{Context.Request.QueryString.Value}";
+
     ViewBag.Title = "Create recipe";
 }
 
@@ -17,17 +20,46 @@
     <div class="px-0">
         <br />
         <div class="col-5">
-            <a asp-controller="UserRecipes" asp-action="Create" class="btn btn-success fw-bold text-light mt-2"><i class="fa-solid fa-folder-plus"></i> New Recipes</a>
+            <a asp-controller="Recipes" asp-action="Create" class="btn btn-success fw-bold text-light mt-2"><i class="fa-solid fa-folder-plus"></i> New Recipes</a>
         </div>
         <br />
         <p>Recipes Found: @Model.Count()</p>
         <div class="container row">
             <div class="col-sm-2">
                 <form id="formFilter" name="formFilter" class="form-inline" asp-controller="UserRecipes" asp-action="Filter">
-                    
+
+                    <input hidden name="includeIngredientsList" value="@ViewData["FilterIncludeList"]"></input>
                     <input class="form-control mr-sm-2" id="includeIngredients" name="includeIngredients" type="text" placeholder="Include Ingredients" />
                     <label class="form-label d-none" for="includeIngredients">Include Ingredients:</label>
+                    @{
+                        foreach (var item in ViewBag.IncludeList)
+                        {
+                            <span>
+                                @item
+                                <a href="#" onclick="window.location.href = removeParameterFromUrl(window.location.href, 'IncludeList', '@item');return false;">
 
+                                    <i class="fa fa-minus-circle" style="font-size:16px;color:black"></i>
+                                </a>
+                            </span>
+                        }
+                    }
+                    <br />
+                    <input hidden name="excludeIngredientsList" value="@ViewData["FilterExcludeList"]"></input>
+                    <input class="form-control mr-sm-2" id="excludeIngredients" name="excludeIngredients" type="text" placeholder="Exclude Ingredients" />
+                    <label class="form-label d-none" for="excludeIngredients">Exclude Ingredients:</label>
+                    @{
+                        foreach (var item in ViewBag.ExcludeList)
+                        {
+                            <span>
+                                @item
+                                <a href="#" onclick="window.location.href = removeParameterFromUrl(window.location.href, 'ExcludeList', '@item');return false;">
+
+                                    <i class="fa fa-minus-circle" style="font-size:16px;color:black"></i>
+                                </a>
+                            </span>
+                        }
+                    }
+                    <br />
                     <label for="recipeCategory" class="control-label">Recipe Category:</label>
                     <select class="form-control" name="recipeCategory" asp-items="ViewBag.FkRecipeCategoryId" onchange="document.getElementById('btnSubmit').click();">
                         <option value="All">All</option>
@@ -35,11 +67,11 @@
                     <label for="prepTime" class="form-label">PrepTime:</label>
                     <select class="form-select" name="prepTime" onchange="document.getElementById('btnSubmit').click();">
                         <option value="All">All</option>
-                        @for(var i=5;i<30;i+=5)
+                        @for (var i = 5; i < 30; i += 5)
                         {
-                            @if (!(String.IsNullOrEmpty(@ViewData["FilterPrepTime"].ToString())) &&(@ViewData["FilterPrepTime"].Equals(i.ToString())))
+                            @if (!(String.IsNullOrEmpty(@ViewData["FilterPrepTime"].ToString())) && (@ViewData["FilterPrepTime"].Equals(i.ToString())))
                             {
-                                <option value = "@i" selected >0 - @i</option>
+                                <option value="@i" selected>0 - @i</option>
                             }
                             else
                             {
@@ -72,113 +104,200 @@
                     <select form="formFilter" class="form-control" name="SortBy" asp-items="ViewBag.SortBy" onchange="document.getElementById('btnSubmit').click();">
                     </select>
                 </div>
-                <table class="table table-bordered table-striped w-100">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Name)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.ImgPath)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Description)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Nutrition)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.PrepTime)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Difficult)
-                            </th>
-                            <th>
-                                RecipeOwner
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.CreatedDate)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.FkRecipe)
-                            </th>
-                            <th>
-                                RecipeCategory
-                            </th>
-                            <th>
-                                Favorite
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
+                @for (int i = 0; i < Model.Count(); i += 3)
+                {
+                    <div class="row">
+                        @foreach (var recipe in Model.Skip(i).Take(3))
                         {
-                            <tr>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Name)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.ImgPath)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Description)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Nutrition)
-                                </td>
-                                <td>@*5*@
-                                    @Html.DisplayFor(modelItem => item.PrepTime)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Difficult)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.FkUserId)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.CreatedDate)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.FkRecipe.Id)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.FkRecipeCategory.Name)
-                                </td>
-                                <td>
-                                    @{
-                                        var parameters = string.IsNullOrEmpty(Context.Request.Path) ? "" : $"{Context.Request.QueryString.Value}";
-                                    }
-                                    @if (SignInManager.IsSignedIn(User))
-                                    {
-                                        <a asp-controller="UserRecipes" asp-route-returnUrl="@Context.Request.Path" asp-route-parameters="@parameters" asp-action="Favorite" asp-route-id="@item.Id">
-                                            @{
-                                                List<int> favoriteList = ViewBag.FavoriteList;
-                                            }
-                                            @if ((favoriteList!=null)&&(favoriteList.Contains(item.Id)))
-                                            {
-                                                <i class="fa fa-heart" style="font-size:48px;color:red"></i>
-                                            }
-                                            else
-                                            {
-                                                <i class="fa fa-heart-o" style="font-size:48px;color:red"></i>
-                                            }
-                                        </a>
-                                    }
-                                </td>
-                                <td>
-                                    <a asp-controller="UserRecipes" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                                </td>
-                                <td>
-                                    <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                                </td>
-                                <td>
-                                    <a asp-controller="UserRecipes" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                                </td>
-                            </tr>
+                            <div class="card col-md-3 col-sm-6 mx-4 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%); height:400px;">
+
+                                <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@recipe.Id">
+                                    <img src="@recipe.ImgPath" class="img-fluid card-img-top" alt="Food" style="height: 65%">
+                                </a>
+                                <div class="mt-3" style="height: 35%">
+                                    <div class="card-body pb-1 pt-3">
+                                        <h4 class="card-title" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@recipe.Name</h4>
+                                    </div>
+                                    <div class="d-flex ms-3">
+                                        <button type="button" class="btn rounded-5 mb-3">
+                                            <i class="fa-solid fa-clock"></i> <span class="text-dark">@recipe.PrepTime minutes</span>
+                                        </button>
+                                        <button type="button" class="btn rounded-5 mb-3">
+                                            <i class="fa-solid fa-utensils"></i> <span class="text-dark">@recipe.FkRecipeCategory?.Name</span>
+                                        </button>
+                                        @if (SignInManager.IsSignedIn(User))
+                                        {
+                                            <a asp-controller="UserRecipes" asp-route-returnUrl="@Context.Request.Path" asp-route-parameters="@parameters" asp-action="Favorite" asp-route-id="@recipe.Id">
+                                                @{
+                                                    List<int> favoriteList = ViewBag.FavoriteList;
+                                                }
+                                                @if ((favoriteList != null) && (favoriteList.Contains(recipe.Id)))
+                                                {
+                                                    <i class="fa fa-heart" style="font-size:48px;color:red"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fa fa-heart-o" style="font-size:48px;color:red"></i>
+                                                }
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
                         }
-                    </tbody>
-                </table>
+                    </div>
+                }
+                @*<table class="table table-bordered table-striped w-100">
+                <thead class="table-dark">
+                <tr>
+                <th>
+                @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                @Html.DisplayNameFor(model => model.ImgPath)
+                </th>
+                <th>
+                @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>
+                @Html.DisplayNameFor(model => model.Nutrition)
+                </th>
+                <th>
+                @Html.DisplayNameFor(model => model.PrepTime)
+                </th>
+                <th>
+                @Html.DisplayNameFor(model => model.Difficult)
+                </th>
+                <th>
+                RecipeOwner
+                </th>
+                <th>
+                @Html.DisplayNameFor(model => model.CreatedDate)
+                </th>
+                <th>
+                @Html.DisplayNameFor(model => model.FkRecipe)
+                </th>
+                <th>
+                RecipeCategory
+                </th>
+                <th>
+                Favorite
+                </th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model)
+                {
+                <tr>
+                <td>
+                @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                @Html.DisplayFor(modelItem => item.ImgPath)
+                </td>
+                <td>
+                @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                @Html.DisplayFor(modelItem => item.Nutrition)
+                </td>
+                <td>
+                @Html.DisplayFor(modelItem => item.PrepTime)
+                </td>
+                <td>
+                @Html.DisplayFor(modelItem => item.Difficult)
+                </td>
+                <td>
+                @Html.DisplayFor(modelItem => item.FkUserId)
+                </td>
+                <td>
+                @Html.DisplayFor(modelItem => item.CreatedDate)
+                </td>
+                <td>
+                @Html.DisplayFor(modelItem => item.FkRecipe.Id)
+                </td>
+                <td>
+                @Html.DisplayFor(modelItem => item.FkRecipeCategory.Name)
+                </td>
+                <td>
+                @{
+                var parameters = string.IsNullOrEmpty(Context.Request.Path) ? "" : $"{Context.Request.QueryString.Value}";
+                }
+                @if (SignInManager.IsSignedIn(User))
+                {
+                <a asp-controller="UserRecipes" asp-route-returnUrl="@Context.Request.Path" asp-route-parameters="@parameters" asp-action="Favorite" asp-route-id="@item.Id">
+                @{
+                List<int> favoriteList = ViewBag.FavoriteList;
+                }
+                @if ((favoriteList!=null)&&(favoriteList.Contains(item.Id)))
+                {
+                <i class="fa fa-heart" style="font-size:48px;color:red"></i>
+                }
+                else
+                {
+                <i class="fa fa-heart-o" style="font-size:48px;color:red"></i>
+                }
+                </a>
+                }
+                </td>
+                <td>
+                <a asp-controller="UserRecipes" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                </td>
+                <td>
+                <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                </td>
+                <td>
+                <a asp-controller="UserRecipes" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+                </tr>
+                }
+                </tbody>
+                </table>*@
             </div>
         </div>
     </div>
 </div>
+
+<script src="~/lib/jquery-3.7.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+
+<script>
+    function removeParameterFromUrl(urlString, parameterName, parameterValue) {
+        const url = new URL(urlString);
+        const parameterValues = url.searchParams.get(parameterName).split(',');
+        const updatedParameterValues = parameterValues.filter((item) => item != parameterValue);
+        console.log(updatedParameterValues);
+        console.log("WORKING");
+        url.searchParams.set(parameterName, updatedParameterValues.join(','));
+        console.log(url.href);
+        return url.href;
+    }
+</script>
+<script>
+    $(function () {
+        $("#includeIngredients, #excludeIngredients").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/UserRecipes/IngredientsAutoComplete",
+                    type: "POST",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return item.name;
+                        }));
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Error");
+                    },
+                    failure: function (response) {
+                        alert("Error");
+                    }
+                });
+            },
+            select: function (e, i) {
+                $(this).val(i.item.val);
+            },
+            minLength: 1
+        })
+    });
+</script>
