@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication;
 using System.Reflection;
 using SmartBreadcrumbs.Extensions;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
@@ -23,7 +24,11 @@ builder.Services.AddBreadcrumbs(Assembly.GetExecutingAssembly(), options => {
     options.ActiveLiClasses = "breadcrumb-item active";
 });
 
-builder.Services.AddAuthentication()
+builder.Services.AddAuthentication(
+    options => {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    })
+    .AddCookie()
     .AddGoogle(googleOptions => {
         googleOptions.ClientId = googleAuthNSection["ClientId"];
         googleOptions.ClientSecret = googleAuthNSection["ClientSecret"];
