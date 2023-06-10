@@ -105,8 +105,24 @@
                 <span asp-validation-for="Nutrition" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PrepTime" class="control-label"></label>
-                <input asp-for="PrepTime" class="form-control" />
+                <label asp-for="PrepTime" class="control-label">Preparation time</label>
+                <select asp-for="PrepTime" class="form-control">
+                    @for(int i = 5; i < 30; i+= 5) {
+                        <option value="@i">
+                            @i minutes
+                        </option>
+                    }
+                    @for(int i = 30; i <= 360; i+= 30) {
+                        <option value="@i">
+                            @i minutes
+                        </option>
+                    }
+                     @for(int i = 420; i <= 720; i+= 60) {
+                        <option value="@i">
+                            @(i/60) hours 
+                        </option>
+                    }
+                </select>
                 <span asp-validation-for="PrepTime" class="text-danger"></span>
             </div>
             <div class="form-group">

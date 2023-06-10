@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartBreadcrumbs.Attributes;
 using System.Diagnostics;
-
+using Microsoft.AspNetCore.Identity;
 
 namespace CapstoneProject.Controllers {
 
@@ -13,10 +13,12 @@ namespace CapstoneProject.Controllers {
         private readonly ILogger<HomeController> _logger;
 
         private readonly RecipeOrganizerContext _context;
+        private readonly UserManager<Account> _userManager;
 
-        public HomeController(RecipeOrganizerContext context) {
+        public HomeController(RecipeOrganizerContext context, UserManager<Account> userManager) {
             //_logger = logger;
             _context = context;
+            _userManager = userManager;
         }
 
         public IActionResult Index() {
@@ -55,6 +57,19 @@ namespace CapstoneProject.Controllers {
             this.ViewBag.Pager = pager;
 
             return View(data);   
+        }
+
+        public async Task<IActionResult> FavouriteList() {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var favorite = _context.Favourites.Include(item => item.Recipes).FirstOrDefault(b => b.FavouriteId == currentUser.FavouriteId);
+            var recipeIds = favorite.Recipes.Select(r => r.Id).ToList();
+
+            var recipes = await _context.Recipes
+                .Where(r => recipeIds.Contains(r.Id))
+                .Include(r => r.FkRecipe)
+                .Include(r => r.FkRecipeCategory)
+                .Include(r => r.FkUser).ToListAsync();
+            return View(recipes);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

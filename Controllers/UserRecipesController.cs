@@ -62,10 +62,10 @@ namespace CapstoneProject.Controllers {
                 ViewBag.SortBy = new SelectList(
                 new List<SelectListItem>
                 {
-                new SelectListItem { Text = "Sort By Popularity", Value = "SortPopular"},
-                new SelectListItem { Text = "Sort By Name", Value = "SortName"},
-                new SelectListItem { Text = "Sort By Date", Value = "SortDate"},
-                new SelectListItem { Text = "Sort By PrepTime", Value = "SortPrepTime"},
+                new SelectListItem { Text = "Popularity", Value = "SortPopular"},
+                new SelectListItem { Text = "Name", Value = "SortName"},
+                new SelectListItem { Text = "Date", Value = "SortDate"},
+                new SelectListItem { Text = "Preparation time", Value = "SortPrepTime"},
                 }
                 , "Value", "Text", sortBy);
 

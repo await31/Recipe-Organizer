@@ -39,14 +39,6 @@ namespace CapstoneProject.Controllers {
             _userManager = userManager;
         }
 
-        [HttpPost]
-        public JsonResult SearchAutoComplete(string term) {
-            var result = (_context.Recipes.Where(t => t.Name.ToLower().Contains(term.ToLower()))
-                 .Select(t => new { Name = t.Name }))
-                 .ToList();
-            return Json(result);
-        }
-
         // GET/POST: Recipes
         [Breadcrumb("Recipes Management")]
 
@@ -134,32 +126,6 @@ namespace CapstoneProject.Controllers {
             this.ViewBag.Pager = pager;
 
             return View(data);
-        }
-
-        [HttpPost]
-        public IActionResult Filter(string searchString, string recipeCategory, string prepTime, string difficulty, string sortBy) {
-            return RedirectToAction("Index", new {
-                SearchString = searchString,
-                RecipeCategory = recipeCategory,
-                PrepTime = prepTime,
-                Difficulty = difficulty,
-                SortBy = sortBy
-            });
-        }
-        public async Task<IActionResult> Favorite(int? id, string returnUrl, string parameters) {
-            var entity = _context.Recipes.FirstOrDefault(item => item.Id == id);
-            if (entity != null) {
-                var currentUser = await _userManager.GetUserAsync(User);
-                var favourite = _context.Favourites.Include(item => item.Recipes).FirstOrDefault(item => item.FavouriteId == currentUser.FavouriteId);
-                if (!favourite.Recipes.Contains(entity))
-                    favourite.Recipes.Add(entity);
-                else
-                    favourite.Recipes.Remove(entity);
-
-                await _context.SaveChangesAsync();
-            }
-
-            return LocalRedirect(returnUrl + parameters);
         }
 
         // GET: Recipes/Details/5
