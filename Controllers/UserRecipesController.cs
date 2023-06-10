@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace CapstoneProject.Controllers {
 
     public class UserRecipesController : Controller {
+
         private readonly RecipeOrganizerContext _context;
         private readonly UserManager<Account> _userManager;
 
@@ -40,7 +41,10 @@ namespace CapstoneProject.Controllers {
         }
 
         // GET: Recipes
-        public async Task<IActionResult> Index() {
+        public async Task<IActionResult> Index(int pg = 1) {
+            const int pageSize = 6; // Number of recipes in 1 page
+            if (pg < 1)
+                pg = 1;
             var recipes = _context.Recipes.Include(b => b.Ingredients).Select(b => b);
             if (recipes != null) {
                 string? searchString = Request.Query["SearchString"];
@@ -77,7 +81,7 @@ namespace CapstoneProject.Controllers {
                 ViewData["FilterDifficulty"] = difficulty;
                 ViewData["FilterIncludeList"] = includeList;
                 ViewData["FilterExcludeList"] = excludeList;
-                //Include Ingr
+                //Include Ingredients
                 if (!prepTime.Equals("All")) {
                     recipes = recipes.Where(b => b.PrepTime <= int.Parse(prepTime));
                 }
@@ -133,12 +137,23 @@ namespace CapstoneProject.Controllers {
                     }
                     ViewBag.FavoriteList = favoriteList;
                 }
+                int recsCount = recipes.Count();
+
+                var pager = new Pager(recsCount, pg, pageSize, includeList, excludeList, recipeCategory, prepTime, difficulty, sortBy);
+
+                int recSkip = (pg - 1) * pageSize;
+
+                var data = recipes.Skip(recSkip).Take(pager.PageSize).ToList();
+
+                this.ViewBag.Pager = pager;
+
+                return View(data);
             }
-            return View(recipes);
+            return View();
         }
         [HttpPost]
         public IActionResult Filter(string searchString, string recipeCategory, string prepTime, string difficulty,
-            string sortBy, string includeIngredients, string includeIngredientsList, string excludeIngredients, string excludeIngredientsList) {
+            string sortBy, string includeIngredients, string includeIngredientsList, string excludeIngredients, string excludeIngredientsList, int pg = 1) {
             string? includeList = includeIngredientsList;
             string? excludeList = excludeIngredientsList;
             if (!String.IsNullOrEmpty(includeIngredients)) {
@@ -165,6 +180,7 @@ namespace CapstoneProject.Controllers {
             }
             var parameter = new RouteValueDictionary
             {
+                { "pg",  pg},
                 { "SearchString", searchString },
                 { "RecipeCategory", recipeCategory },
                 { "PrepTime", prepTime },

@@ -3,12 +3,13 @@
 @using Microsoft.AspNetCore.Identity;
 @inject UserManager<Account> UserManager
 
-@*@if (SignInManager.IsSignedIn(User))
-{
-    <div>Hello @UserManager.GetUserName(User)!</div>
-}
-*@
 @{
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if(ViewBag.Pager != null) {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurrentPage;
+    }
     var parameters = string.IsNullOrEmpty(Context.Request.Path) ? "" : $"{Context.Request.QueryString.Value}";
     ViewBag.Title = "Search recipe";
 }
@@ -137,9 +138,8 @@
                         </div>
                     </div>
                 } else {
-                    @for (int i = 0; i < Model.Count(); i += 3) {
                     <div class="row">
-                        @foreach (var recipe in Model.Skip(i).Take(3)) {
+                        @foreach (var recipe in Model) {
                             <div class="card d-flex col-md-3 col-sm-6 mx-4 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%); height:300px;">
                                 <div class="position-relative" style="height: 60%;">
                                     @if (SignInManager.IsSignedIn(User)) {
@@ -179,10 +179,9 @@
                                 </div>
                             </div>
                         }
+                           <partial name="_Pager" model="@pager"/>
                     </div>
                 }
-                }
-                
             </div>
         </div>
     </div>
