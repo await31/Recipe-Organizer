@@ -170,34 +170,34 @@ namespace CapstoneProject.Controllers {
                     IFormFile file = recipe.file;
                     // Generate a unique file name
                     string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                    var currentUser = await _userManager.GetUserAsync(User);
+                    if(currentUser != null) {
+                        // Upload the file to Firebase Storage
+                        string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
+                        Uri imageUrlUri = new(imageUrl);
+                        string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
+                        recipe.ImgPath = baseUrl;
+                        recipe.Status = false;
+                        recipe.CreatedDate = DateTime.Now;
+                        recipe.FkUserId = await _userManager.GetUserIdAsync(currentUser);
+                        // Save ingredient, recipe to IngredientRecipe
+                        // Save ingredient IDs to recipe
+                        if (IngredientIds != null && IngredientIds.Length > 0) {
+                            var ingredients = _context.Ingredients.Where(i => IngredientIds.Contains(i.Id)).ToList();
+                            recipe.Ingredients.AddRange(ingredients);
+                        }
+                        /*var recipeTempId = recipe.Id;
+                        var ingredientTempId = ingredientId;
+                        var ingredient = _context.Ingredients.Find(ingredientTempId);
+                        recipe.Ingredients.Add(ingredient);*/
 
-                    // Upload the file to Firebase Storage
-                    string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
-                    Uri imageUrlUri = new(imageUrl);
-                    string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
-                    recipe.ImgPath = baseUrl;
-
-                    recipe.Status = false;
-
-                    recipe.CreatedDate = DateTime.Now;
-                    // Save ingredient, recipe to IngredientRecipe
-                    // Save ingredient IDs to recipe
-                    if (IngredientIds != null && IngredientIds.Length > 0) {
-                        var ingredients = _context.Ingredients.Where(i => IngredientIds.Contains(i.Id)).ToList();
-                        recipe.Ingredients.AddRange(ingredients);
+                    } else {
+                        recipe.ImgPath = "untitle.jpg";
                     }
-                    /*var recipeTempId = recipe.Id;
-                    var ingredientTempId = ingredientId;
-                    var ingredient = _context.Ingredients.Find(ingredientTempId);
-                    recipe.Ingredients.Add(ingredient);*/
-
-
-                } else {
-                    recipe.ImgPath = "untitle.jpg";
+                    _context.Recipes.Add(recipe);
+                    await _context.SaveChangesAsync();
                 }
-
-                _context.Recipes.Add(recipe);
-                await _context.SaveChangesAsync();
+                    
                 return RedirectToAction(nameof(Index));
 
             }

@@ -126,6 +126,7 @@ namespace CapstoneProject.Controllers {
                     }
                 } else
                     ViewBag.ExcludeList = new List<String>();
+
                 //Favorite
                 var currentUser = await _userManager.GetUserAsync(User);
                 ViewBag.FavoriteList = null;
@@ -137,6 +138,7 @@ namespace CapstoneProject.Controllers {
                     }
                     ViewBag.FavoriteList = favoriteList;
                 }
+
                 int recsCount = recipes.Count();
 
                 var pager = new Pager(recsCount, pg, pageSize, includeList, excludeList, recipeCategory, prepTime, difficulty, sortBy);
@@ -208,6 +210,7 @@ namespace CapstoneProject.Controllers {
 
             return LocalRedirect(returnUrl + parameters);
         }
+
         private string RemoveFromStringWithComma(string remove, string full) {
             full = full.Replace("," + remove, "");
             full = full.Replace(remove + ",", "");
