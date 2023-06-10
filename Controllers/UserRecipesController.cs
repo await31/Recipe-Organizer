@@ -23,6 +23,7 @@ namespace CapstoneProject.Controllers {
             _context = context;
             _userManager = userManager;
         }
+
         [HttpPost]
         public JsonResult SearchAutoComplete(string term) {
             var result = (_context.Recipes.Where(t => t.Name.ToLower().Contains(term.ToLower()))
@@ -37,6 +38,7 @@ namespace CapstoneProject.Controllers {
                  .ToList();
             return Json(result);
         }
+
         // GET: Recipes
         public async Task<IActionResult> Index() {
             var recipes = _context.Recipes.Include(b => b.Ingredients).Select(b => b);

@@ -7,7 +7,7 @@
 @if (SignInManager.IsSignedIn(User)) {
     <div class="mt-3">
         <a class="text-decoration-none btn btn-success text-light btn-sm me-1" asp-controller="Recipes" asp-action="Create"><i class="fa-solid fa-plus"></i> New recipe</a>
-        <a class="text-decoration-none btn btn-warning text-light btn-sm me-1" asp-controller="Recipes" asp-action="Create"><i class="fa-solid fa-file-signature"></i> My recipes</a>
+        @*<a class="text-decoration-none btn btn-warning text-light btn-sm me-1" asp-controller="Recipes" asp-action="Create"><i class="fa-solid fa-file-signature"></i> My recipes</a>*@
         <a style="background-color: #FC6C85;" class="text-decoration-none btn text-light btn-sm" asp-controller="Home" asp-action="FavouriteList"><i class="fa-solid fa-heart"></i> My favourites</a>
     </div>
     <li class="nav-item dropdown">
