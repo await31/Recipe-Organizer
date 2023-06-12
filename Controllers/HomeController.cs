@@ -4,6 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using SmartBreadcrumbs.Attributes;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using SmartBreadcrumbs.Nodes;
+using System;
 
 namespace CapstoneProject.Controllers {
 
@@ -73,6 +77,7 @@ namespace CapstoneProject.Controllers {
 
             IEnumerable<Ingredient> obj = _context.Ingredients.Where(i => i.FkCategoryId == id).ToList();
 
+
             const int pageSize = 10; // Number of ingredients in 1 page
 
             if (pg < 1)
@@ -119,6 +124,30 @@ namespace CapstoneProject.Controllers {
                 await _context.SaveChangesAsync();
             }
             return LocalRedirect(returnUrl + parameters);
+        }
+
+        public async Task<IActionResult> IngredientDetails(int? id, int? ingredientId) {
+            var childNode1 = new MvcBreadcrumbNode("ViewIngredient", "Home", "View Ingredients", false) {
+                RouteValues = new { id } //this comes in as a param into the action
+            };
+            var childNode2 = new MvcBreadcrumbNode("IngredientDetails", "Home", "Ingredient Details") {
+                OverwriteTitleOnExactMatch = true,
+                Parent = childNode1
+            };
+
+            if (id == null || _context.Ingredients == null) {
+                return NotFound();
+            }
+
+            var ingredient = await _context.Ingredients
+                .Include(b => b.FkCategory)
+                .FirstOrDefaultAsync(m => m.Id == ingredientId);
+            if (ingredient == null) {
+                return NotFound();
+            }
+
+            ViewData["BreadcrumbNode"] = childNode2;
+            return View(ingredient);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.Collections;
 using Microsoft.IdentityModel.Tokens;
+using SmartBreadcrumbs.Attributes;
 
 namespace CapstoneProject.Controllers {
 
@@ -41,6 +42,7 @@ namespace CapstoneProject.Controllers {
         }
 
         // GET: Recipes
+        [Breadcrumb("View Recipes")]
         public async Task<IActionResult> Index(int pg = 1) {
             const int pageSize = 6; // Number of recipes in 1 page
             if (pg < 1)
@@ -147,6 +149,8 @@ namespace CapstoneProject.Controllers {
 
                 var data = recipes.Skip(recSkip).Take(pager.PageSize).ToList();
 
+                ViewData["count"] = recsCount;
+
                 this.ViewBag.Pager = pager;
 
                 return View(data);
@@ -217,6 +221,8 @@ namespace CapstoneProject.Controllers {
             full = full.Replace(remove, "");
             return full;
         }
+
+        [Breadcrumb("Details", FromAction = "Index", FromController = typeof(UserRecipesController))]
         // GET: Recipes/Details/5
         public async Task<IActionResult> Details(int? id) {
             var entity = _context.Recipes.FirstOrDefault(item => item.Id == id);

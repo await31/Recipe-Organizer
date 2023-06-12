@@ -121,7 +121,7 @@ namespace CapstoneProject.Controllers {
 
             int recSkip = (pg - 1) * pageSize;
 
-            var data = recipes.Skip(recSkip).Take(pager.PageSize).ToList();
+            var data = recipes.Skip(recSkip).Take(pager.PageSize).Include(b => b.FkUser).ToList();
 
             this.ViewBag.Pager = pager;
 

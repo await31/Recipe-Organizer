@@ -86,10 +86,6 @@
                                     ImgPath
                                 </th>
                                 <th>
-                                    @*@Html.DisplayNameFor(model => model.Description)*@
-                                    Description
-                                </th>
-                                <th>
                                     @*@Html.DisplayNameFor(model => model.Nutrition)*@
                                     Nutrition
                                 </th>
@@ -102,15 +98,11 @@
                                     Difficulty
                                 </th>
                                 <th>
-                                    RecipeOwner
+                                    Recipe Owner
                                 </th>
                                 <th>
                                     @*@Html.DisplayNameFor(model => model.CreatedDate)*@
                                     CreatedDate
-                                </th>
-                                <th>
-                                    @*@Html.DisplayNameFor(model => model.FkRecipe)*@
-                                    FkRecipe
                                 </th>
                                 <th>
                                     RecipeCategory
@@ -137,11 +129,8 @@
                                     <td>
                                         @Html.DisplayFor(modelItem => item.Name)
                                     </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.ImgPath)
-                                    </td>
-                                    <td>
-                                        @Html.Raw(item.Description)
+                                    <td class="p-0">
+                                        <img src="@item.ImgPath" class="img-fluid">
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.Nutrition)
@@ -149,18 +138,23 @@
                                     <td>
                                         @Html.DisplayFor(modelItem => item.PrepTime)
                                     </td>
+                                    
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Difficult)
-                                    </td>
+                                    @if (item.Difficult == 1) {
+                                        <p>Easy</p>
+                                    } else if (item.Difficult == 2) {
+                                        <p>Medium</p>
+                                    } else if (item.Difficult ==3) {
+                                        <p>Hard</p>
+                                    }
+                                </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.FkUserId)
+                                        @item.FkUser?.UserName
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.CreatedDate)
                                     </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.FkRecipe.Id)
-                                    </td>
+                                    
                                     <td>
                                         @Html.DisplayFor(modelItem => item.FkRecipeCategory.Name)
                                     </td>
@@ -177,25 +171,25 @@
                                         }
                                     </td>
                                     <td>
-                                        <a asp-controller="Recipes" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                        <a asp-controller="Recipes" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
                                     </td>
                                     <td>
-                                        <a asp-controller="Recipes" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                                        <a asp-controller="Recipes" asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
                                     </td>
                                     <td>
-                                        <a asp-controller="Recipes" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                        <a asp-controller="Recipes" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
                                     </td>
                                     <AuthorizeView Roles="Admin">
                                         <td>
                                             <form method="post" asp-controller="Recipes" asp-action="Approve">
                                                 <input type="hidden" name="id" value="@item.Id" />
-                                                <button type="submit" class="btn btn-link">Approve</button>
+                                                <button type="submit" class="btn btn-success">Approve</button>
                                             </form>
                                         </td>
                                         <td>
                                             <form method="post" asp-controller="Recipes" asp-action="Deny">
                                                 <input type="hidden" name="id" value="@item.Id" />
-                                                <button type="submit" class="btn btn-link">Deny</button>
+                                                <button type="submit" class="btn btn-danger">Deny</button>
                                             </form>
                                         </td>
                                     </AuthorizeView>
