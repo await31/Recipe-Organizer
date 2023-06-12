@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Manage your external logins";
     ViewData["ActivePage"] = ManageNavPages.ExternalLogins;
+
 }
 
 <partial name="_StatusMessage" model="Model.StatusMessage" />
@@ -14,6 +15,9 @@
             @foreach (var login in Model.CurrentLogins)
             {
                 <tr>
+                    <td>
+                        <button style="background-color: #f5f5f5; width: 30px; height:30px;" id="@($"login-provider-{login.LoginProvider}")" class="btn btn-light rounded-2 shadow w-100 fw-bold img-fluid me-2" name="provider" value="@login.ProviderDisplayName" title="Log in using your @login.ProviderDisplayName account"><img src="/images/ggicon.png" /> Connect with Google </button>
+                    </td>
                     <td id="@($"login-provider-{login.LoginProvider}")">@login.ProviderDisplayName</td>
                     <td>
                         @if (Model.ShowRemoveButton)
@@ -45,7 +49,14 @@
             <p>
                 @foreach (var provider in Model.OtherLogins)
                 {
-                    <button id="@($"link-login-button-{provider.Name}")" type="submit" class="btn btn-default" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                    if (@provider.Name.Equals("Google"))
+                    {
+                        <button type="submit" style="background-color: #f5f5f5" class="btn btn-light rounded-2 shadow w-50 fw-bold" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><img src="/images/ggicon.png" class="img-fluid me-2" style="width: 30px; height:30px;" /> Connect with Google </button>
+                    }
+                    if (@provider.Name.Equals("Facebook"))
+                    {
+                        <button type="submit" style="background-color: #1877f2" class="btn text-light rounded-2 mt-3 shadow w-50 fw-bold" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><img src="/images/fbicon.png" class="img-fluid me-2" style="width: 30px; height:30px;" /> Connect with Facebook  </button>
+                    }
                 }
             </p>
         </div>

@@ -57,7 +57,7 @@
                     @if(Model.ProviderDisplayName == "Google")
                     {
                        <h3 id="external-login-description" class="text-center mb-5" >Please choose a username to continue registration. </h3>
-                       <div class="input-group mb-3 d-flex">
+                       <div class="input-group mb-3 d-flex d-none">
                             <span class="input-group-text" id="basic-addon1"><i class="fa fa-envelope"></i></span>
                             <input asp-for="Input.Email" type="text" class="form-control form-control-lg" placeholder="Email" aria-label="Username" aria-describedby="basic-addon1" readonly />
                             <span asp-validation-for="Input.Email" class="text-danger"></span>

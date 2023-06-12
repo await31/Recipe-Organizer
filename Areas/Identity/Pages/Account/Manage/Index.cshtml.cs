@@ -47,8 +47,7 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
 
-            [Display(Name = "Profile image")]
-            public IFormFile File { get; set; }
+
         }
 
         private async Task LoadAsync(IdentityUser user)
@@ -100,15 +99,6 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
-
-            IFormFile file = Input.File;
-            var currImgSrcString = _userManager.GetUserAsync(User).Result.ImgPath;
-
-            string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-            string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
-
-            user.ImgPath = imageUrl;
-            await _userManager.UpdateAsync(user);
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";

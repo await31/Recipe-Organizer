@@ -10,40 +10,50 @@
 <div>
     <p>To use an authenticator app go through the following steps:</p>
     <ol class="list">
+        
         <li>
-            <p>
-                Download a two-factor authenticator app like Microsoft Authenticator for
-                <a href="https://go.microsoft.com/fwlink/?Linkid=825072">Android</a> and
-                <a href="https://go.microsoft.com/fwlink/?Linkid=825073">iOS</a> or
-                Google Authenticator for
-                <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&amp;hl=en">Android</a> and
-                <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8">iOS</a>.
-            </p>
-        </li>
-        <li>
-            <p>Scan the QR Code or enter this key <kbd>@Model.SharedKey</kbd> into your two factor authenticator app. Spaces and casing do not matter.</p>
-            <div class="alert alert-info">Learn how to <a href="https://go.microsoft.com/fwlink/?Linkid=852423">enable QR code generation</a>.</div>
-            <div id="qrCode"></div>
-            <div id="qrCodeData" data-url="@Html.Raw(Model.AuthenticatorUri)"></div>
-        </li>
-        <li>
-            <p>
-                Once you have scanned the QR code or input the key above, your two factor authentication app will provide you
-                with a unique code. Enter the code in the confirmation box below.
-            </p>
             <div class="row">
-                <div class="col-md-6">
+                    <p>Use your Authenticator APP to scan this QR code.</p>
+
+                <div class="col-md-3 img-fluid">
+
+                    <div id="qrCode" style="width: 200px; height: 200px;"></div>
+                    <div id="qrCodeData" data-url="@Html.Raw(Model.AuthenticatorUri)"></div>
+                </div>
+                <div class="col-md-9">
+                    <kbd>@Model.SharedKey</kbd>
+                    <p>If you have any problem with scanning the QR code, enter this code manually into the APP.</p>
                     <form method="post">
                         <div class="form-group">
                             <label asp-for="Input.Code" class="control-label">Verification Code</label>
                             <input asp-for="Input.Code" class="form-control" autocomplete="off" />
                             <span asp-validation-for="Input.Code" class="text-danger"></span>
                         </div>
-                        <button type="submit" class="btn btn-default">Verify</button>
+                        <button type="submit" class="btn btn-dark btn-lg flex-end rounded-2">Verify</button>
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     </form>
                 </div>
-            </div>
+            </div>     
+        </li>
+
+        <li>
+            <p>
+                Download a two-factor authenticator app:
+                <ul>
+                    <li>
+                        <strong>Microsoft Authenticator</strong> <br />
+                        <a href="https://go.microsoft.com/fwlink/?Linkid=825072" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;"><img src="/images/google-badge.png" style="border-radius: 13px; width: 250px; height: 83px;" /></a>
+                        <a href="https://apps.apple.com/us/app/microsoft-authenticator/id983156458?itsct=apps_box_badge&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;"><img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1432944000" alt="Download on the App Store" style="border-radius: 13px; width: 250px; height: 83px;"></a>
+                    </li>
+                    <hr />
+                    <li>
+                        <strong>Google Authenticator</strong> <br />
+                        <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&amp;hl=en" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;"><img src="/images/google-badge.png" style="border-radius: 13px; width: 250px; height: 83px;" /></a>
+                        <a href="https://apps.apple.com/us/app/google-authenticator/id388497605?itsct=apps_box_badge&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;"><img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1284940800" alt="Download on the App Store" style="border-radius: 13px; width: 250px; height: 83px;"></a>
+                    </li>
+                </ul>
+
+            </p>
         </li>
     </ol>
 </div>
