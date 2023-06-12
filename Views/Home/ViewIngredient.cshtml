@@ -52,7 +52,7 @@
                     <div class="card-body h-50 mb-1">
                         <h5 class="card-title">@obj.Name</h5>
                         <p class="card-text">@obj.Description</p>
-                        <a href="#" class="btn btn-dark text-light float-end" data-mdb-ripple-color="dark"><i class="fa-solid fa-file-lines"></i></a>
+                        <a asp-controller="Home" asp-action="IngredientDetails" asp-route-ingredientId="@obj.Id" asp-route-id="@obj.FkCategoryId" class="btn btn-dark text-light float-end"><i class="fa-solid fa-file-lines"></i></a>
                     </div>
                 </div>
         }

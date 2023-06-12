@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication;
 using System.Reflection;
 using SmartBreadcrumbs.Extensions;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");

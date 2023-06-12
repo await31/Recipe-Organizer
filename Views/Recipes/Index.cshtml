@@ -1,146 +1,207 @@
 ﻿@model IEnumerable<Recipe>
 
+@inject SignInManager<Account> SignInManager
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<Account> UserManager
+
 @{
     ViewBag.Title = "View Recipe";
     Pager pager = new Pager();
     int pageNo = 0;
-    if (ViewBag.Pager != null) {
+    if (ViewBag.Pager != null)
+    {
         pager = ViewBag.Pager;
         pageNo = pager.CurrentPage;
     }
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="row">
-    <div class="px-0">
-        <br />
-        <div class="col-5">
-            <a asp-controller="Recipes" asp-action="Create" class="btn btn-success fw-bold text-light mt-2"><i class="fa-solid fa-folder-plus"></i> New Recipes</a>
-        </div>
-        <br />
-        <table class="table table-bordered table-striped w-100">
-            <thead class="table-dark">
-                <tr>
-                    <th>
-                        @*@Html.DisplayNameFor(model => model.Name)*@
-                        Name
-                    </th>
-                    <th>
-                        @*@Html.DisplayNameFor(model => model.ImgPath)*@
-                        ImgPath
-                    </th>
-                    <th>
-                        @*@Html.DisplayNameFor(model => model.Description)*@
-                        Description
-                    </th>
-                    <th>
-                        @*@Html.DisplayNameFor(model => model.Nutrition)*@
-                        Nutrition
-                    </th>
-                    <th>
-                        @*@Html.DisplayNameFor(model => model.PrepTime)*@
-                        PrepTime
-                    </th>
-                    <th>
-                        @*@Html.DisplayNameFor(model => model.Difficult)*@
-                        Difficult
-                    </th>
-                    <th>
-                        RecipeOwner
-                    </th>
-                    <th>
-                        @*@Html.DisplayNameFor(model => model.CreatedDate)*@
-                        CreatedDate
-                    </th>
-                    <th>
-                        @*@Html.DisplayNameFor(model => model.FkRecipe)*@
-                        FkRecipe
-                    </th>
-                    <th>
-                        RecipeCategory
-                    </th>
-                    <th>
-                        @*@Html.DisplayNameFor(model => model.Status)*@
-                        Status
-                    </th>
-                    <th colspan="3">
-                        Action
-                    </th>
-                    <th colspan="2">
-                        Approve
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model) {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.ImgPath)
-                        </td>
-                        <td>
-                            @Html.Raw(item.Description)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Nutrition)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.PrepTime)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Difficult)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.FkUserId)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.CreatedDate)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.FkRecipe.Id)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.FkRecipeCategory.Name)
-                        </td>
-                        <td>
-                            @if (item.Status == false) {
-                                @Html.Raw("Deny")
-                                ;
-                            } else {
-                                @Html.Raw("Approved")
-                                ;
+    <form class="form-inline" asp-controller="Recipes" asp-action="Search">
+        <input class="form-control mr-sm-2" id="searchString" name="searchString" type="text" placeholder="Search" aria-label="Search" value="@ViewData["FilterSearch"]" />
+        <input class="btn btn-outline-success my-2 my-sm-0" type="submit" value="Search" />
+    </form>
+    <div class="row">
+        <div class="px-0">
+            <br />
+            <div class="col-5">
+                <a asp-controller="Recipes" asp-action="Create" class="btn btn-success fw-bold text-light mt-2"><i class="fa-solid fa-folder-plus"></i> New Recipes</a>
+            </div>
+            <br />
+            <div class="container row">
+                <div class="col-sm-2">
+                    <form id="formFilter" name="formFilter" class="form-inline" asp-controller="Recipes" asp-action="Filter">
+
+                        <input class="form-control mr-sm-2" id="includeIngredients" name="includeIngredients" type="text" placeholder="Include Ingredients" />
+                        <label class="form-label d-none" for="includeIngredients">Include Ingredients:</label>
+
+                        <label for="recipeCategory" class="control-label">Recipe Category:</label>
+                        <select class="form-control" name="recipeCategory" asp-items="ViewBag.FkRecipeCategoryId" onchange="document.getElementById('btnSubmit').click();">
+                            <option value="All">All</option>
+                        </select>
+                        <label for="prepTime" class="form-label">PrepTime:</label>
+                        <select class="form-select" name="prepTime" onchange="document.getElementById('btnSubmit').click();">
+                            <option value="All">All</option>
+                            @for (var i = 5; i < 30; i += 5)
+                            {
+                                @if (!(String.IsNullOrEmpty(@ViewData["FilterPrepTime"].ToString())) && (@ViewData["FilterPrepTime"].Equals(i.ToString())))
+                                {
+                                    <option value="@i" selected>0 - @i</option>
+                                }
+                                else
+                                {
+                                    <option value="@i">0 - @i</option>
+                                }
                             }
-                        </td>
-                        <td>
-                            <a asp-controller="Recipes" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                        </td>
-                        <td>
-                            <a asp-controller="Recipes" asp-action="Details" asp-route-id="@item.Id">Details</a>
-                        </td>
-                        <td>
-                            <a asp-controller="Recipes" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                        </td>
-                        <td>
-                            <form method="post" asp-controller="Recipes" asp-action="Approve">
-                                <input type="hidden" name="id" value="@item.Id" />
-                                <button type="submit" class="btn btn-link">Approve</button>
-                            </form>
-                        </td>
-                        <td>
-                            <form method="post" asp-controller="Recipes" asp-action="Deny">
-                                <input type="hidden" name="id" value="@item.Id" />
-                                <button type="submit" class="btn btn-link">Deny</button>
-                            </form>
-                        </td>
+                        </select>
+                        <label for="difficulty" class="form-label">Difficulty:</label>
+                        <select class="form-select" name="difficulty" onchange="document.getElementById('btnSubmit').click();">
+                            <option value="All">All</option>
+                            @for (var i = 1; i < 6; i++)
+                            {
+                                @if (!(String.IsNullOrEmpty(@ViewData["FilterDifficulty"].ToString())) && (@ViewData["FilterDifficulty"].Equals(i.ToString())))
+                                {
+                                    <option value="@i.ToString()" selected>@i.ToString()</option>
+                                }
+                                else
+                                {
+                                    <option value="@i.ToString()">@i.ToString()</option>
+                                }
+                            }
+                        </select>
+                        <input id="SearchString" name="searchString" type="hidden" value="@ViewData["FilterSearch"]" />
+                        <input type="submit" hidden id="btnSubmit" value="Filter" />
+                    </form>
+                </div>
 
-                    </tr>
-                }
-            </tbody>
-        </table>
+                <div class="col-sm-10">
+                    <table class="table table-bordered table-striped w-100">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>
+                                    @*@Html.DisplayNameFor(model => model.Name)*@
+                                    Name
+                                </th>
+                                <th>
+                                    @*@Html.DisplayNameFor(model => model.ImgPath)*@
+                                    ImgPath
+                                </th>
+                                <th>
+                                    @*@Html.DisplayNameFor(model => model.Nutrition)*@
+                                    Nutrition
+                                </th>
+                                <th>
+                                    @*@Html.DisplayNameFor(model => model.PrepTime)*@
+                                    PrepTime
+                                </th>
+                                <th>
+                                    @*@Html.DisplayNameFor(model => model.Difficult)*@
+                                    Difficulty
+                                </th>
+                                <th>
+                                    Recipe Owner
+                                </th>
+                                <th>
+                                    @*@Html.DisplayNameFor(model => model.CreatedDate)*@
+                                    CreatedDate
+                                </th>
+                                <th>
+                                    RecipeCategory
+                                </th>
+                                <th>
+                                    @*@Html.DisplayNameFor(model => model.Status)*@
+                                    Status
+                                </th>
 
-        
-        <partial name="_Pager" model="@pager" />
+                                <AuthorizeView Roles="Admin">
+                                    <th colspan="3">
+                                        Action
+                                    </th>
+                                    <th colspan="2">
+                                        Approve
+                                    </th>
+                                </AuthorizeView>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    <td class="p-0">
+                                        <img src="@item.ImgPath" class="img-fluid">
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Nutrition)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PrepTime)
+                                    </td>
+                                    
+                                    <td>
+                                    @if (item.Difficult == 1) {
+                                        <p>Easy</p>
+                                    } else if (item.Difficult == 2) {
+                                        <p>Medium</p>
+                                    } else if (item.Difficult ==3) {
+                                        <p>Hard</p>
+                                    }
+                                </td>
+                                    <td>
+                                        @item.FkUser?.UserName
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CreatedDate)
+                                    </td>
+                                    
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FkRecipeCategory.Name)
+                                    </td>
+                                    <td>
+                                        @if (item.Status == false)
+                                        {
+                                            @Html.Raw("Deny")
+                                            ;
+                                        }
+                                        else
+                                        {
+                                            @Html.Raw("Approved")
+                                            ;
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-controller="Recipes" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
+                                    </td>
+                                    <td>
+                                        <a asp-controller="Recipes" asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
+                                    </td>
+                                    <td>
+                                        <a asp-controller="Recipes" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                                    </td>
+                                    <AuthorizeView Roles="Admin">
+                                        <td>
+                                            <form method="post" asp-controller="Recipes" asp-action="Approve">
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <button type="submit" class="btn btn-success">Approve</button>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <form method="post" asp-controller="Recipes" asp-action="Deny">
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <button type="submit" class="btn btn-danger">Deny</button>
+                                            </form>
+                                        </td>
+                                    </AuthorizeView>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <partial name="_Pager" model="@pager" />
+        </div>
     </div>
-</div>

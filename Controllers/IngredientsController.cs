@@ -21,7 +21,7 @@ using SmartBreadcrumbs.Attributes;
 
 namespace CapstoneProject.Controllers {
 
-    [Authorize]
+    [Authorize(Roles ="Admin")]
     public class IngredientsController : Controller {
 
         private readonly RecipeOrganizerContext _context;
@@ -37,7 +37,7 @@ namespace CapstoneProject.Controllers {
 
         [Breadcrumb("Ingredients Management")]
         public IActionResult Index() {
-            IEnumerable<Ingredient> objIngredient = _context.Ingredients.ToList();
+            IEnumerable<Ingredient> objIngredient = _context.Ingredients.Include(r=>r.FkCategory).ToList();
             return View(objIngredient);
         }
 
@@ -61,7 +61,9 @@ namespace CapstoneProject.Controllers {
 
                     // Upload the file to Firebase Storage
                     string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
-                    model.ImgPath = imageUrl;
+                    Uri imageUrlUri = new Uri(imageUrl);
+                    string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
+                    model.ImgPath = baseUrl;
                     _context.Ingredients.Add(model);
                     await _context.SaveChangesAsync();
                     TempData["success"] = "Ingredient created successfully";
@@ -132,9 +134,52 @@ namespace CapstoneProject.Controllers {
             }
         }
 
+
+        //GET
+        [Breadcrumb("Edit", FromAction = "Index", FromController = typeof(IngredientsController))]
+        public async Task<IActionResult> Edit(int? id) {
+            if (id == null || _context.Ingredients == null) {
+                return NotFound();
+            }
+            var ingredient = await _context.Ingredients.FindAsync(id);
+            if (ingredient == null) {
+                return NotFound();
+            }
+            ViewData["FkCategoryId"] = new SelectList(_context.IngredientCategories, "Id", "Name");
+            return View(ingredient);
+        }
+
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id, Name, ImgPath, Description, FkCategoryId")] Ingredient ingredient) {
+            if (id != ingredient.Id) {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid) {
+                try {
+                    _context.Update(ingredient);
+                    await _context.SaveChangesAsync();
+                } catch (DbUpdateConcurrencyException) {
+                    if (!IngredientExists(ingredient.Id)) {
+                        return NotFound();
+                    } else {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["FkCategoryId"] = new SelectList(_context.IngredientCategories, "Id", "Name", ingredient.FkCategoryId);
+            return View(ingredient);
+        }
+
+        private bool IngredientExists(int id) {
+            return (_context.Ingredients?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
         //GET
         [Breadcrumb("Delete", FromAction = "Index", FromController = typeof(IngredientsController))]
-
         public IActionResult Delete(int? id) {
             if (id == null || id == 0) {
                 return NotFound();

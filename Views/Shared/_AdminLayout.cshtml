@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <link rel="icon" type="image/x-icon" href="\images\logo.png">
     <script src="https://kit.fontawesome.com/08194921a9.js" crossorigin="anonymous"></script>
+
     <style>
         hr {
             clear: both;
@@ -102,12 +103,7 @@
                             <img src="\images\logo.png" alt="Logo" width="80" height="80" class="d-inline-block align-text-top">
                         </a>
                         <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                            @*<li><a href="#" class="nav-link px-2 text-white active">Home</a></li>
-                            <li><a href="#" class="nav-link px-2 text-white">Features</a></li>
-                            <li><a href="#" class="nav-link px-2 text-white">Pricing</a></li>
-                            <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
-                            <li><a href="#" class="nav-link px-2 text-white">About</a></li>
-                            *@
+                           
                         </ul>
                         <div class="text-end d-flex">
                             <partial name="_LoginPartial" />
@@ -124,32 +120,6 @@
     <script src="~/lib/bootstrap-5.3.0/js/bootstrap.min.js"></script>
     <script src="~/lib/bootstrap-5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="~/lib/vendor/chart.js/Chart.min.js"></script>
-    <script src="~/lib/vendor/chart.js/Chart.bundle.min.js"></script>
-    <script src="~/js/chart/chart-area-demo.js"></script>
-    <script src="~/js/chart/chart-pie-demo.js"></script>
-    <script>
-        $(document).ready(function () {
-            var currentUrl = document.location.pathname;
-
-            var elementLevelZero = $('.nav-main a[href="' + currentUrl + '"]');
-            $(elementLevelZero).addClass('active');
-
-            var elementLevelZeroList = $(elementLevelZero).closest('ul');
-
-            var elementLevelOne = $(elementLevelZeroList).prev("a");
-            $(elementLevelOne).addClass('active');
-
-            var elementLevelOneList = $($(elementLevelOne).parent()).closest('ul');
-
-            var elementLevelTwo = $(elementLevelOneList).prev("a");
-            $(elementLevelTwo).addClass('active');
-
-            var elementLevelTwoList = $($(elementLevelTwo).parent()).closest('ul');
-
-            var elementLevelThree = $(elementLevelTwoList).prev("a");
-            $(elementLevelThree).addClass('active');
-        });
-    </script>
+    <partial name="_ValidationScriptsPartial" />
 </body>
 </html>

@@ -100,8 +100,18 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
                 }
             }
 
+            IFormFile file = Input.File;
+            var currImgSrcString = _userManager.GetUserAsync(User).Result.ImgPath;
+
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+            string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
+            Uri imageUrlUri = new Uri(imageUrl);
+            string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
+            user.ImgPath = baseUrl;
+            await _userManager.UpdateAsync(user);
+
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
+            TempData["success"] = "Your profile has been updated!";
             return RedirectToPage();
         }
 

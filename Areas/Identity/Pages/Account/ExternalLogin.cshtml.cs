@@ -137,23 +137,25 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
                 IFormFile file = Input.File;
                 string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
                 string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
+                Uri imageUrlUri = new Uri(imageUrl);
+                string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
                 var up = new Favourite();
                 _context.Favourites.Add(up);
                 await _context.SaveChangesAsync();
 
                 user.FavouriteId = up.FavouriteId;
                 user.Status = true;
-                user.ImgPath = imageUrl;
+                user.ImgPath = baseUrl;
                 user.CreatedDate = DateTime.UtcNow;
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded) {
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded) {
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
-
+                        await _userManager.AddToRoleAsync(user, "Cooker");
                         var userId = await _userManager.GetUserIdAsync(user);
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code)); 
                         var callbackUrl = Url.Page(
                             "/Account/ConfirmEmail",
                             pageHandler: null,

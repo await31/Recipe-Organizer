@@ -159,7 +159,8 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
                 IFormFile file = Input.File;
                 string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
                 string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
-
+                Uri imageUrlUri = new Uri(imageUrl);
+                string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
                 var up = new Favourite();
                 _context.Favourites.Add(up);
                 await _context.SaveChangesAsync();
@@ -167,7 +168,7 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
                 var user = new Models.Account {
                     UserName = Input.Username,
                     Email = Input.Email,
-                    ImgPath = imageUrl,
+                    ImgPath = baseUrl,
                     FavouriteId = up.FavouriteId,
                     Status = true,
                     CreatedDate = DateTime.UtcNow
