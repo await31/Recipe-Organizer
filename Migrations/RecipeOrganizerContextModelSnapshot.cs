@@ -44,9 +44,6 @@ namespace CapstoneProject.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int>("FavouriteId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ImgPath")
                         .HasColumnType("nvarchar(max)");
 
@@ -88,9 +85,6 @@ namespace CapstoneProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FavouriteId")
-                        .IsUnique();
-
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -104,13 +98,25 @@ namespace CapstoneProject.Migrations
 
             modelBuilder.Entity("CapstoneProject.Models.Favourite", b =>
                 {
-                    b.Property<int>("FavouriteId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FavouriteId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.HasKey("FavouriteId");
+                    b.Property<string>("AccountId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
 
                     b.ToTable("Favourites");
                 });
@@ -290,13 +296,13 @@ namespace CapstoneProject.Migrations
 
             modelBuilder.Entity("FavouriteRecipe", b =>
                 {
-                    b.Property<int>("FavouritesFavouriteId")
+                    b.Property<int>("FavouritesId")
                         .HasColumnType("int");
 
                     b.Property<int>("RecipesId")
                         .HasColumnType("int");
 
-                    b.HasKey("FavouritesFavouriteId", "RecipesId");
+                    b.HasKey("FavouritesId", "RecipesId");
 
                     b.HasIndex("RecipesId");
 
@@ -466,15 +472,15 @@ namespace CapstoneProject.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("CapstoneProject.Models.Account", b =>
+            modelBuilder.Entity("CapstoneProject.Models.Favourite", b =>
                 {
-                    b.HasOne("CapstoneProject.Models.Favourite", "Favourites")
-                        .WithOne("Account")
-                        .HasForeignKey("CapstoneProject.Models.Account", "FavouriteId")
+                    b.HasOne("CapstoneProject.Models.Account", "Account")
+                        .WithMany("Favourites")
+                        .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Favourites");
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.Ingredient", b =>
@@ -535,7 +541,7 @@ namespace CapstoneProject.Migrations
                 {
                     b.HasOne("CapstoneProject.Models.Favourite", null)
                         .WithMany()
-                        .HasForeignKey("FavouritesFavouriteId")
+                        .HasForeignKey("FavouritesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -629,17 +635,13 @@ namespace CapstoneProject.Migrations
 
             modelBuilder.Entity("CapstoneProject.Models.Account", b =>
                 {
+                    b.Navigation("Favourites");
+
                     b.Navigation("MealPlans");
 
                     b.Navigation("RecipeFeedbacks");
 
                     b.Navigation("Recipes");
-                });
-
-            modelBuilder.Entity("CapstoneProject.Models.Favourite", b =>
-                {
-                    b.Navigation("Account")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.IngredientCategory", b =>

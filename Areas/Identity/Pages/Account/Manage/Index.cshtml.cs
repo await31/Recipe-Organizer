@@ -12,6 +12,7 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats;
 using NuGet.Protocol;
+using SixLabors.ImageSharp.Formats.Webp;
 
 namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
 {
@@ -45,9 +46,10 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
         {
             [Phone]
             [Display(Name = "Phone number")]
-            public string PhoneNumber { get; set; }
+            public string? PhoneNumber { get; set; }
 
-
+            [Display(Name = "Profile Image")]
+            public IFormFile? File { get; set; }
         }
 
         private async Task LoadAsync(IdentityUser user)
@@ -99,24 +101,45 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
-
-            IFormFile file = Input.File;
-            var currImgSrcString = _userManager.GetUserAsync(User).Result.ImgPath;
-
-            string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-            string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
-            Uri imageUrlUri = new Uri(imageUrl);
-            string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
-            user.ImgPath = baseUrl;
+            if (Input.File != null) {
+                IFormFile file = Input.File;
+                var currImgSrc = _userManager.GetUserAsync(User).Result.ImgPath;
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                string imageUrl = await RemoveOldAndUploadFirebase(file.OpenReadStream(), uniqueFileName, currImgSrc);
+                Uri imageUrlUri = new Uri(imageUrl);
+                string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
+                user.ImgPath = baseUrl;
+            }
+            
             await _userManager.UpdateAsync(user);
-
             await _signInManager.RefreshSignInAsync(user);
-            TempData["success"] = "Your profile has been updated!";
             return RedirectToPage();
         }
 
-        public static async Task<string> UploadFirebase(Stream stream, string fileName)
+        public static async Task<string> RemoveOldAndUploadFirebase(Stream stream, string fileName, string deletedFile)
         {
+            if (!string.IsNullOrEmpty(deletedFile)) {
+                string exactFileName = GetImageNameFromUrl(deletedFile);
+                FirebaseAuthProvider firebaseConfiguration = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                FirebaseAuthLink authConfiguration = await firebaseConfiguration
+                    .SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                FirebaseStorage storage = new FirebaseStorage(
+                    Bucket,
+                    new FirebaseStorageOptions {
+                        AuthTokenAsyncFactory = () => Task.FromResult(authConfiguration.FirebaseToken),
+                        ThrowOnCancel = true
+                    });
+
+                await storage
+                    .Child("images")
+                    .Child("avatar")
+                    .Child(exactFileName) // Use the fileName directly as the child reference
+                    .DeleteAsync();
+
+                firebaseConfiguration.Dispose();
+            }
+
             string imageFromFirebaseStorage = "";
 
             using (Image image = Image.Load(stream))
@@ -134,29 +157,12 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
                     }));
                 }
 
-                // Compress the image
-                IImageEncoder imageEncoder;
-                string fileExtension = Path.GetExtension(fileName).ToLower();
-                if (fileExtension == ".png")
-                {
-                    imageEncoder = new PngEncoder { CompressionLevel = PngCompressionLevel.BestCompression };
-                }
-                else if (fileExtension == ".webp")
-                {
-                    imageEncoder = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder { Quality = 100 }; // Adjust the quality level as needed
-                }
-                else
-                {
-                    imageEncoder = new JpegEncoder { Quality = 80 }; // Adjust the quality level as needed
-                }
+				using (MemoryStream webpStream = new()) {
+					await image.SaveAsync(webpStream, new WebpEncoder());
 
-                using (MemoryStream webpStream = new MemoryStream())
-                {
-                    image.Save(webpStream, new SixLabors.ImageSharp.Formats.Webp.WebpEncoder());
+					webpStream.Position = 0;
 
-                    webpStream.Position = 0;
-
-                    FirebaseAuthProvider firebaseConfiguration = new(new FirebaseConfig(ApiKey));
+					FirebaseAuthProvider firebaseConfiguration = new(new FirebaseConfig(ApiKey));
 
                     FirebaseAuthLink authConfiguration = await firebaseConfiguration
                         .SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
@@ -174,7 +180,6 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
                         .Child("avatar")
                         .Child(fileName)
                         .PutAsync(webpStream, cancellationToken.Token);
-
                     try
                     {
                         imageFromFirebaseStorage = await storageManager;
@@ -188,6 +193,14 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
                     }
                 }
             }
+        }
+
+        public static string GetImageNameFromUrl(string url) {
+            int lastSeparatorIndex = url.LastIndexOf("%2F"); // Get the index of the last "%2F"
+            int startIndex = lastSeparatorIndex + 3; // Start index of the desired string
+            int endIndex = url.IndexOf("?alt", startIndex); // End index of the desired string
+            string extractedString = url.Substring(startIndex, endIndex - startIndex); // Extract the string between the last "%2F" and before "?alt"
+            return extractedString;
         }
     }
 }

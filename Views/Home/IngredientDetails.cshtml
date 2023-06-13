@@ -12,7 +12,7 @@
                 <div class="small mb-1">@Model.FkCategory?.Name</div>
                 <h1 class="display-5 fw-bolder">@Model.Name</h1>
                 <p class="lead">@Model.Description</p>
-                <div class="d-flex"><button class="btn btn-outline-dark flex-shrink-0" type="button"><i class="bi-cart-fill me-1"></i>Related recipes</button></div>
+                <div class="d-flex"><a asp-controller="UserRecipes" asp-action="Index" asp-route-IncludeList="@Model.Name" class="btn btn-outline-dark flex-shrink-0"><i class="bi-cart-fill me-1"></i>Related recipes</a></div>
             </div>
         </div>
     </div>

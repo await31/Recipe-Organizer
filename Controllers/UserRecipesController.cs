@@ -13,6 +13,12 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.Collections;
 using Microsoft.IdentityModel.Tokens;
 using SmartBreadcrumbs.Attributes;
+using NuGet.Packaging;
+using Firebase.Auth;
+using Firebase.Storage;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Formats;
 
 namespace CapstoneProject.Controllers {
 
@@ -21,6 +27,10 @@ namespace CapstoneProject.Controllers {
         private readonly RecipeOrganizerContext _context;
         private readonly UserManager<Account> _userManager;
 
+        public static string ApiKey = "AIzaSyDIXdDdvo8NguMgxLvn4DWMNS-vXkUxoag";
+        public static string Bucket = "cookez-cloud.appspot.com";
+        public static string AuthEmail = "cookez.mail@gmail.com";
+        public static string AuthPassword = "cookez";
         public UserRecipesController(RecipeOrganizerContext context, UserManager<Account> userManager) {
             _context = context;
             _userManager = userManager;
@@ -132,13 +142,12 @@ namespace CapstoneProject.Controllers {
                 //Favorite
                 var currentUser = await _userManager.GetUserAsync(User);
                 ViewBag.FavoriteList = null;
+
                 if (currentUser != null) {
-                    var favorite = _context.Favourites.Include(item => item.Recipes).FirstOrDefault(b => b.FavouriteId == currentUser.FavouriteId);
-                    List<int> favoriteList = null;
-                    if (favorite != null) {
-                        favoriteList = favorite.Recipes.Select(r => r.Id).ToList();
-                    }
-                    ViewBag.FavoriteList = favoriteList;
+                    //TODO: make this code works with all favorite list
+                    var userFavouriteList = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToList();
+                    List<int> favoritedRecipes = _context.Favourites.Where(a => userFavouriteList.Contains(a)).Include(a => a.Recipes).SelectMany(c => c.Recipes).Select(r => r.Id).ToList();
+                    ViewBag.FavoriteList = favoritedRecipes;
                 }
 
                 int recsCount = recipes.Count();
@@ -152,7 +161,6 @@ namespace CapstoneProject.Controllers {
                 ViewData["count"] = recsCount;
 
                 this.ViewBag.Pager = pager;
-
                 return View(data);
             }
             return View();
@@ -197,11 +205,15 @@ namespace CapstoneProject.Controllers {
             };
             return RedirectToAction("Index", parameter);
         }
-        public async Task<IActionResult> Favorite(int? id, string returnUrl, string parameters) {
+        public async Task<IActionResult> Favorite(int? id, int? favouriteId, string returnUrl, string parameters) {
             var entity = _context.Recipes.FirstOrDefault(item => item.Id == id);
             if (entity != null) {
                 var currentUser = await _userManager.GetUserAsync(User);
-                var favourite = _context.Favourites.Include(item => item.Recipes).FirstOrDefault(item => item.FavouriteId == currentUser.FavouriteId);
+                var userFavouriteId = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToArray();
+                favouriteId = userFavouriteId[0].Id;
+                //Get user from dbContext which include favorites
+                var favourite = _context.Favourites.Include(a => a.Recipes).FirstOrDefault(a => a.Id == favouriteId);
+
                 if (!favourite.Recipes.Contains(entity)) {
                     favourite.Recipes.Add(entity);
                     TempData["success"] = "Add to favourites successfully";
@@ -251,6 +263,12 @@ namespace CapstoneProject.Controllers {
         public IActionResult Create() {
             ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id");
             ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name");
+
+            // lay danh sach ingredient tu database
+            var ingredients = _context.Ingredients.ToList();
+
+            ViewData["Ingredients"] = new SelectList(ingredients, "Id", "Name"); // truyen qua view create
+
             return View();
         }
 
@@ -259,15 +277,42 @@ namespace CapstoneProject.Controllers {
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,ImgPath,Description,FkRecipeCategoryId,FkRecipeId,Nutrition,PrepTime,Difficult,FkUserId,CreatedDate")] Recipe recipe) {
+        public async Task<IActionResult> Create(Recipe recipe, int[] IngredientIds) {
             if (ModelState.IsValid) {
-                if (recipe.CreatedDate == null)
-                    recipe.CreatedDate = DateTime.Now;
-                if (recipe.ViewCount == null)
-                    recipe.ViewCount = 0;
-                _context.Add(recipe);
-                await _context.SaveChangesAsync();
+                if (recipe.file != null && recipe.file.Length > 0) {
+                    IFormFile file = recipe.file;
+                    // Generate a unique file name
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                    var currentUser = await _userManager.GetUserAsync(User);
+                    if (currentUser != null) {
+                        // Upload the file to Firebase Storage
+                        string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
+                        Uri imageUrlUri = new(imageUrl);
+                        string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
+                        recipe.ImgPath = baseUrl;
+                        recipe.Status = false;
+                        recipe.CreatedDate = DateTime.Now;
+                        recipe.FkUserId = await _userManager.GetUserIdAsync(currentUser);
+                        // Save ingredient, recipe to IngredientRecipe
+                        // Save ingredient IDs to recipe
+                        if (IngredientIds != null && IngredientIds.Length > 0) {
+                            var ingredients = _context.Ingredients.Where(i => IngredientIds.Contains(i.Id)).ToList();
+                            recipe.Ingredients.AddRange(ingredients);
+                        }
+                        /*var recipeTempId = recipe.Id;
+                        var ingredientTempId = ingredientId;
+                        var ingredient = _context.Ingredients.Find(ingredientTempId);
+                        recipe.Ingredients.Add(ingredient);*/
+
+                    } else {
+                        recipe.ImgPath = "untitle.jpg";
+                    }
+                    _context.Recipes.Add(recipe);
+                    await _context.SaveChangesAsync();
+                }
+
                 return RedirectToAction(nameof(Index));
+
             }
             ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id", recipe.FkRecipeId);
             ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.FkRecipeCategoryId);
@@ -353,6 +398,68 @@ namespace CapstoneProject.Controllers {
 
         private bool RecipeExists(int id) {
             return (_context.Recipes?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        //firebase
+        public static async Task<string> UploadFirebase(Stream stream, string fileName) {
+            string imageFromFirebaseStorage = "";
+
+            using (Image image = Image.Load(stream)) {
+
+                // Resize the image to a smaller size if needed
+                int maxWidth = 1000; // Set your desired maximum width here
+                int maxHeight = 1000; // Set your desired maximum height here
+                if (image.Width > maxWidth || image.Height > maxHeight) {
+                    image.Mutate(x => x.Resize(new ResizeOptions {
+                        Size = new Size(maxWidth, maxHeight),
+                        Mode = ResizeMode.Max
+                    }));
+                }
+
+                // Compress the image
+                IImageEncoder imageEncoder;
+                string fileExtension = Path.GetExtension(fileName).ToLower();
+                if (fileExtension == ".png") {
+                    imageEncoder = new PngEncoder { CompressionLevel = PngCompressionLevel.BestCompression };
+                } else if (fileExtension == ".webp") {
+                    imageEncoder = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder { Quality = 100 }; // Adjust the quality level as needed
+                } else {
+                    imageEncoder = new JpegEncoder { Quality = 80 }; // Adjust the quality level as needed
+                }
+
+                using (MemoryStream webpStream = new MemoryStream()) {
+                    image.Save(webpStream, new SixLabors.ImageSharp.Formats.Webp.WebpEncoder());
+
+                    webpStream.Position = 0;
+
+                    FirebaseAuthProvider firebaseConfiguration = new(new FirebaseConfig(ApiKey));
+
+                    FirebaseAuthLink authConfiguration = await firebaseConfiguration
+                        .SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                    CancellationTokenSource cancellationToken = new();
+
+                    FirebaseStorageTask storageManager = new FirebaseStorage(
+                        Bucket,
+                        new FirebaseStorageOptions {
+                            AuthTokenAsyncFactory = () => Task.FromResult(authConfiguration.FirebaseToken),
+                            ThrowOnCancel = true
+                        })
+                        .Child("images")
+                        .Child("recipes")
+                        .Child(fileName)
+                        .PutAsync(webpStream, cancellationToken.Token);
+
+                    try {
+                        imageFromFirebaseStorage = await storageManager;
+                        firebaseConfiguration.Dispose();
+                        return imageFromFirebaseStorage;
+                    } catch (Exception ex) {
+                        Console.WriteLine("Exception was thrown: {0}", ex);
+                        return null;
+                    }
+                }
+            }
         }
     }
 }

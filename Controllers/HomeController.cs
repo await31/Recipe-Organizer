@@ -1,4 +1,5 @@
 ﻿using CapstoneProject.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartBreadcrumbs.Attributes;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SmartBreadcrumbs.Nodes;
 using System;
+using Firebase.Auth;
 
 namespace CapstoneProject.Controllers {
 
@@ -42,22 +44,14 @@ namespace CapstoneProject.Controllers {
                 ViewData["HotRecipe"] = hotRecipe;
             }
 
-            var currentUser = await _userManager.GetUserAsync(User);
+            var currentUser = await _userManager.GetUserAsync(User); // Get user from identity
             ViewBag.FavoriteList = null;
 
             if (currentUser != null) {
-                var favorite = _context
-                    .Favourites
-                    .Include(item => item.Recipes)
-                    .FirstOrDefault(b => b.FavouriteId == currentUser.FavouriteId);
-
-                List<int> favoriteList = null;
-                if (favorite != null) {
-                    favoriteList = favorite.Recipes.Select(r => r.Id).ToList();
-                }
-                ViewBag.FavoriteList = favoriteList;
-
-                return View(recipes);
+                //TODO: make this code works with all favorite list
+                var userFavouriteList = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToList();
+                List<int> favoritedRecipes = _context.Favourites.Where(a => userFavouriteList.Contains(a)).Include(a => a.Recipes).SelectMany(c => c.Recipes).Select(r => r.Id).ToList();
+                ViewBag.FavoriteList = favoritedRecipes;
             }
             return View(recipes);
         }
@@ -95,11 +89,10 @@ namespace CapstoneProject.Controllers {
 
             return View(data);
         }
-
         public async Task<IActionResult> FavouriteList() {
             var currentUser = await _userManager.GetUserAsync(User);
-            var favorite = _context.Favourites.Include(item => item.Recipes).FirstOrDefault(b => b.FavouriteId == currentUser.FavouriteId);
-            var recipeIds = favorite.Recipes.Select(r => r.Id).ToList();
+            var userFavouriteList = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToList();
+            List<int> recipeIds = _context.Favourites.Where(a => userFavouriteList.Contains(a)).Include(a => a.Recipes).SelectMany(c => c.Recipes).Select(r => r.Id).ToList();
 
             var recipes = await _context.Recipes
                 .Where(r => recipeIds.Contains(r.Id))
@@ -108,12 +101,15 @@ namespace CapstoneProject.Controllers {
                 .Include(r => r.FkUser).ToListAsync();
             return View(recipes);
         }
-
-        public async Task<IActionResult> Favorite(int? id, string returnUrl, string parameters) {
+        public async Task<IActionResult> Favorite(int? id, int? favouriteId, string returnUrl, string parameters) {
             var entity = _context.Recipes.FirstOrDefault(item => item.Id == id);
             if (entity != null) {
                 var currentUser = await _userManager.GetUserAsync(User);
-                var favourite = _context.Favourites.Include(item => item.Recipes).FirstOrDefault(item => item.FavouriteId == currentUser.FavouriteId);
+                var userFavouriteId = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToArray();
+                favouriteId = userFavouriteId[0].Id;
+                //Get user from dbContext which include favorites
+                var favourite = _context.Favourites.Include(a => a.Recipes).FirstOrDefault(a => a.Id == favouriteId);
+
                 if (!favourite.Recipes.Contains(entity)) {
                     favourite.Recipes.Add(entity);
                     TempData["success"] = "Add to favourites successfully";

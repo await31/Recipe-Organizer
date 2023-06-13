@@ -18,7 +18,18 @@ namespace CapstoneProject.Controllers {
 
         [Breadcrumb("Dashboard")]
         public IActionResult Index() {
-            IEnumerable<Recipe> objRecipe = _context.Recipes.ToList();
+            IEnumerable<Recipe> objRecipe = _context.Recipes
+                .Where(b=>b.Status == false)
+                .ToList();
+
+            //Get counts of ingredients, recipes, and pending request
+            ViewData["IngredientsCount"] = _context.Ingredients
+                .Count();
+            ViewData["RecipesCount"] = _context.Recipes
+                .Where(a => a.Status == true)
+                .Count();
+            ViewData["PendingRequestsCount"] = objRecipe
+                .Count();
             return View(objRecipe);
         }
     }

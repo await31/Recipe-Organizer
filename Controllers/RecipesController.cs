@@ -11,7 +11,6 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Webp;
-using Libwebp.Standard;
 using Microsoft.AspNetCore.WebUtilities;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
@@ -42,10 +41,13 @@ namespace CapstoneProject.Controllers {
         // GET/POST: Recipes
         [Breadcrumb("Recipes Management")]
 
-        public async Task<IActionResult> Index(int pg =1) {
-            var recipes = from b in _context.Recipes
-                          select b;
-            if (recipes != null) {
+        public IActionResult Index(int pg = 1) {
+            var recipes = _context.Recipes
+                .Include(x => x.FkRecipeCategory)
+                .ToList();
+
+            /*
+             if (recipes != null) {
                 string? searchString = Request.Query["SearchString"];
                 string? prepTime = Request.Query["PrepTime"];
                 string? recipeCategory = Request.Query["RecipeCategory"];
@@ -104,12 +106,15 @@ namespace CapstoneProject.Controllers {
             }
             //Favorite
             var currentUser = await _userManager.GetUserAsync(User);
-            var favorite = _context.Favourites.Include(item => item.Recipes).FirstOrDefault(b => b.FavouriteId == currentUser.FavouriteId);
-            List<int> favoriteList = null;
-            if (favorite != null) {
-                favoriteList = favorite.Recipes.Select(r => r.Id).ToList();
+            ViewBag.FavoriteList = null;
+
+            if (currentUser != null) {
+                //Get user from dbContext which include favorites
+                var user = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id);
+                List<int> favoritedRecipes = user.Favourites.SelectMany(c => c.Recipes).Select(r => r.Id).ToList();
+                ViewBag.FavoriteList = favoritedRecipes;
             }
-            ViewBag.FavoriteList = favoriteList;
+             */
             const int pageSize = 10; // Number of recipes in 1 page
 
             if (pg < 1)
@@ -121,7 +126,7 @@ namespace CapstoneProject.Controllers {
 
             int recSkip = (pg - 1) * pageSize;
 
-            var data = recipes.Skip(recSkip).Take(pager.PageSize).Include(b => b.FkUser).ToList();
+            var data = recipes.Skip(recSkip).Take(pager.PageSize).ToList();
 
             this.ViewBag.Pager = pager;
 
@@ -171,7 +176,7 @@ namespace CapstoneProject.Controllers {
                     // Generate a unique file name
                     string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
                     var currentUser = await _userManager.GetUserAsync(User);
-                    if(currentUser != null) {
+                    if (currentUser != null) {
                         // Upload the file to Firebase Storage
                         string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
                         Uri imageUrlUri = new(imageUrl);
@@ -197,7 +202,7 @@ namespace CapstoneProject.Controllers {
                     _context.Recipes.Add(recipe);
                     await _context.SaveChangesAsync();
                 }
-                    
+
                 return RedirectToAction(nameof(Index));
 
             }
@@ -279,9 +284,7 @@ namespace CapstoneProject.Controllers {
             if (recipe != null) {
                 await DeleteFromFirebaseStorage(recipe.ImgPath);
                 _context.Recipes.Remove(recipe);
-
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -315,7 +318,8 @@ namespace CapstoneProject.Controllers {
                 return NotFound();
             }
 
-            recipe.Status = false; // Set the status to denied
+            await DeleteFromFirebaseStorage(recipe.ImgPath);
+            _context.Recipes.Remove(recipe);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
@@ -338,19 +342,9 @@ namespace CapstoneProject.Controllers {
                     }));
                 }
 
-                // Compress the image
-                IImageEncoder imageEncoder;
-                string fileExtension = Path.GetExtension(fileName).ToLower();
-                if (fileExtension == ".png") {
-                    imageEncoder = new PngEncoder { CompressionLevel = PngCompressionLevel.BestCompression };
-                } else if (fileExtension == ".webp") {
-                    imageEncoder = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder { Quality = 100 }; // Adjust the quality level as needed
-                } else {
-                    imageEncoder = new JpegEncoder { Quality = 80 }; // Adjust the quality level as needed
-                }
+                using (MemoryStream webpStream = new()) {
 
-                using (MemoryStream webpStream = new MemoryStream()) {
-                    image.Save(webpStream, new SixLabors.ImageSharp.Formats.Webp.WebpEncoder());
+                    await image.SaveAsync(webpStream, new WebpEncoder());
 
                     webpStream.Position = 0;
 

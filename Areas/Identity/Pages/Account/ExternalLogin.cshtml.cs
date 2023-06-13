@@ -19,6 +19,7 @@ using Firebase.Storage;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Formats.Webp;
 
 namespace CapstoneProject.Areas.Identity.Pages.Account {
     [AllowAnonymous]
@@ -139,11 +140,13 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
                 string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
                 Uri imageUrlUri = new Uri(imageUrl);
                 string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
-                var up = new Favourite();
+                var up = new Favourite() {
+                    Name = "Favourite",
+                    Account = user,
+                };
                 _context.Favourites.Add(up);
                 await _context.SaveChangesAsync();
-
-                user.FavouriteId = up.FavouriteId;
+                user.Favourites.Add(up); //Add userId
                 user.Status = true;
                 user.ImgPath = baseUrl;
                 user.CreatedDate = DateTime.UtcNow;
@@ -155,7 +158,7 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
                         await _userManager.AddToRoleAsync(user, "Cooker");
                         var userId = await _userManager.GetUserIdAsync(user);
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code)); 
+                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                         var callbackUrl = Url.Page(
                             "/Account/ConfirmEmail",
                             pageHandler: null,
@@ -210,19 +213,9 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
                     }));
                 }
 
-                // Compress the image
-                IImageEncoder imageEncoder;
-                string fileExtension = Path.GetExtension(fileName).ToLower();
-                if (fileExtension == ".png") {
-                    imageEncoder = new PngEncoder { CompressionLevel = PngCompressionLevel.BestCompression };
-                } else if (fileExtension == ".webp") {
-                    imageEncoder = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder { Quality = 100 }; // Adjust the quality level as needed
-                } else {
-                    imageEncoder = new JpegEncoder { Quality = 80 }; // Adjust the quality level as needed
-                }
+                using (MemoryStream webpStream = new ()) {
 
-                using (MemoryStream webpStream = new MemoryStream()) {
-                    image.Save(webpStream, new SixLabors.ImageSharp.Formats.Webp.WebpEncoder());
+                    await image.SaveAsync(webpStream, new WebpEncoder());
 
                     webpStream.Position = 0;
 

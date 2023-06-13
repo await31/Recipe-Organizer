@@ -11,7 +11,6 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Webp;
-using Libwebp.Standard;
 using Microsoft.AspNetCore.WebUtilities;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
@@ -75,7 +74,6 @@ namespace CapstoneProject.Controllers {
 
         public static async Task<string> UploadFirebase(Stream stream, string fileName) {
             string imageFromFirebaseStorage = "";
-
             using (Image image = Image.Load(stream)) {
 
                 // Resize the image to a smaller size if needed
@@ -88,19 +86,9 @@ namespace CapstoneProject.Controllers {
                     }));
                 }
 
-                // Compress the image
-                IImageEncoder imageEncoder;
-                string fileExtension = Path.GetExtension(fileName).ToLower();
-                if (fileExtension == ".png") {
-                    imageEncoder = new PngEncoder { CompressionLevel = PngCompressionLevel.BestCompression };
-                } else if (fileExtension == ".webp") {
-                    imageEncoder = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder { Quality = 100 }; // Adjust the quality level as needed
-                } else {
-                    imageEncoder = new JpegEncoder { Quality = 80 }; // Adjust the quality level as needed
-                }
+                using (MemoryStream webpStream = new()) {
 
-                using (MemoryStream webpStream = new MemoryStream()) {
-                    image.Save(webpStream, new SixLabors.ImageSharp.Formats.Webp.WebpEncoder());
+                    await image.SaveAsync(webpStream, new WebpEncoder());
 
                     webpStream.Position = 0;
 

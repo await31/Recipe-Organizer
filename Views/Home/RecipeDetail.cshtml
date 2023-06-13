@@ -1,10 +1,12 @@
-﻿@{
+﻿@model Recipe
+
+@{
     ViewData["Title"] = "Recipe Detail";
 }
 
 <!-- Carousel -->
     <div class="container" style="margin-top: 40px;">
-        <h1 style="margin-bottom: 40px;">Health Japanese Fried Rice</h1>
+        <h1 style="margin-bottom: 40px;">@Model.Name</h1>
         <div class="container" style="margin-bottom: 40px;">
             <div class="row">
                 <div class="col-sm-8">
@@ -15,14 +17,14 @@
                                 <div class="col-4" style="align-self: center;">
                                     <div>
                                         <img class="img-fluid rounded-circle"
-                                            src="https://media.dolenglish.vn/PUBLIC/MEDIA/7ed115ae-0e5f-49e1-bcc6-c574b14fc8fe.jpg"
-                                            alt="">
+                                            src="@Model.FkUser?.ImgPath"
+                                            >
                                     </div>
                                 </div>
                                 <div class="col-8">
                                     <div>
-                                        <h5 style="font-size: 1rem;">John Smith</h5>
-                                        15 March 2022
+                                        <h5 style="font-size: 1rem;">@Model.FkUser.UserName</h5>
+                                        @Model.CreatedDate
                                     </div>
                                 </div>
                             </div>
@@ -39,23 +41,11 @@
                                 </div>
                                 <div class="col-10">
                                     <h5 style="font-size: 1rem;">PREP TIME</h5>
-                                    15 Minutes
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md"
-                            style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
-                            <div class="row">
-                                <div class="col-2" style="align-self: center;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        class="bi bi-clock-fill" viewBox="0 0 16 16">
-                                        <path
-                                            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z" />
-                                    </svg>
-                                </div>
-                                <div class="col-10">
-                                    <h5 style="font-size: 1rem;">COOK TIME</h5>
-                                    15 Minutes
+                                    @if(Model.PrepTime <= 360) {
+                                            <p>@Model.PrepTime minutes</p>
+                                } else {
+                                     <p>@(Model.PrepTime/60) hours</p>
+                                }
                                 </div>
                             </div>
                         </div>
@@ -68,7 +58,7 @@
                                     </svg>
                                 </div>
                                 <div class="col-10">
-                                    Chicken
+                                    @Model.FkRecipeCategory.Name
                                 </div>
                             </div>
                         </div>
@@ -76,17 +66,7 @@
                 </div>
                 <div class="col-sm-4" style="align-self: center; padding-right: 0;">
                     <div class="row" style="float: right;">
-                        <div class="col-6">
-                            <button type="button" class="btn btn-sm" style="background: #E7FAFE; border-radius: 50%;">
-                                <svg style="width: 80%;" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
-                                    fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16">
-                                    <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z" />
-                                    <path
-                                        d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="col-6">
+                        <div class="col-12">
                             <button type="button" class="btn btn-sm" style="background: #E7FAFE; border-radius: 50%;">
                                 <svg style="width: 80%;" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
                                     fill="currentColor" class="bi bi-share" viewBox="0 0 16 16">
@@ -99,49 +79,22 @@
                 </div>
             </div>
         </div>
-        <div class="row" style="text-align: -webkit-center;">
+        <div class="row" style="text-align: center;">
             <div class="col-sm-8">
-                <img class="img-fluid" style="border-radius: 4ch; width: 100%;"
-                    src="https://www.anediblemosaic.com/wp-content/uploads//2021/09/yakimeshi-featured-image-500x500.jpg"
-                    alt="Japanese fried rice" class="img-fluid">
+                <img class="img-fluid" style="border-radius: 4ch; width: 100%; max-height: 800px;"
+                    src="@Model.ImgPath"
+                    class="img-fluid">
             </div>
             <div class="col-sm-4" style="background: #E7FAFE; border-radius: 4ch; padding: 0 40px 0 40px">
                 <h5 class="text-start" style="margin-top: 40px;">Nutrition Information</h5>
                 <div class="nutrition row justify-content-between">
                     <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Calories</div>
-                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">219.9 kcal</div>
+                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition kcal</div>
                 </div>
-                <div class="nutrition row justify-content-between">
-                    <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Total Fat</div>
-                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">10.7 g</div>
-                </div>
-                <div class="nutrition row justify-content-between">
-                    <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Protein</div>
-                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">7.9 g</div>
-                </div>
-                <div class="nutrition row justify-content-between">
-                    <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Carbohydrate</div>
-                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">22.3 g</div>
-                </div>
-                <div class="nutrition row justify-content-between">
-                    <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Cholesterol</div>
-                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">37.4 mg</div>
-                </div>
-                <div style="margin-top: 360px;">adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                    magna aliqua.</div>
-            </div>
         </div>
     </div>
-
-    <!-- Something -->
-    <div class="container" style="margin-top: 80px; margin-bottom: 80px;">Lorem ipsum dolor sit amet, consectetur
-        adipiscing elit, sed do eiusmod tempor incididunt
-        ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-        aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-        fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
-        anim id est laborum.
-    </div>
-
+    <hr/>   
+    <hr />
     <!-- Ingredients -->
     <div class="container">
         <div class="row">
@@ -149,56 +102,10 @@
                 <h3 style="margin-bottom: 40px;">Ingredients</h3>
                 <h5 style="margin-bottom: 20px;">For main dish</h5>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item" style="margin-bottom: 20px;">Lorem ipsum dolor sit amet</li>
-                    <li class="list-group-item" style="margin-bottom: 20px;">Lorem ipsum dolor sit amet</li>
-                    <li class="list-group-item" style="margin-bottom: 20px;">Lorem ipsum dolor sit amet</li>
-                    <li class="list-group-item" style="margin-bottom: 20px;">Lorem ipsum dolor sit amet</li>
-                    <li class="list-group-item" style="margin-bottom: 20px;">Lorem ipsum dolor sit amet</li>
+                    @foreach(var item in (List<Ingredient>)Model.Ingredients) {
+                        <li class="list-group-item" style="margin-bottom: 20px;">@item.Name</li>
+                    }
                 </ul>
-                <h5 style="margin-bottom: 20px;">For the sauce</h5>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item" style="margin-bottom: 20px;">Lorem ipsum dolor sit amet</li>
-                    <li class="list-group-item" style="margin-bottom: 20px;">Lorem ipsum dolor sit amet</li>
-                    <li class="list-group-item" style="margin-bottom: 20px;">Lorem ipsum dolor sit amet</li>
-                    <li class="list-group-item" style="margin-bottom: 20px;">Lorem ipsum dolor sit amet</li>
-                    <li class="list-group-item" style="margin-bottom: 20px;">Lorem ipsum dolor sit amet</li>
-                </ul>
-            </div>
-            <div class="col-4">
-                <h3 style="margin-bottom: 40px;">Other Recipe</h3>
-                <div class="row" style="margin-bottom: 40px;">
-                    <div class="col-6">
-                        <img class="img-fluid rounded"
-                            src="https://www.lemonblossoms.com/wp-content/uploads/2020/08/Cajun-Chicken-Meatballs-in-Creamy-Sauce-S5.jpg"
-                            alt="">
-                    </div>
-                    <div class="col-6" style="align-self: center;">
-                        <h4>Chicken Meatball with Cream Cheese</h4>
-                        By Andreas Paula
-                    </div>
-                </div>
-                <div class="row" style="margin-bottom: 40px;">
-                    <div class="col-6">
-                        <img class="img-fluid rounded"
-                            src="https://www.lemonblossoms.com/wp-content/uploads/2020/08/Cajun-Chicken-Meatballs-in-Creamy-Sauce-S5.jpg"
-                            alt="">
-                    </div>
-                    <div class="col-6" style="align-self: center;">
-                        <h4>Chicken Meatball with Cream Cheese</h4>
-                        By Andreas Paula
-                    </div>
-                </div>
-                <div class="row" style="margin-bottom: 40px;">
-                    <div class="col-6">
-                        <img class="img-fluid rounded"
-                            src="https://www.lemonblossoms.com/wp-content/uploads/2020/08/Cajun-Chicken-Meatballs-in-Creamy-Sauce-S5.jpg"
-                            alt="">
-                    </div>
-                    <div class="col-6" style="align-self: center;">
-                        <h4>Chicken Meatball with Cream Cheese</h4>
-                        By Andreas Paula
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -206,272 +113,21 @@
     <!-- Directions -->
     <div class="container" style="margin-bottom: 120px;">
         <div class="row">
-            <div class="col-8" style="border-bottom: rgba(0, 0, 0, 0.15) solid 1px; margin-bottom: 40px;">
+            <div class="col-12" style="border-bottom: rgba(0, 0, 0, 0.15) solid 1px; margin-bottom: 40px;">
                 <h3 style="margin-bottom: 40px;">Directions</h3>
-                <h5 style="margin-bottom: 20px;">1. Lorem ipsum dolor sit amet</h5>
-                Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni
-                dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia
-                dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore
-                et dolore magnam aliquam quaerat voluptatem.<br></br>
-                <img src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVvcGxlJTIwY29va2luZ3xlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80"
-                    alt="" class="img-fluid">
+                @Html.Raw(Model.Description)
                 <br></br>
-                <div style="margin-bottom: 40px;">Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut
-                    fugit, sed quia consequuntur
-                    magni
-                    dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia
-                    dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut
-                    labore
-                    et dolore magnam aliquam quaerat voluptatem.
-                </div>
-            </div>
-            <div class="col-8" style="border-bottom: rgba(0, 0, 0, 0.15) solid 1px; margin-bottom: 40px;">
-                <h5 style="margin-bottom: 20px;">2. Lorem ipsum dolor sit amet</h5>
-                <div style="margin-bottom: 40px;">Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut
-                    fugit, sed quia consequuntur
-                    magni
-                    dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia
-                    dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut
-                    labore
-                    et dolore magnam aliquam quaerat voluptatem.
-                </div>
-            </div>
-            <div class="col-8" style="border-bottom: rgba(0, 0, 0, 0.15) solid 1px; margin-bottom: 40px;">
-                <h5 style="margin-bottom: 20px;">3. Lorem ipsum dolor sit amet</h5>
-                <div style="margin-bottom: 40px;">Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut
-                    fugit, sed quia consequuntur
-                    magni
-                    dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia
-                    dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut
-                    labore
-                    et dolore magnam aliquam quaerat voluptatem.
-                </div>
             </div>
         </div>
     </div>
 
     <!-- You may like these recipe too -->
     <div class="container">
-        <h3 style="margin-bottom: 80px; text-align: center;">You may like these recipe too</h3>
+        <h3 style="margin-bottom: 80px; text-align: center;">You may like these recipes too</h3>
         <div class="row">
             <div class="col-3">
-                <figure class="figure">
-                    <img src="https://images.unsplash.com/photo-1680593180878-e0cd1e99486e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDg0fHhqUFI0aGxrQkdBfHxlbnwwfHx8fHw%3D&auto=format&fit=crop&w=500&q=60"
-                        class="figure-img img-fluid rounded" alt="">
-                    <h5 class="js-name-b2">Mixed Tropical Fruit Salad with Superfood Boosts</h5>
-                    <figcaption class="figure-caption">
-                        <div class="row text-center">
-                            <div class="col-4">30 Minutes</div>
-                            <div class="col-4">
-                                <div class="row">
-                                    <div class="col-4" style="padding: 0;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
-                                            style="max-width: 16px;">
-                                            <path
-                                                d="M416 0C400 0 288 32 288 176V288c0 35.3 28.7 64 64 64h32V480c0 17.7 14.3 32 32 32s32-14.3 32-32V352 240 32c0-17.7-14.3-32-32-32zM64 16C64 7.8 57.9 1 49.7 .1S34.2 4.6 32.4 12.5L2.1 148.8C.7 155.1 0 161.5 0 167.9c0 45.9 35.1 83.6 80 87.7V480c0 17.7 14.3 32 32 32s32-14.3 32-32V255.6c44.9-4.1 80-41.8 80-87.7c0-6.4-.7-12.8-2.1-19.1L191.6 12.5c-1.8-8-9.3-13.3-17.4-12.4S160 7.8 160 16V150.2c0 5.4-4.4 9.8-9.8 9.8c-5.1 0-9.3-3.9-9.8-9L127.9 14.6C127.2 6.3 120.3 0 112 0s-15.2 6.3-15.9 14.6L83.7 151c-.5 5.1-4.7 9-9.8 9c-5.4 0-9.8-4.4-9.8-9.8V16zm48.3 152l-.3 0-.3 0 .3-.7 .3 .7z" />
-                                        </svg>
-                                    </div>
-                                    <div class="col-8" style="text-align: left; padding: 0;">
-                                        Healthy
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-4" style="align-self: center;">
-                                <a href="#" class="like-button">
-                                    <?xml version="1.0" encoding="utf-8"?>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        class="bi bi-heart-fill" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd"
-                                            d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </figcaption>
-                </figure>
-            </div>
-            <div class="col-3">
-                <figure class="figure">
-                    <img src="https://images.unsplash.com/photo-1680593180878-e0cd1e99486e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDg0fHhqUFI0aGxrQkdBfHxlbnwwfHx8fHw%3D&auto=format&fit=crop&w=500&q=60"
-                        class="figure-img img-fluid rounded" alt="">
-                    <h5 class="js-name-b2">Mixed Tropical Fruit Salad with Superfood Boosts</h5>
-                    <figcaption class="figure-caption">
-                        <div class="row text-center">
-                            <div class="col-4">30 Minutes</div>
-                            <div class="col-4">
-                                <div class="row">
-                                    <div class="col-4" style="padding: 0;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
-                                            style="max-width: 16px;">
-                                            <path
-                                                d="M416 0C400 0 288 32 288 176V288c0 35.3 28.7 64 64 64h32V480c0 17.7 14.3 32 32 32s32-14.3 32-32V352 240 32c0-17.7-14.3-32-32-32zM64 16C64 7.8 57.9 1 49.7 .1S34.2 4.6 32.4 12.5L2.1 148.8C.7 155.1 0 161.5 0 167.9c0 45.9 35.1 83.6 80 87.7V480c0 17.7 14.3 32 32 32s32-14.3 32-32V255.6c44.9-4.1 80-41.8 80-87.7c0-6.4-.7-12.8-2.1-19.1L191.6 12.5c-1.8-8-9.3-13.3-17.4-12.4S160 7.8 160 16V150.2c0 5.4-4.4 9.8-9.8 9.8c-5.1 0-9.3-3.9-9.8-9L127.9 14.6C127.2 6.3 120.3 0 112 0s-15.2 6.3-15.9 14.6L83.7 151c-.5 5.1-4.7 9-9.8 9c-5.4 0-9.8-4.4-9.8-9.8V16zm48.3 152l-.3 0-.3 0 .3-.7 .3 .7z" />
-                                        </svg>
-                                    </div>
-                                    <div class="col-8" style="text-align: left; padding: 0;">
-                                        Healthy
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-4" style="align-self: center;">
-                                <a href="#" class="like-button2">
-                                    <?xml version="1.0" encoding="utf-8"?>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        class="bi bi-heart-fill" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd"
-                                            d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </figcaption>
-                </figure>
-            </div>
-            <div class="col-3">
-                <figure class="figure">
-                    <img src="https://images.unsplash.com/photo-1680593180878-e0cd1e99486e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDg0fHhqUFI0aGxrQkdBfHxlbnwwfHx8fHw%3D&auto=format&fit=crop&w=500&q=60"
-                        class="figure-img img-fluid rounded" alt="">
-                    <h5 class="js-name-b2">Mixed Tropical Fruit Salad with Superfood Boosts</h5>
-                    <figcaption class="figure-caption">
-                        <div class="row text-center">
-                            <div class="col-4">30 Minutes</div>
-                            <div class="col-4">
-                                <div class="row">
-                                    <div class="col-4" style="padding: 0;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
-                                            style="max-width: 16px;">
-                                            <path
-                                                d="M416 0C400 0 288 32 288 176V288c0 35.3 28.7 64 64 64h32V480c0 17.7 14.3 32 32 32s32-14.3 32-32V352 240 32c0-17.7-14.3-32-32-32zM64 16C64 7.8 57.9 1 49.7 .1S34.2 4.6 32.4 12.5L2.1 148.8C.7 155.1 0 161.5 0 167.9c0 45.9 35.1 83.6 80 87.7V480c0 17.7 14.3 32 32 32s32-14.3 32-32V255.6c44.9-4.1 80-41.8 80-87.7c0-6.4-.7-12.8-2.1-19.1L191.6 12.5c-1.8-8-9.3-13.3-17.4-12.4S160 7.8 160 16V150.2c0 5.4-4.4 9.8-9.8 9.8c-5.1 0-9.3-3.9-9.8-9L127.9 14.6C127.2 6.3 120.3 0 112 0s-15.2 6.3-15.9 14.6L83.7 151c-.5 5.1-4.7 9-9.8 9c-5.4 0-9.8-4.4-9.8-9.8V16zm48.3 152l-.3 0-.3 0 .3-.7 .3 .7z" />
-                                        </svg>
-                                    </div>
-                                    <div class="col-8" style="text-align: left; padding: 0;">
-                                        Healthy
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-4" style="align-self: center;">
-                                <a href="#" class="like-button3">
-                                    <?xml version="1.0" encoding="utf-8"?>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        class="bi bi-heart-fill" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd"
-                                            d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </figcaption>
-                </figure>
-            </div>
-            <div class="col-3">
-                <figure class="figure">
-                    <img src="https://images.unsplash.com/photo-1680593180878-e0cd1e99486e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDg0fHhqUFI0aGxrQkdBfHxlbnwwfHx8fHw%3D&auto=format&fit=crop&w=500&q=60"
-                        class="figure-img img-fluid rounded" alt="">
-                    <h5 class="js-name-b2">Mixed Tropical Fruit Salad with Superfood Boosts</h5>
-                    <figcaption class="figure-caption">
-                        <div class="row text-center">
-                            <div class="col-4">30 Minutes</div>
-                            <div class="col-4">
-                                <div class="row">
-                                    <div class="col-4" style="padding: 0;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
-                                            style="max-width: 16px;">
-                                            <path
-                                                d="M416 0C400 0 288 32 288 176V288c0 35.3 28.7 64 64 64h32V480c0 17.7 14.3 32 32 32s32-14.3 32-32V352 240 32c0-17.7-14.3-32-32-32zM64 16C64 7.8 57.9 1 49.7 .1S34.2 4.6 32.4 12.5L2.1 148.8C.7 155.1 0 161.5 0 167.9c0 45.9 35.1 83.6 80 87.7V480c0 17.7 14.3 32 32 32s32-14.3 32-32V255.6c44.9-4.1 80-41.8 80-87.7c0-6.4-.7-12.8-2.1-19.1L191.6 12.5c-1.8-8-9.3-13.3-17.4-12.4S160 7.8 160 16V150.2c0 5.4-4.4 9.8-9.8 9.8c-5.1 0-9.3-3.9-9.8-9L127.9 14.6C127.2 6.3 120.3 0 112 0s-15.2 6.3-15.9 14.6L83.7 151c-.5 5.1-4.7 9-9.8 9c-5.4 0-9.8-4.4-9.8-9.8V16zm48.3 152l-.3 0-.3 0 .3-.7 .3 .7z" />
-                                        </svg>
-                                    </div>
-                                    <div class="col-8" style="text-align: left; padding: 0;">
-                                        Healthy
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-4" style="align-self: center;">
-                                <a href="#" class="like-button4">
-                                    <?xml version="1.0" encoding="utf-8"?>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        class="bi bi-heart-fill" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd"
-                                            d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </figcaption>
-                </figure>
+                
             </div>
         </div>
     </div>
 
-    <script>
-        let button = document.querySelector(".like-button");
-        let button2 = document.querySelector(".like-button2");
-        let button3 = document.querySelector(".like-button3");
-        let button4 = document.querySelector(".like-button4");
-
-        button.addEventListener("click", function (e) {
-            e.preventDefault();
-            this.classList.toggle("active");
-            this.classList.add("animated");
-            generateClones(this);
-        });
-
-        button2.addEventListener("click", function (e) {
-            e.preventDefault();
-            this.classList.toggle("active");
-            this.classList.add("animated");
-            generateClones(this);
-        });
-
-        button3.addEventListener("click", function (e) {
-            e.preventDefault();
-            this.classList.toggle("active");
-            this.classList.add("animated");
-            generateClones(this);
-        });
-
-        button4.addEventListener("click", function (e) {
-            e.preventDefault();
-            this.classList.toggle("active");
-            this.classList.add("animated");
-            generateClones(this);
-        });
-
-        function generateClones(button) {
-            let clones = randomInt(2, 4);
-            for (let it = 1; it <= clones; it++) {
-                let clone = button.querySelector("svg").cloneNode(true),
-                    size = randomInt(5, 16);
-                button.appendChild(clone);
-                clone.setAttribute("width", size);
-                clone.setAttribute("height", size);
-                clone.style.position = "absolute";
-                clone.style.transition =
-                    "transform 0.5s cubic-bezier(0.12, 0.74, 0.58, 0.99) 0.3s, opacity 1s ease-out .5s";
-                let animTimeout = setTimeout(function () {
-                    clearTimeout(animTimeout);
-                    clone.style.transform =
-                        "translate3d(" +
-                        (plusOrMinus() * randomInt(10, 25)) +
-                        "px," +
-                        (plusOrMinus() * randomInt(10, 25)) +
-                        "px,0)";
-                    clone.style.opacity = 0;
-                }, 1);
-                let removeNodeTimeout = setTimeout(function () {
-                    clone.parentNode.removeChild(clone);
-                    clearTimeout(removeNodeTimeout);
-                }, 900);
-                let removeClassTimeout = setTimeout(function () {
-                    button.classList.remove("animated")
-                }, 600);
-            }
-        }
-
-
-        function plusOrMinus() {
-            return Math.random() < 0.5 ? -1 : 1;
-        }
-
-        function randomInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1) + min);
-        }
-    </script>

@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CapstoneProject.Models;
 
-public partial class Account : IdentityUser
-{
+public partial class Account : IdentityUser {
     public string? ImgPath { get; set; }
 
     public bool? Status { get; set; }
@@ -16,10 +15,7 @@ public partial class Account : IdentityUser
 
     public DateTime CreatedDate { get; set; }
 
-    [ForeignKey("Favourite")]
-    public int FavouriteId { get; set; }
-
-    public virtual Favourite Favourites { get; set; }
+    public virtual ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();
 
     public virtual ICollection<MealPlan> MealPlans { get; set; } = new List<MealPlan>();
 

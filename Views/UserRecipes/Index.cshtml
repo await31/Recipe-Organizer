@@ -156,7 +156,7 @@
                                     <img src="@recipe.ImgPath" class="img-fluid card-img-top" alt="Food" style="height: 100%">
                                 </div>
                                 <div class="mt-2" style="height: 40%;">
-                                    <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@recipe.Id" class="text-decoration-none h-100">
+                                    <a asp-controller="Home" asp-action="RecipeDetail" asp-route-id="@recipe.Id" class="text-decoration-none h-100">
                                         <div class="card-body pb-4 pt-3">
                                             <h4 class="card-title text-dark text-decoration-none text-center" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@recipe.Name</h4>
                                             <div class="d-flex row mt-4 ms-4 mb-3">
@@ -175,7 +175,7 @@
                                     </a>
                                 </div>
                             </div>
-                        }
+                        } @*End of foreach*@
                            <partial name="_Pager" model="@pager"/>
                     </div>
                 }
