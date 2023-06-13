@@ -112,6 +112,7 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
             }
             
             await _userManager.UpdateAsync(user);
+            TempData["success"] = "Profile information updated successfully";
             await _signInManager.RefreshSignInAsync(user);
             return RedirectToPage();
         }

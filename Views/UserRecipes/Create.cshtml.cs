@@ -11,9 +11,9 @@ namespace CapstoneProject.Views.UserRecipes
 {
     public class CreateModel : PageModel
     {
-        private readonly CapstoneProject.Models.RecipeOrganizerContext _context;
+        private readonly RecipeOrganizerContext _context;
 
-        public CreateModel(CapstoneProject.Models.RecipeOrganizerContext context)
+        public CreateModel(RecipeOrganizerContext context)
         {
             _context = context;
         }

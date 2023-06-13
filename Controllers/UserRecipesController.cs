@@ -291,6 +291,7 @@ namespace CapstoneProject.Controllers {
                         string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
                         recipe.ImgPath = baseUrl;
                         recipe.Status = false;
+                        recipe.ViewCount = 0;
                         recipe.CreatedDate = DateTime.Now;
                         recipe.FkUserId = await _userManager.GetUserIdAsync(currentUser);
                         // Save ingredient, recipe to IngredientRecipe
