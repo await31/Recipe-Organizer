@@ -62,8 +62,13 @@ namespace CapstoneProject.Controllers {
         }
 
         [Breadcrumb("Recipe Detail", FromAction = "Index", FromController = typeof(HomeController))]
-        public IActionResult RecipeDetail() {
-            return View();
+        public IActionResult RecipeDetail(int? id) {
+            var recipe = _context.Recipes
+                .Include(x => x.FkUser)
+                .Include(y => y.FkRecipeCategory)
+                .Include(z => z.Ingredients)
+                .FirstOrDefault(a=> a.Id == id);
+            return View(recipe);
         }
 
         [Breadcrumb("View Ingredients", FromAction = "Index", FromController = typeof(HomeController))]
