@@ -298,25 +298,29 @@ namespace CapstoneProject.Controllers {
                         // Save ingredient IDs to recipe
                         if (IngredientIds != null && IngredientIds.Length > 0) {
                             var ingredients = _context.Ingredients.Where(i => IngredientIds.Contains(i.Id)).ToList();
-                            recipe.Ingredients.AddRange(ingredients);
+                             recipe.Ingredients.AddRange(ingredients);
                         }
-                        /*var recipeTempId = recipe.Id;
-                        var ingredientTempId = ingredientId;
-                        var ingredient = _context.Ingredients.Find(ingredientTempId);
-                        recipe.Ingredients.Add(ingredient);*/
-
                     } else {
                         recipe.ImgPath = "untitle.jpg";
                     }
                     _context.Recipes.Add(recipe);
                     await _context.SaveChangesAsync();
+                    if (IngredientIds != null && IngredientIds.Length > 0) {
+                        var recipeIngredients = IngredientIds.Select(ingredientId => new RecipeIngredient {
+                            IngredientId = ingredientId,
+                            RecipeId = recipe.Id,
+                            Quantity = 0,        // so luong don vi
+                            UnitOfMeasure = null // 3 don vi, gam, ml, tablespoon
+                        }).ToList();
+
+                        _context.RecipeIngredient.AddRange(recipeIngredients);
+                        await _context.SaveChangesAsync();
+                    }
+                    return RedirectToAction(nameof(Index));
                 }
-
-                return RedirectToAction(nameof(Index));
-
+                ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id", recipe.FkRecipeId);
+                ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.FkRecipeCategoryId);
             }
-            ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id", recipe.FkRecipeId);
-            ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.FkRecipeCategoryId);
             return View(recipe);
         }
 

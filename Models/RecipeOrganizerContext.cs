@@ -29,6 +29,8 @@ public partial class RecipeOrganizerContext : IdentityDbContext<Account> {
 
     public virtual DbSet<RecipeFeedback> RecipeFeedbacks { get; set; }
 
+    public virtual DbSet<RecipeIngredient> RecipeIngredient { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
         // Create a configuration object
         var configuration = new ConfigurationBuilder()

@@ -22,8 +22,6 @@ public partial class Recipe {
 
     public int? FkRecipeId { get; set; }
 
-    public string? Nutrition { get; set; }
-
     public int? PrepTime { get; set; }
 
     public int? Difficult { get; set; }
@@ -33,6 +31,8 @@ public partial class Recipe {
     public Boolean? Status { get; set; }
 
     public DateTime? CreatedDate { get; set; }
+
+    public virtual Nutrition? Nutrition { get; set; }
 
     public virtual Recipe? FkRecipe { get; set; }
 
@@ -49,4 +49,44 @@ public partial class Recipe {
     public virtual ICollection<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
 
     public virtual ICollection<MealPlan> Mealplans { get; set; } = new List<MealPlan>();
+
+    public virtual ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
 }
+
+
+public partial class Nutrition {
+    [ForeignKey("Recipe")]
+    public int Id { get; set; }
+
+    public int? Calories { get; set; }
+
+    public int? Fat { get; set; }
+
+    public int? Protein { get; set; }
+
+    public int? Carbohydrate { get; set; }
+
+    public int? Cholesterol { get; set; }
+
+    public virtual Recipe? Recipe { get; set; }
+}
+
+public partial class RecipeIngredient {
+
+    [Key]
+    public int Id { get; set; }
+
+    public int? IngredientId { get; set; }
+
+    public int? RecipeId { get; set; }
+
+    public int? Quantity { get; set; }
+
+    public string? UnitOfMeasure { get; set; }
+
+    public virtual Ingredient? Ingredient { get; set; }
+
+    public virtual Recipe? Recipe { get; set; }
+}
+
+
