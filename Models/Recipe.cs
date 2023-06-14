@@ -74,13 +74,14 @@ public partial class Nutrition {
 public partial class RecipeIngredient {
 
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
     public int? IngredientId { get; set; }
 
     public int? RecipeId { get; set; }
 
-    public int? Quantity { get; set; }
+    public double? Quantity { get; set; }
 
     public string? UnitOfMeasure { get; set; }
 

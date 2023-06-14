@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CapstoneProject.Migrations
 {
     [DbContext(typeof(RecipeOrganizerContext))]
-    [Migration("20230613133309_InitDB2")]
-    partial class InitDB2
+    [Migration("20230614042808_InitDB")]
+    partial class InitDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -330,8 +330,8 @@ namespace CapstoneProject.Migrations
                     b.Property<int?>("IngredientId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("int");
+                    b.Property<double?>("Quantity")
+                        .HasColumnType("float");
 
                     b.Property<int?>("RecipeId")
                         .HasColumnType("int");

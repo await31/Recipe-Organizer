@@ -327,8 +327,8 @@ namespace CapstoneProject.Migrations
                     b.Property<int?>("IngredientId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("int");
+                    b.Property<double?>("Quantity")
+                        .HasColumnType("float");
 
                     b.Property<int?>("RecipeId")
                         .HasColumnType("int");

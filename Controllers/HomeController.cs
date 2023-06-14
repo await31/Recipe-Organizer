@@ -67,6 +67,8 @@ namespace CapstoneProject.Controllers {
                 .Include(x => x.FkUser)
                 .Include(y => y.FkRecipeCategory)
                 .Include(z => z.Ingredients)
+                .Include(t => t.Nutrition)
+                .Include(a => a.RecipeIngredients)
                 .FirstOrDefault(a=> a.Id == id);
             recipe.ViewCount++;
             _context.SaveChanges();

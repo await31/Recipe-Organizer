@@ -262,7 +262,6 @@ namespace CapstoneProject.Migrations
                     ViewCount = table.Column<int>(type: "int", nullable: true),
                     FkRecipeCategoryId = table.Column<int>(type: "int", nullable: true),
                     FkRecipeId = table.Column<int>(type: "int", nullable: true),
-                    Nutrition = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PrepTime = table.Column<int>(type: "int", nullable: true),
                     Difficult = table.Column<int>(type: "int", nullable: true),
                     FkUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
@@ -362,6 +361,28 @@ namespace CapstoneProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Nutrition",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Calories = table.Column<int>(type: "int", nullable: true),
+                    Fat = table.Column<int>(type: "int", nullable: true),
+                    Protein = table.Column<int>(type: "int", nullable: true),
+                    Carbohydrate = table.Column<int>(type: "int", nullable: true),
+                    Cholesterol = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Nutrition", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Nutrition_Recipes_Id",
+                        column: x => x.Id,
+                        principalTable: "Recipes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RecipeFeedbacks",
                 columns: table => new
                 {
@@ -383,6 +404,32 @@ namespace CapstoneProject.Migrations
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_RecipeFeedbacks_Recipes_RecipeId",
+                        column: x => x.RecipeId,
+                        principalTable: "Recipes",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RecipeIngredient",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IngredientId = table.Column<int>(type: "int", nullable: true),
+                    RecipeId = table.Column<int>(type: "int", nullable: true),
+                    Quantity = table.Column<double>(type: "float", nullable: true),
+                    UnitOfMeasure = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecipeIngredient", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RecipeIngredient_Ingredients_IngredientId",
+                        column: x => x.IngredientId,
+                        principalTable: "Ingredients",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_RecipeIngredient_Recipes_RecipeId",
                         column: x => x.RecipeId,
                         principalTable: "Recipes",
                         principalColumn: "Id");
@@ -468,6 +515,16 @@ namespace CapstoneProject.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RecipeIngredient_IngredientId",
+                table: "RecipeIngredient",
+                column: "IngredientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RecipeIngredient_RecipeId",
+                table: "RecipeIngredient",
+                column: "RecipeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Recipes_FkRecipeCategoryId",
                 table: "Recipes",
                 column: "FkRecipeCategoryId");
@@ -511,7 +568,13 @@ namespace CapstoneProject.Migrations
                 name: "MealPlanRecipe");
 
             migrationBuilder.DropTable(
+                name: "Nutrition");
+
+            migrationBuilder.DropTable(
                 name: "RecipeFeedbacks");
+
+            migrationBuilder.DropTable(
+                name: "RecipeIngredient");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -520,10 +583,10 @@ namespace CapstoneProject.Migrations
                 name: "Favourites");
 
             migrationBuilder.DropTable(
-                name: "Ingredients");
+                name: "MealPlans");
 
             migrationBuilder.DropTable(
-                name: "MealPlans");
+                name: "Ingredients");
 
             migrationBuilder.DropTable(
                 name: "Recipes");

@@ -134,22 +134,25 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
 
                 //var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
 
-                var user = new CapstoneProject.Models.Account { UserName = Input.Username, Email = Input.Email };
                 IFormFile file = Input.File;
                 string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
                 string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
                 Uri imageUrlUri = new Uri(imageUrl);
                 string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
+                
+                var user = new Models.Account {
+                    UserName = Input.Username,
+                    Email = Input.Email,
+                    ImgPath = baseUrl,
+                    Status = true,
+                    CreatedDate = DateTime.UtcNow
+                };
                 var up = new Favourite() {
                     Name = "Favourite",
                     Account = user,
                 };
                 _context.Favourites.Add(up);
-                await _context.SaveChangesAsync();
-                user.Favourites.Add(up); //Add userId
-                user.Status = true;
-                user.ImgPath = baseUrl;
-                user.CreatedDate = DateTime.UtcNow;
+
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded) {
                     result = await _userManager.AddLoginAsync(user, info);

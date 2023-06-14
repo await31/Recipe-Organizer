@@ -27,19 +27,55 @@
                 <textarea asp-for="Description" class="form-control ckeditor"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-
+            <div class="form-group">
+                <label asp-for="Nutrition.Calories" class="control-label">Calories (Optional)</label>
+                <input asp-for="Nutrition.Calories" class="form-control" />
+                <span asp-validation-for="Nutrition" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Nutrition.Fat" class="control-label">Fat (Optional)</label>
+                <input asp-for="Nutrition.Fat" class="form-control" />
+                <span asp-validation-for="Nutrition" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Nutrition.Protein" class="control-label">Protein (Optional)</label>
+                <input asp-for="Nutrition.Protein" class="form-control"/>
+                <span asp-validation-for="Nutrition" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Nutrition.Carbohydrate" class="control-label">Carbohydrate (Optional)</label>
+                <input asp-for="Nutrition.Carbohydrate" class="form-control"/>
+                <span asp-validation-for="Nutrition" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Nutrition.Cholesterol" class="control-label">Cholesterol (Optional)</label>
+                <input asp-for="Nutrition.Cholesterol" class="form-control" />
+                <span asp-validation-for="Nutrition" class="text-danger"></span>
+            </div>
             <!-- Ingredient -->
             <div id="ingredient-container">
                 <!-- Initial ingredient select element -->
-                <div class="form-group">
-                    <label for="IngredientId">Ingredient:</label>
-                    <select class="form-control" id="IngredientId" name="IngredientIds[]">
-                        <option value="">Select Ingredient</option>
-                        @foreach (var item in (SelectList)ViewData["Ingredients"])
-                        {
-                            <option value="@item.Value">@item.Text</option>
-                        }
-                    </select>
+                <div class="form-group row">
+                    <div class="col-md-4">
+                        <label for="IngredientId">Ingredient:</label>
+                        <select class="form-control" id="IngredientId" name="IngredientIds[]">
+                            <option value="">Select Ingredient</option>
+                            @foreach (var item in (SelectList)ViewData["Ingredients"]) {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="Quantity">Quantity:</label>
+                        <input type="number" class="form-control" id="Quantity" name="Quantities[]" step="any" />
+                    </div>
+                    <div class="col-md-5">
+                        <label for="UnitOfMeasure">Unit of Measure:</label>
+                        <select class="form-control" id="UnitOfMeasure" name="UnitOfMeasures[]">
+                            <option value="milliliters">milliliters (ml)</option>
+                            <option value="grams">grams (g)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -52,10 +88,13 @@
 
                     var newFormGroup = originalFormGroup.cloneNode(true);
                     var newSelect = newFormGroup.querySelector('select');
+                    var newQuantityInput = newFormGroup.querySelector('input[type="number"]');
+                    var newUnitOfMeasureSelect = newFormGroup.querySelector('select[name="UnitOfMeasures[]"]');
 
                     // Clear the selected option in the new select element
                     newSelect.value = '';
-
+                    newQuantityInput.value = '';
+                    newUnitOfMeasureSelect.value = '';
                     // Add the new form group to the container
                     container.appendChild(newFormGroup);
                 }
@@ -67,6 +106,8 @@
 
                     // Get all the select elements within the container
                     var selectElements = document.querySelectorAll('#ingredient-container select');
+                    var quantityInputs = document.querySelectorAll('#ingredient-container input[type="number"]');
+                    var unitOfMeasureSelects = document.querySelectorAll('#ingredient-container select[name="UnitOfMeasures[]"]');
 
                     // Create a hidden input for each ingredient ID
                     var hiddenInputsContainer = document.getElementById('hidden-inputs-container');
@@ -75,12 +116,27 @@
                     // Iterate over the select elements and create hidden inputs for each selected ID
                     selectElements.forEach(function (select) {
                         var selectedId = select.value;
-                        if (selectedId !== '') {
-                            var hiddenInput = document.createElement('input');
-                            hiddenInput.type = 'hidden';
-                            hiddenInput.name = 'IngredientIds[]';
-                            hiddenInput.value = selectedId;
-                            hiddenInputsContainer.appendChild(hiddenInput);
+                        var quantity = quantityInputs[index].value;
+                        var unitOfMeasure = unitOfMeasureSelects[index].value;
+
+                        if (selectedId !== '' && quantity !== '' && unitOfMeasure !== '') {
+                            var hiddenInputId = document.createElement('input');
+                            hiddenInputId.type = 'hidden';
+                            hiddenInputId.name = 'IngredientIds[]';
+                            hiddenInputId.value = selectedId;
+                            hiddenInputsContainer.appendChild(hiddenInputId);
+
+                            var hiddenInputQuantity = document.createElement('input');
+                            hiddenInputQuantity.type = 'hidden';
+                            hiddenInputQuantity.name = 'Quantities[]';
+                            hiddenInputQuantity.value = quantity;
+                            hiddenInputsContainer.appendChild(hiddenInputQuantity);
+
+                            var hiddenInputUnitOfMeasure = document.createElement('input');
+                            hiddenInputUnitOfMeasure.type = 'hidden';
+                            hiddenInputUnitOfMeasure.name = 'UnitOfMeasures[]';
+                            hiddenInputUnitOfMeasure.value = unitOfMeasure;
+                            hiddenInputsContainer.appendChild(hiddenInputUnitOfMeasure);
                         }
                     });
 
@@ -100,11 +156,6 @@
             <label asp-for="FkRecipeId" class="control-label"></label>
             <select asp-for="FkRecipeId" class="form-control" asp-items="ViewBag.FkRecipeId"></select>
             </div>*@
-            <div class="form-group">
-                <label asp-for="Nutrition" class="control-label">Calories</label>
-                <input asp-for="Nutrition" class="form-control" />
-                <span asp-validation-for="Nutrition" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="PrepTime" class="control-label">Preparation time</label>
                 <select asp-for="PrepTime" class="form-control">

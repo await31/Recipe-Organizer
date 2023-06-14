@@ -88,8 +88,24 @@
                 <h5 class="text-start" style="margin-top: 40px;">Nutrition Information</h5>
                 <div class="nutrition row justify-content-between">
                     <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Calories</div>
-                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition kcal</div>
+                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Calories kcal</div>
                 </div>
+            <div class="nutrition row justify-content-between">
+                <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Fat</div>
+                <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Fat gam</div>
+            </div>
+            <div class="nutrition row justify-content-between">
+                    <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Protein</div>
+                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Protein gam</div>
+                </div>
+            <div class="nutrition row justify-content-between">
+                <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Carbohydrate</div>
+                <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Carbohydrate gam</div>
+            </div>
+            <div class="nutrition row justify-content-between">
+                <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Cholesterol</div>
+                <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Cholesterol gam</div>
+            </div>
         </div>
     </div>
     <hr/>   
@@ -101,8 +117,8 @@
                 <h3 style="margin-bottom: 40px;">Ingredients</h3>
                 <h5 style="margin-bottom: 20px;">For main dish</h5>
                 <ul class="list-group list-group-flush">
-                    @foreach(var item in (List<Ingredient>)Model.Ingredients) {
-                        <li class="list-group-item" style="margin-bottom: 20px;">@item.Name</li>
+                    @foreach(var item in Model.RecipeIngredients) {
+                        <li class="list-group-item" style="margin-bottom: 20px;">@item.Quantity @item.UnitOfMeasure @item.Ingredient?.Name</li>
                     }
                 </ul>
             </div>

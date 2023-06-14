@@ -277,7 +277,7 @@ namespace CapstoneProject.Controllers {
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Recipe recipe, int[] IngredientIds) {
+        public async Task<IActionResult> Create(Recipe recipe, int[] IngredientIds, double[] Quantities, string[] UnitOfMeasures) {
             if (ModelState.IsValid) {
                 if (recipe.file != null && recipe.file.Length > 0) {
                     IFormFile file = recipe.file;
@@ -298,29 +298,36 @@ namespace CapstoneProject.Controllers {
                         // Save ingredient IDs to recipe
                         if (IngredientIds != null && IngredientIds.Length > 0) {
                             var ingredients = _context.Ingredients.Where(i => IngredientIds.Contains(i.Id)).ToList();
-                             recipe.Ingredients.AddRange(ingredients);
+                            recipe.Ingredients.AddRange(ingredients);
+                            _context.Recipes.Add(recipe);
+                            await _context.SaveChangesAsync();
+
+                            // Create recipe ingredients with quantities and unit of measure
+                            var recipeIngredients = new List<RecipeIngredient>();
+
+                            for (int i = 0; i < IngredientIds.Length; i++) {
+                                recipeIngredients.Add(new RecipeIngredient {
+                                    IngredientId = IngredientIds[i],
+                                    RecipeId = recipe.Id,
+                                    Quantity = Quantities[i],
+                                    UnitOfMeasure = UnitOfMeasures[i]
+                                });
+                            }
+                            _context.RecipeIngredient.AddRange(recipeIngredients);
                         }
                     } else {
                         recipe.ImgPath = "untitle.jpg";
                     }
-                    _context.Recipes.Add(recipe);
-                    await _context.SaveChangesAsync();
-                    if (IngredientIds != null && IngredientIds.Length > 0) {
-                        var recipeIngredients = IngredientIds.Select(ingredientId => new RecipeIngredient {
-                            IngredientId = ingredientId,
-                            RecipeId = recipe.Id,
-                            Quantity = 0,        // so luong don vi
-                            UnitOfMeasure = null // 3 don vi, gam, ml, tablespoon
-                        }).ToList();
 
-                        _context.RecipeIngredient.AddRange(recipeIngredients);
-                        await _context.SaveChangesAsync();
-                    }
+                    await _context.SaveChangesAsync();
+
                     return RedirectToAction(nameof(Index));
                 }
+
                 ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id", recipe.FkRecipeId);
                 ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.FkRecipeCategoryId);
             }
+
             return View(recipe);
         }
 
