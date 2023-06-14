@@ -52,7 +52,7 @@ namespace CapstoneProject.Controllers {
         }
 
         // GET: Recipes
-        [Breadcrumb("View Recipes")]
+        [Breadcrumb("Recipes")]
         public async Task<IActionResult> Index(int pg = 1) {
             const int pageSize = 6; // Number of recipes in 1 page
             if (pg < 1)
@@ -260,6 +260,7 @@ namespace CapstoneProject.Controllers {
         }
 
         // GET: Recipes/Create
+        [Breadcrumb("Create recipe")]
         public IActionResult Create() {
             ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id");
             ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name");

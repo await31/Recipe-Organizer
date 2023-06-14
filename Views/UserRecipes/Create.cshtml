@@ -5,7 +5,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="text-center mt-4 text-dark label-font">Create new Recipe</h2>
 
 <style>
     a:hover {
@@ -23,6 +22,7 @@
 
     <div class="col-8 rounded-3 bg-white border border-dark border-2" style="background-color: #e7f9fd;">
         <form asp-action="Create" enctype="multipart/form-data" class="p-5">
+            <h1 class="text-center mb-5 text-dark label-font">Information</h1>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label mb-2 label-font">Recipe Name</label>
@@ -68,7 +68,8 @@
                 </select>
             </div>
 
-            <div class="form-group mt-4">
+            <div class="form-group mt-5">
+                <p class="text-center text-dark fw-bolder fs-2 label-font">Nutrition &nbsp;Facts</p>
                 <div class="row">
                     <div class="col-md-4">
                         <label asp-for="Nutrition.Calories" class="control-label label-font">Calories (kcal)</label>
@@ -80,11 +81,11 @@
                         <input asp-for="Nutrition.Fat" class="form-control" min="1" max="10000" placeholder="Optional" />
                         <span asp-validation-for="Nutrition" class="text-danger"></span>
                     </div>
-                    <div class="col-md-4
-            <label asp-for="Nutrition.Protein" class="control-label label-font">Protein (g)</label>
-            <input asp-for="Nutrition.Protein" class="form-control" min="1" max="10000" placeholder="Optional"/>
-            <span asp-validation-for="Nutrition" class="text-danger"></span>
-        </div>
+                    <div class="col-md-4">
+                        <label asp-for="Nutrition.Protein" class="control-label label-font">Protein (g)</label>
+                        <input asp-for="Nutrition.Protein" class="form-control" min="1" max="10000" placeholder="Optional" />
+                        <span asp-validation-for="Nutrition" class="text-danger"></span>
+                    </div>
                 </div>
                 <div class="row mt-3">
                     <div class="col-md-6">
@@ -101,7 +102,7 @@
                 <!-- Ingredient -->
                 <div id="ingredient-container" class="mt-5">
                     <!-- Initial ingredient select element -->
-                    <p class="text-center text-warning fw-bolder fs-2" style="font-family: 'Font Awesome 6 Pro'">Ingredients &nbsp;List</p>
+                    <p class="text-center text-dark fw-bolder fs-2 label-font">Ingredients &nbsp;List</p>
                     <div class="form-group row mt-2">
                         <div class="col-md-4">
                             <label for="IngredientId" class="mb-2 label-font">Name</label>
@@ -153,12 +154,22 @@
 
                     function removeIngredient(button) {
                         var formGroup = button.closest('.form-group');
+                        var ingredientContainer = document.getElementById('ingredient-container');
+                        var ingredientCount = ingredientContainer.getElementsByClassName('form-group').length;
 
-                        if (formGroup.previousElementSibling === null) {
-                            return; // Skip removal for the first ingredient
+                        if (ingredientCount === 1) {
+                            // If there is only one ingredient, clear the input fields instead of removing the form group
+                            var select = formGroup.querySelector('select');
+                            var quantityInput = formGroup.querySelector('input[type="number"]');
+                            var unitOfMeasureSelect = formGroup.querySelector('select[name="UnitOfMeasures[]"]');
+
+                            select.value = '';
+                            quantityInput.value = '';
+                            unitOfMeasureSelect.value = '';
+                        } else {
+                            // If there are multiple ingredients, remove the form group
+                            formGroup.remove();
                         }
-
-                        formGroup.remove();
                     }
 
                     // Submit event handler
@@ -206,8 +217,8 @@
                         this.submit();
                     });
                 </script>
-                <div class="form-group mt-4">
-                    <label asp-for="Description" class="control-label mb-2 label-font">Recipe Instruction</label>
+                <div class="form-group mt-5">
+                    <p class="text-center text-dark fw-bolder fs-2 label-font">Recipe &nbsp;Instruction</p>
                     <textarea asp-for="Description" class="form-control ckeditor"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
