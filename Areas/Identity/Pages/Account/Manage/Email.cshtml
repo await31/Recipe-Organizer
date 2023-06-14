@@ -16,9 +16,8 @@
                 @if (Model.IsEmailConfirmed)
                 {
                     <div class="input-group">
-
                         <span class="input-group-text" id="basic-addon1"><i class="fa fa-lock"></i></span>
-                        <input asp-for="Email" class="form-control" disabled />
+                        <input asp-for="Email" class="form-control form-control-lg" disabled />
                         <span class="input-group-addon" aria-hidden="true"><span class="glyphicon glyphicon-ok text-success"></span></span>
                     </div>
                 }

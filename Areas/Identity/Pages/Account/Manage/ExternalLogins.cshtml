@@ -16,9 +16,15 @@
             {
                 <tr>
                     <td>
-                        <button style="background-color: #f5f5f5; width: 30px; height:30px;" id="@($"login-provider-{login.LoginProvider}")" class="btn btn-light rounded-2 shadow w-100 fw-bold img-fluid me-2" name="provider" value="@login.ProviderDisplayName" title="Log in using your @login.ProviderDisplayName account"><img src="/images/ggicon.png" /> Connect with Google </button>
+                        @if (login.ProviderDisplayName.Equals("Google"))
+                        {
+                            <div style="background-color: #f5f5f5" class="btn btn-light rounded-2 shadow w-50 fw-bold" name="provider" value="login.ProviderDisplayName"><img src="/images/ggicon.png" class="img-fluid me-2" style="width: 30px; height:30px;" /> Google </div>
+                        }
+                        @if (login.ProviderDisplayName.Equals("Facebook"))
+                        {
+                            <div style="background-color: #1877f2" class="btn text-light rounded-2 shadow w-50 fw-bold" name="provider" value="login.ProviderDisplayName"><img src="/images/fbicon.png" class="img-fluid me-2" style="width: 30px; height:30px;" /> Facebook  </div>
+                        }
                     </td>
-                    <td id="@($"login-provider-{login.LoginProvider}")">@login.ProviderDisplayName</td>
                     <td>
                         @if (Model.ShowRemoveButton)
                         {
@@ -26,7 +32,7 @@
                                 <div>
                                     <input asp-for="@login.LoginProvider" name="LoginProvider" type="hidden" />
                                     <input asp-for="@login.ProviderKey" name="ProviderKey" type="hidden" />
-                                    <button type="submit" class="btn btn-default" title="Remove this @login.LoginProvider login from your account">Remove</button>
+                                    <button type="submit" class="btn btn-danger flex-end rounded-2" title="Remove this @login.LoginProvider login from your account">Remove</button>
                                 </div>
                             </form>
                         }
