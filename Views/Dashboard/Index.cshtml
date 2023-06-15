@@ -269,9 +269,10 @@
                         <thead class="table-dark">
                             <tr>
                                 <th>Name</th>
-                                <th>User</th>
-                                <th>Detail</th>
-                                <th>Action</th>
+                                <th>Owner</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -285,12 +286,18 @@
                                             @item.FkUser
                                         </td>
                                         <td>
-                                            <a asp-controller="Recipes" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                                            <a asp-controller="Recipes" asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
                                         </td>
                                         <td>
                                             <form method="post" asp-controller="Recipes" asp-action="Approve">
                                                 <input type="hidden" name="id" value="@item.Id" />
-                                                <button type="submit" class="btn btn-link">Approve</button>
+                                                <button type="submit" class="btn btn-success">Approve</button>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <form method="post" asp-controller="Recipes" asp-action="Deny">
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <button type="submit" class="btn btn-danger">Deny</button>
                                             </form>
                                         </td>
                                     </tr>

@@ -19,6 +19,7 @@ namespace CapstoneProject.Controllers {
         [Breadcrumb("Dashboard")]
         public IActionResult Index() {
             IEnumerable<Recipe> objRecipe = _context.Recipes
+                .Include(a => a.FkUser)
                 .Where(b=>b.Status == false)
                 .ToList();
 

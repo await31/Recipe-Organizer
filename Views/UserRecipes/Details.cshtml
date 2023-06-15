@@ -1,78 +1,149 @@
 ﻿@model Recipe
 
 @{
-    ViewBag.Title = "Create recipe";
+    ViewData["Title"] = Model.Name;
 }
 
-<h2>Details</h2>
-
-<div>
-    <h4>Recipe</h4>
+<!-- Carousel -->
+<div class="container" style="margin-top: 40px;">
+    <h1 style="margin-bottom: 40px;" class="label-font">@Model.Name</h1>
+    <div class="container" style="margin-bottom: 40px;">
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="row">
+                    <div class="col-md"
+                         style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
+                        <div class="row">
+                            <div class="col-4" style="align-self: center;">
+                                <div>
+                                    <img class="img-fluid rounded-circle"
+                                         src="@Model.FkUser?.ImgPath" style="height: 60px; width: 60px;">
+                                </div>
+                            </div>
+                            <div class="col-8 ps-0">
+                                <div>
+                                    <h5 style="font-size: 1rem;">@Model.FkUser.UserName</h5>
+                                    @Model.CreatedDate
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md"
+                         style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
+                        <div class="row">
+                            <div class="col-2" style="align-self: center;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                     class="bi bi-clock-fill" viewBox="0 0 16 16">
+                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z" />
+                                </svg>
+                            </div>
+                            <div class="col-10">
+                                <h5 class="fs-6">PREPARATION TIME</h5>
+                                @if (Model.PrepTime <= 360) {
+                                    <p>@Model.PrepTime minutes</p>
+                                } else {
+                                    <p>@(Model.PrepTime / 60) hours</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md" style="align-self: center;">
+                        <div class="row">
+                            <div class="col-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                    <path d="M416 0C400 0 288 32 288 176V288c0 35.3 28.7 64 64 64h32V480c0 17.7 14.3 32 32 32s32-14.3 32-32V352 240 32c0-17.7-14.3-32-32-32zM64 16C64 7.8 57.9 1 49.7 .1S34.2 4.6 32.4 12.5L2.1 148.8C.7 155.1 0 161.5 0 167.9c0 45.9 35.1 83.6 80 87.7V480c0 17.7 14.3 32 32 32s32-14.3 32-32V255.6c44.9-4.1 80-41.8 80-87.7c0-6.4-.7-12.8-2.1-19.1L191.6 12.5c-1.8-8-9.3-13.3-17.4-12.4S160 7.8 160 16V150.2c0 5.4-4.4 9.8-9.8 9.8c-5.1 0-9.3-3.9-9.8-9L127.9 14.6C127.2 6.3 120.3 0 112 0s-15.2 6.3-15.9 14.6L83.7 151c-.5 5.1-4.7 9-9.8 9c-5.4 0-9.8-4.4-9.8-9.8V16zm48.3 152l-.3 0-.3 0 .3-.7 .3 .7z" />
+                                </svg>
+                            </div>
+                            <div class="col-10">
+                                @Model.FkRecipeCategory.Name
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4" style="align-self: center; padding-right: 0;">
+                <div class="row" style="float: right;">
+                    <div class="col-12">
+                        <button type="button" class="btn btn-sm" style="background: #E7FAFE; border-radius: 50%;">
+                            <svg style="width: 80%;" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                                 fill="currentColor" class="bi bi-share" viewBox="0 0 16 16">
+                                <path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="text-align: center;">
+        <div class="col-sm-8">
+            <img class="img-fluid" style="border-radius: 4ch; width: 100%; max-height: 800px;"
+                 src="@Model.ImgPath"
+                 class="img-fluid">
+        </div>
+        <div class="col-sm-4" style="background: #E7FAFE; border-radius: 4ch; padding: 0 40px 0 40px">
+            <h5 class="text-start label-font" style="margin-top: 40px;">Nutrition Information</h5>
+            <div class="nutrition row justify-content-between">
+                <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Calories</div>
+                <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Calories kcal</div>
+            </div>
+            <div class="nutrition row justify-content-between">
+                <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Fat</div>
+                <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Fat gam</div>
+            </div>
+            <div class="nutrition row justify-content-between">
+                <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Protein</div>
+                <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Protein gam</div>
+            </div>
+            <div class="nutrition row justify-content-between">
+                <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Carbohydrate</div>
+                <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Carbohydrate gam</div>
+            </div>
+            <div class="nutrition row justify-content-between">
+                <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Cholesterol</div>
+                <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Cholesterol gam</div>
+            </div>
+        </div>
+    </div>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.ImgPath)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ImgPath)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Nutrition)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Nutrition)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.PrepTime)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.PrepTime)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Difficult)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Difficult)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.FkUserId)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.FkUserId)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.FkRecipe)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.FkRecipe.Id)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.FkRecipeCategory)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.FkRecipeCategory.Name)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+    <hr />
+    <!-- Ingredients -->
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 style="margin-bottom: 40px;" class="text-center label-font">Ingredients</h1>
+                <div class="row">
+                    <div class="col-3"></div>
+                    <div class="col-6 text-center">
+                        <ul class="list-group list-group-flush">
+                            @foreach (var item in Model.RecipeIngredients) {
+                                <li class="list-group-item" style="margin-bottom: 20px;">@item.Quantity @item.UnitOfMeasure @item.Ingredient?.Name</li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="col-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Directions -->
+    <div class="container" style="margin-bottom: 120px;">
+        <div class="row">
+            <div class="col-12" style="border-bottom: rgba(0, 0, 0, 0.15) solid 1px; margin-bottom: 40px;">
+                <h1 class="text-center mt-5 mb-5 label-font">Cooking Instruction</h1>
+                @Html.Raw(Model.Description)
+                <br></br>
+            </div>
+        </div>
+    </div>
+
+    <!-- You may like these recipe too -->
+    <div class="container">
+        <h3 style="margin-bottom: 80px; text-align: center;">You may like these recipes too</h3>
+        <div class="row">
+            <div class="col-3">
+            </div>
+        </div>
+    </div>
+

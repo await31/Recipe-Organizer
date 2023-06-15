@@ -57,7 +57,10 @@ namespace CapstoneProject.Controllers {
             const int pageSize = 6; // Number of recipes in 1 page
             if (pg < 1)
                 pg = 1;
-            var recipes = _context.Recipes.Include(b => b.Ingredients).Select(b => b);
+            var recipes = _context.Recipes
+                .Where(a => a.Status == true)
+                .Include(b => b.Ingredients)
+                .Select(b => b);
             if (recipes != null) {
                 string? searchString = Request.Query["SearchString"];
                 string? prepTime = Request.Query["PrepTime"];
@@ -230,29 +233,20 @@ namespace CapstoneProject.Controllers {
             return full;
         }
 
-        [Breadcrumb("Details", FromAction = "Index", FromController = typeof(UserRecipesController))]
+        [Breadcrumb("Details")]
         // GET: Recipes/Details/5
-        public async Task<IActionResult> Details(int? id) {
-            var entity = _context.Recipes.FirstOrDefault(item => item.Id == id);
-            if (entity != null) {
-                entity.ViewCount++;
-                await _context.SaveChangesAsync();
-            }
-
-            ViewBag.Title = "Create recipe";
-            if (id == null || _context.Recipes == null) {
-                return NotFound();
-            }
-
-            var recipe = await _context.Recipes
-                .Include(r => r.FkRecipe)
-                .Include(r => r.FkRecipeCategory)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (recipe == null) {
-                return NotFound();
-            }
-
-            return View(recipe);
+        public IActionResult Details(int? id) {
+                var recipe = _context.Recipes
+                    .Where(a => a.Status == true)
+                    .Include(x => x.FkUser)
+                    .Include(y => y.FkRecipeCategory)
+                    .Include(z => z.Ingredients)
+                    .Include(t => t.Nutrition)
+                    .Include(a => a.RecipeIngredients)
+                    .FirstOrDefault(a => a.Id == id);
+                recipe.ViewCount++;
+                _context.SaveChanges();
+                return View(recipe);
         }
 
         // GET: Recipes/Create
