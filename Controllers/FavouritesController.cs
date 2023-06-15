@@ -18,15 +18,13 @@ namespace CapstoneProject.Controllers {
             _userManager = userManager;
         }
         [HttpPost]
-        public async Task<JsonResult> GetFavourites(int[] recipeIds) {
+        public async Task<JsonResult> GetAllFavouriteRecipes(int[] recipeIds) {
             var favourites = new List<object>();
 
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser != null) {
-                var userFavouriteList = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToList();
-
                 foreach (var recipeId in recipeIds) {
-                    var favorite = _context.Favourites.Where(a => userFavouriteList.Contains(a)).Include(f => f.Recipes).SelectMany(c => c.Recipes).FirstOrDefault(f => f.Id == recipeId);
+                    var favorite = _context.Favourites.Where(a => a.Account == currentUser).Include(f => f.Recipes).SelectMany(c => c.Recipes).FirstOrDefault(f => f.Id == recipeId);
 
                     if (favorite != null) {
                         favourites.Add(new { recipeId = recipeId, isFavorite = true });
@@ -38,24 +36,41 @@ namespace CapstoneProject.Controllers {
 
             return Json(favourites);
         }
+        //This is for favourite's checkboxes
         [HttpPost]
-        public async Task<JsonResult> AddRecipe(int recipeId, int favouriteId) {
+        public async Task<JsonResult> GetAllFavouriteLists(int recipeId, int[] favouriteIds) {
+            var favourites = new List<object>();
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null) {
+                foreach (var favouriteId in favouriteIds) {
+                    var favorite = _context.Favourites.Where(a => a.Account == currentUser).Include(f => f.Recipes).FirstOrDefault(a => a.Id == favouriteId).Recipes.FirstOrDefault(f => f.Id == recipeId);
+
+                    if (favorite != null) {
+                        favourites.Add(new { id = favouriteId, isFavorite = true });
+                    } else {
+                        favourites.Add(new { id = favouriteId, isFavorite = false });
+                    }
+                }
+            }
+
+            return Json(favourites);
+        }
+        [HttpPost]
+        public async Task<JsonResult> AddRecipe(int recipeId, int[] favouriteIds, int[] allfavouriteIds) {
             var entity = _context.Recipes.FirstOrDefault(item => item.Id == recipeId);
             if (entity != null) {
-                var currentUser = await _userManager.GetUserAsync(User);
-                //Get list of user favourites's id
-                var userFavouriteId = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToArray();
-                //Temp value
-                favouriteId = userFavouriteId[0].Id;
-                //Get user from dbContext which include favorites
-                var favourite = _context.Favourites.Include(a => a.Recipes).FirstOrDefault(a => a.Id == favouriteId);
+                foreach (var favouriteId in allfavouriteIds) {
+                    var favourite = _context.Favourites.Include(a => a.Recipes).FirstOrDefault(a => a.Id == favouriteId);
 
-                if (!favourite.Recipes.Contains(entity)) {
-                    favourite.Recipes.Add(entity);
-                    TempData["success"] = "Add to favourites successfully";
-                } else {
-                    favourite.Recipes.Remove(entity);
-                    TempData["success"] = "Removed from favourites successfully";
+                    if ((favouriteIds.Contains(favouriteId)) && (!favourite.Recipes.Contains(entity))) {
+                        favourite.Recipes.Add(entity);
+                        //TempData["success"] = "Add to favourites successfully";
+                    } else
+                    if (!(favouriteIds.Contains(favouriteId)) && (favourite.Recipes.Contains(entity))) {
+                        favourite.Recipes.Remove(entity);
+                        //TempData["success"] = "Removed from favourites successfully";
+                    }
                 }
                 await _context.SaveChangesAsync();
             }
@@ -126,7 +141,6 @@ namespace CapstoneProject.Controllers {
             if (id != favourite.Id) {
                 return NotFound();
             }
-
             if (ModelState.IsValid) {
                 try {
                     _context.Update(favourite);

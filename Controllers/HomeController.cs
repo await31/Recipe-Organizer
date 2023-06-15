@@ -27,7 +27,7 @@ namespace CapstoneProject.Controllers {
             _userManager = userManager;
         }
 
-        public IActionResult Index() {
+        public async Task<IActionResult> Index() {
 
             var recipes = _context.Recipes
                             .OrderByDescending(b => b.CreatedDate)
@@ -43,6 +43,13 @@ namespace CapstoneProject.Controllers {
                             .FirstOrDefault();
                 ViewData["HotRecipe"] = hotRecipe;
             }
+
+            //Favourite list
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null)
+                ViewBag.FavouriteList = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.Select(f => new { f.Id, f.Name }).ToList();
+            else
+                ViewBag.FavouriteList = null;
 
             return View(recipes);
         }

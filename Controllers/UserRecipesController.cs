@@ -139,6 +139,13 @@ namespace CapstoneProject.Controllers {
                 } else
                     ViewBag.ExcludeList = new List<String>();
 
+                //Favourite list
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser != null)
+                    ViewBag.FavouriteList = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.Select(f => new { f.Id, f.Name }).ToList();
+                else
+                    ViewBag.FavouriteList = null;
+
                 int recsCount = recipes.Count();
 
                 var pager = new Pager(recsCount, pg, pageSize, includeList, excludeList, recipeCategory, prepTime, difficulty, sortBy);

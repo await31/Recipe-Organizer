@@ -177,6 +177,33 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="favouriteModal" tabindex="-1" aria-labelledby="favouriteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="favouriteModalLabel">Add to Collections</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @{
+                    if (ViewBag.FavouriteList != null) {
+                        foreach (var item in ViewBag.FavouriteList) {
+                            <div class="form-check">
+                                <input class="form-check-input favourite-checkbox" type="checkbox" id="favourite-checkbox-@item.Id" value="@item.Id">
+                                <label class="form-check-label">@item.Name</label>
+                            </div>
+                        }
+                    }
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="favourite-save" type="button" class="btn btn-primary" data-bs-dismiss="modal" data-recipe-id="0">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="~/lib/jquery-3.7.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CapstoneProject.Models.Favourite>
+﻿@model IEnumerable<Favourite>
 
 @{
     ViewData["Title"] = "Collections";
@@ -9,21 +9,20 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-@for (int i = 0; i < Model.Count(); i += 3) {
-    <div class="row">
-        @foreach (var collection in Model) {
-            <div class="card d-flex col-md-3 col-sm-6 mx-4 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%); height:300px;">
-
-                <div class="mt-2" style="height: 40%;">
-                    <a asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id" class="text-decoration-none h-100">
-                        <div class="card-body pb-4 pt-3">
-                            <h4 class="card-title text-dark text-decoration-none text-center" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@collection.Name</h4>
-                            <div class="d-flex row mt-4 ms-4 mb-3">
-                                @collection.Description
-                            </div>
+<div class="row ms-5">
+    @foreach (var collection in Model)
+    {
+        <div class="card d-flex col-md-3 col-sm-6 mx-4 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%); height:300px;">
+                
+            <div class="mt-2" style="height: 40%;">
+                <a asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id" class="text-decoration-none h-100">
+                    <div class="card-body pb-4 pt-3">
+                        <h4 class="card-title text-dark text-decoration-none text-center" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@collection.Name</h4>
+                        <div class="d-flex row mt-4 ms-4 mb-3">
+                            @collection.Description
                         </div>
-                    </a>
-                </div>
+                    </div>
+                </a>
             </div>
-        } @*End of foreach*@</div>
-}
+        </div>
+    } @*End of foreach*@</div>
