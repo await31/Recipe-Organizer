@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CapstoneProject.Migrations
 {
     [DbContext(typeof(RecipeOrganizerContext))]
-    [Migration("20230614042808_InitDB")]
+    [Migration("20230615014758_InitDB")]
     partial class InitDB
     {
         /// <inheritdoc />
@@ -108,7 +108,6 @@ namespace CapstoneProject.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AccountId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
@@ -530,9 +529,7 @@ namespace CapstoneProject.Migrations
                 {
                     b.HasOne("CapstoneProject.Models.Account", "Account")
                         .WithMany("Favourites")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AccountId");
 
                     b.Navigation("Account");
                 });
