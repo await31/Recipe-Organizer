@@ -6,7 +6,7 @@
 
 <!-- Carousel -->
     <div class="container" style="margin-top: 40px;">
-        <h1 style="margin-bottom: 40px;">@Model.Name</h1>
+        <h1 style="margin-bottom: 40px;" class="label-font">@Model.Name</h1>
         <div class="container" style="margin-bottom: 40px;">
             <div class="row">
                 <div class="col-sm-8">
@@ -39,7 +39,7 @@
                                     </svg>
                                 </div>
                                 <div class="col-10">
-                                    <h5 style="font-size: 1rem;">PREP TIME</h5>
+                                    <h5 class="fs-6">PREPARATION TIME</h5>
                                     @if(Model.PrepTime <= 360) {
                                             <p>@Model.PrepTime minutes</p>
                                 } else {
@@ -85,7 +85,7 @@
                     class="img-fluid">
             </div>
             <div class="col-sm-4" style="background: #E7FAFE; border-radius: 4ch; padding: 0 40px 0 40px">
-                <h5 class="text-start" style="margin-top: 40px;">Nutrition Information</h5>
+                <h5 class="text-start label-font" style="margin-top: 40px;">Nutrition Information</h5>
                 <div class="nutrition row justify-content-between">
                     <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Calories</div>
                     <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Calories kcal</div>
@@ -113,14 +113,19 @@
     <!-- Ingredients -->
     <div class="container">
         <div class="row">
-            <div class="col-8">
-                <h3 style="margin-bottom: 40px;">Ingredients</h3>
-                <h5 style="margin-bottom: 20px;">For main dish</h5>
-                <ul class="list-group list-group-flush">
-                    @foreach(var item in Model.RecipeIngredients) {
-                        <li class="list-group-item" style="margin-bottom: 20px;">@item.Quantity @item.UnitOfMeasure @item.Ingredient?.Name</li>
-                    }
-                </ul>
+            <div class="col-12">
+                <h1 style="margin-bottom: 40px;" class="text-center label-font">Ingredients</h1>
+                <div class="row">
+                    <div class="col-3"></div>
+                    <div class="col-6 text-center">
+                        <ul class="list-group list-group-flush">
+                            @foreach (var item in Model.RecipeIngredients) {
+                                <li class="list-group-item" style="margin-bottom: 20px;">@item.Quantity @item.UnitOfMeasure @item.Ingredient?.Name</li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="col-3"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -129,7 +134,7 @@
     <div class="container" style="margin-bottom: 120px;">
         <div class="row">
             <div class="col-12" style="border-bottom: rgba(0, 0, 0, 0.15) solid 1px; margin-bottom: 40px;">
-                <h3 style="margin-bottom: 40px;">Directions</h3>
+                <h1 class="text-center mt-5 mb-5 label-font">Cooking Instruction</h1>
                 @Html.Raw(Model.Description)
                 <br></br>
             </div>

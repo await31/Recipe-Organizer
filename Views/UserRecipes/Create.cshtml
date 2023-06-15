@@ -69,7 +69,7 @@
             </div>
 
             <div class="form-group mt-5">
-                <p class="text-center text-dark fw-bolder fs-2 label-font">Nutrition &nbsp;Facts</p>
+                <p class="text-center text-dark fw-bolder fs-2 label-font mb-4">Nutrition &nbsp;Facts</p>
                 <div class="row">
                     <div class="col-md-4">
                         <label asp-for="Nutrition.Calories" class="control-label label-font">Calories (kcal)</label>
@@ -102,8 +102,8 @@
                 <!-- Ingredient -->
                 <div id="ingredient-container" class="mt-5">
                     <!-- Initial ingredient select element -->
-                    <p class="text-center text-dark fw-bolder fs-2 label-font">Ingredients &nbsp;List</p>
-                    <div class="form-group row mt-2">
+                    <p class="text-center text-dark fw-bolder fs-2 label-font">Ingredients</p>
+                    <div class="form-group row mt-4">
                         <div class="col-md-4">
                             <label for="IngredientId" class="mb-2 label-font">Name</label>
                             <select class="form-control" id="IngredientId" name="IngredientIds[]">
@@ -117,20 +117,20 @@
                             <label for="Quantity" class="mb-2 label-font">Quantity</label>
                             <input type="number" class="form-control" id="Quantity" name="Quantities[]" step="any" min="1" />
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label for="UnitOfMeasure" class="mb-2 label-font">Unit of Measure</label>
                             <select class="form-control" id="UnitOfMeasure" name="UnitOfMeasures[]">
                                 <option value="milliliters">milliliters (ml)</option>
                                 <option value="grams">grams (g)</option>
                             </select>
                         </div>
-                        <div class="col-md-2" style="margin-top: 4%;">
+                        <div class="col-md-1" style="margin-top: 4%;">
                             <a onclick="removeIngredient(this)" class="text-decoration-none text-danger ms-3 fw-bolder fs-4"><i class="fa-solid fa-trash-can"></i></a>
                         </div>
                     </div>
                 </div>
                 <div class="mt-3">
-                    <a onclick="addIngredient()" class="text-decoration-none text-success">Add Ingredient <i class="fa-solid fa-plus"></i></a>
+                    <a onclick="addIngredient()" class="text-decoration-none text-success label-font">Add Ingredient <i class="fa-solid fa-plus"></i></a>
                 </div>
 
 
@@ -218,7 +218,7 @@
                     });
                 </script>
                 <div class="form-group mt-5">
-                    <p class="text-center text-dark fw-bolder fs-2 label-font">Recipe &nbsp;Instruction</p>
+                    <p class="text-center text-dark fw-bolder fs-2 mb-4 label-font">Cooking Instruction</p>
                     <textarea asp-for="Description" class="form-control ckeditor"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
