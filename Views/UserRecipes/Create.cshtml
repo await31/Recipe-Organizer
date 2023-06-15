@@ -106,7 +106,7 @@
                     <div class="form-group row mt-4">
                         <div class="col-md-4">
                             <label for="IngredientId" class="mb-2 label-font">Name</label>
-                            <select class="form-control" id="IngredientId" name="IngredientIds[]">
+                            <select class="form-control" id="IngredientId" name="IngredientIds[]" required>
                                 <option value="">Select Ingredient</option>
                                 @foreach (var item in (SelectList)ViewData["Ingredients"]) {
                                     <option value="@item.Value">@item.Text</option>
@@ -115,11 +115,11 @@
                         </div>
                         <div class="col-md-3">
                             <label for="Quantity" class="mb-2 label-font">Quantity</label>
-                            <input type="number" class="form-control" id="Quantity" name="Quantities[]" step="any" min="1" />
+                            <input type="number" class="form-control" id="Quantity" name="Quantities[]" step="any" min="1" required/>
                         </div>
                         <div class="col-md-4">
                             <label for="UnitOfMeasure" class="mb-2 label-font">Unit of Measure</label>
-                            <select class="form-control" id="UnitOfMeasure" name="UnitOfMeasures[]">
+                            <select class="form-control" id="UnitOfMeasure" name="UnitOfMeasures[]" required>
                                 <option value="milliliters">milliliters (ml)</option>
                                 <option value="grams">grams (g)</option>
                             </select>
