@@ -139,17 +139,6 @@ namespace CapstoneProject.Controllers {
                 } else
                     ViewBag.ExcludeList = new List<String>();
 
-                //Favorite
-                var currentUser = await _userManager.GetUserAsync(User);
-                ViewBag.FavoriteList = null;
-
-                if (currentUser != null) {
-                    //TODO: make this code works with all favorite list
-                    var userFavouriteList = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToList();
-                    List<int> favoritedRecipes = _context.Favourites.Where(a => userFavouriteList.Contains(a)).Include(a => a.Recipes).SelectMany(c => c.Recipes).Select(r => r.Id).ToList();
-                    ViewBag.FavoriteList = favoritedRecipes;
-                }
-
                 int recsCount = recipes.Count();
 
                 var pager = new Pager(recsCount, pg, pageSize, includeList, excludeList, recipeCategory, prepTime, difficulty, sortBy);

@@ -12,7 +12,7 @@ public partial class Favourite {
     public string? Name { get; set; }
     public string? Description { get; set; }
 
-    public virtual Account Account { get; set; }
+    public virtual Account? Account { get; set; }
 
     public virtual ICollection<Recipe> Recipes { get; set; } = new List<Recipe>();
 

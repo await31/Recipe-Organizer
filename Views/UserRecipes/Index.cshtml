@@ -141,16 +141,9 @@
                                 <div class="position-relative" style="height: 60%;">
                                     @if (SignInManager.IsSignedIn(User)) {
                                         <div class="position-absolute rounded-circle bg-light p-2 pb-1" style="top: 3%; right: 3%;">
-                                            <a asp-controller="UserRecipes" asp-route-returnUrl="@Context.Request.Path" asp-route-parameters="@parameters" asp-action="Favorite" asp-route-id="@recipe.Id">
-                                                @{
-                                                    List<int> favoriteList = ViewBag.FavoriteList;
-                                                }
-                                                @if ((favoriteList != null) && (favoriteList.Contains(recipe.Id))) {
-                                                    <i class="fa fa-heart fs-3 text-danger"></i>
-                                                } else {
-                                                    <i class="fa fa-heart-o fs-3 text-danger"></i>
-                                                }
-                                            </a>
+                                            <button class="unstyled-button add-favourite" data-recipe-id="@recipe.Id">
+                                                <i id="favourite-icon-@recipe.Id" class="fa fa-heart-o" style="font-size:48px;color:red"></i>
+                                            </button>
                                         </div>
                                     }
                                     <img src="@recipe.ImgPath" class="img-fluid card-img-top" alt="Food" style="height: 100%">
@@ -226,4 +219,44 @@
             minLength: 1
         })
     });
+    $(document).ready(function () {
+        UpdateIcon();
+        $('.add-favourite').click(function () {
+            var recipeId = $(this).data('recipe-id');
+
+            $.ajax({
+                url: '/Favourites/AddRecipe',
+                type: 'POST',
+                data: { recipeId: recipeId },
+                success: UpdateIcon,
+                error: function () {
+                    alert('Error adding recipes to favorites.');
+                }
+            });
+        });
+    });
+    function UpdateIcon() {
+        var recipeId = @Html.Raw(Json.Serialize(@Model.Select(r=> r.Id).ToArray()));
+
+        $.ajax({
+            url: '/Favourites/GetFavourites',
+            type: 'POST',
+            data: { recipeIds: recipeId },
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].isFavorite) {
+                        $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart');
+                        $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart-o');
+                    }
+                    else {
+                        $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart');
+                        $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart-o');
+                    }
+                }
+            },
+            error: function () {
+                alert('Error getting favorite status.');
+            }
+        });
+    }
 </script>

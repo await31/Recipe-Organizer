@@ -64,24 +64,24 @@ namespace CapstoneProject.Controllers {
         }
         // GET: Favourites
         public async Task<IActionResult> Index() {
-            return _context.Favourites != null ?
-                        View(await _context.Favourites.ToListAsync()) :
-                        Problem("Entity set 'RecipeOrganizerContext.Favourites'  is null.");
+            var currentUser = await _userManager.GetUserAsync(User);
+            var userFavourite = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToList();
+
+            return View(userFavourite);
         }
 
         // GET: Favourites/Details/5
         public async Task<IActionResult> Details(int? id) {
-            if (id == null || _context.Favourites == null) {
-                return NotFound();
-            }
+            var currentUser = await _userManager.GetUserAsync(User);
+            var userFavouriteList = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToList();
+            var favouriteList = _context.Favourites.Where(a => userFavouriteList.Contains(a)).Include(a => a.Recipes).FirstOrDefault(a => a.Id == id);
+            @ViewData["Name"] = favouriteList.Name;
+            @ViewData["Description"] = favouriteList.Description;
+            @ViewData["Id"] = id;
 
-            var favourite = await _context.Favourites
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (favourite == null) {
-                return NotFound();
-            }
+            var recipes = favouriteList.Recipes.ToList();
 
-            return View(favourite);
+            return View(recipes);
         }
 
         // GET: Favourites/Create
@@ -95,6 +95,7 @@ namespace CapstoneProject.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description")] Favourite favourite) {
+            favourite.Account = await _userManager.GetUserAsync(User);
             if (ModelState.IsValid) {
                 _context.Add(favourite);
                 await _context.SaveChangesAsync();

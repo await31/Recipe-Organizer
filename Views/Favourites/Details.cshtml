@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Recipe>
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>@ViewData["Name"]</h2>
+<h3>@ViewData["Description"]</h3>
+
+@for (int i = 0; i < Model.Count(); i += 3) {
+    <div class="row">
+        @foreach (var recipe in Model) {
+            <div class="card d-flex col-md-3 col-sm-6 mx-4 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%); height:300px;">
+                <div class="position-relative" style="height: 60%;">
+                    <img src="@recipe.ImgPath" class="img-fluid card-img-top" alt="Food" style="height: 100%">
+                </div>
+                <div class="mt-2" style="height: 40%;">
+                    <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@recipe.Id" class="text-decoration-none h-100">
+                        <div class="card-body pb-4 pt-3">
+                            <h4 class="card-title text-dark text-decoration-none text-center" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@recipe.Name</h4>
+                            <div class="d-flex row mt-4 ms-4 mb-3">
+                                <div class="rounded-5 col-6 text-dark px-0">
+                                    @if (recipe.PrepTime < 360) {
+                                        <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@recipe.PrepTime minutes</span>
+                                    } else {
+                                        <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@(recipe.PrepTime / 60) hours</span>
+                                    }
+                                </div>
+                                <div class="rounded-5 col-6 text-dark px-0">
+                                    <i class="fa-solid fa-utensils"></i> <span class="text-dark" style="font-size: 14px;">@recipe.FkRecipeCategory?.Name</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        } @*End of foreach*@</div>
+}
+<div>
+    <a asp-action="Edit" asp-route-id="@ViewData["Id"]">Edit</a>
+    <a asp-action="Index">Back to List</a>
+</div>
