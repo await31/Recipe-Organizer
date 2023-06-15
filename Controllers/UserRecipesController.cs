@@ -39,14 +39,14 @@ namespace CapstoneProject.Controllers {
         [HttpPost]
         public JsonResult SearchAutoComplete(string term) {
             var result = (_context.Recipes.Where(t => t.Name.ToLower().Contains(term.ToLower()))
-                 .Select(t => new { Name = t.Name }))
+                 .Select(t => new { t.Name }))
                  .ToList();
             return Json(result);
         }
         [HttpPost]
         public JsonResult IngredientsAutoComplete(string term) {
             var result = (_context.Ingredients.Where(t => t.Name.ToLower().Contains(term.ToLower()))
-                 .Select(t => new { Name = t.Name }))
+                 .Select(t => new { t.Name }))
                  .ToList();
             return Json(result);
         }

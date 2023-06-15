@@ -87,15 +87,28 @@ namespace CapstoneProject.Controllers {
         }
 
         // GET: Favourites/Details/5
+        [Breadcrumb("Collection Details")]
         public async Task<IActionResult> Details(int? id) {
-            var currentUser = await _userManager.GetUserAsync(User);
-            var userFavouriteList = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToList();
-            var favouriteList = _context.Favourites.Where(a => userFavouriteList.Contains(a)).Include(a => a.Recipes).FirstOrDefault(a => a.Id == id);
-            @ViewData["Name"] = favouriteList.Name;
-            @ViewData["Description"] = favouriteList.Description;
-            @ViewData["Id"] = id;
 
-            var recipes = favouriteList.Recipes.ToList();
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            var userFavouriteList = _context.Accounts
+                .Include(u => u.Favourites)
+                .FirstOrDefault(u => u.Id == currentUser.Id)?.Favourites
+                .ToList();
+
+            var favouriteList = _context.Favourites
+                .Where(a => userFavouriteList.Contains(a))
+                .Include(a => a.Recipes)
+                .ThenInclude(recipe => recipe.FkRecipeCategory)
+                .FirstOrDefault(a => a.Id == id);
+
+            ViewData["Name"] = favouriteList?.Name;
+            ViewData["Description"] = favouriteList.Description;
+            ViewData["Id"] = id;
+
+            var recipes = favouriteList.Recipes
+                .ToList();
 
             return View(recipes);
         }
