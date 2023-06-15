@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CapstoneProject.Models;
 using Microsoft.AspNetCore.Identity;
+using SmartBreadcrumbs.Attributes;
 
 namespace CapstoneProject.Controllers {
     public class FavouritesController : Controller {
@@ -78,10 +79,10 @@ namespace CapstoneProject.Controllers {
             return Json(new { success = true });
         }
         // GET: Favourites
+        [Breadcrumb("My Collections")]
         public async Task<IActionResult> Index() {
             var currentUser = await _userManager.GetUserAsync(User);
             var userFavourite = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToList();
-
             return View(userFavourite);
         }
 
