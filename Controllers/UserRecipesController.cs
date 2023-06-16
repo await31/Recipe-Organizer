@@ -236,17 +236,47 @@ namespace CapstoneProject.Controllers {
         [Breadcrumb("Details")]
         // GET: Recipes/Details/5
         public IActionResult Details(int? id) {
-                var recipe = _context.Recipes
-                    .Where(a => a.Status == true)
-                    .Include(x => x.FkUser)
-                    .Include(y => y.FkRecipeCategory)
-                    .Include(z => z.Ingredients)
-                    .Include(t => t.Nutrition)
-                    .Include(a => a.RecipeIngredients)
-                    .FirstOrDefault(a => a.Id == id);
-                recipe.ViewCount++;
-                _context.SaveChanges();
-                return View(recipe);
+            var recipe = _context.Recipes
+                .Where(a => a.Status == true)
+                .Include(x => x.FkUser)
+                .Include(y => y.FkRecipeCategory)
+                .Include(z => z.Ingredients)
+                .Include(t => t.Nutrition)
+                .Include(a => a.RecipeIngredients)
+                .Include(a => a.RecipeFeedbacks)
+                .FirstOrDefault(a => a.Id == id);
+            recipe.ViewCount++;
+            _context.SaveChanges();
+            return View(recipe);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetFeedbackAsync(string feedbackText, int recipeId) {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (feedbackText != null) {
+                if (CompareLimitedWords(feedbackText) == true) {
+                    TempData["error"] = "Your feedback was ignored because it contains an invalid word.";
+                    return RedirectToAction("Index");
+                } else {
+                    var feedback = new RecipeFeedback {
+                        RecipeId = recipeId,
+                        UserId = currentUser.Id,
+                        Description = feedbackText,
+                        Rating = 0,
+                        CreatedDate = DateTime.Now
+                    };
+                    _context.RecipeFeedbacks.Add(feedback);
+                }
+                _context.SaveChanges(); // Save changes to the database
+                return RedirectToAction("Index");
+            }
+            return RedirectToAction("Index");
+        }
+
+        public bool CompareLimitedWords(string text) {
+            //Gioi han 1 vai tu de demo
+            List<string> words = new List<string>() { "stupid", "idiot", "disgusting", "shit" };
+            return words.Contains(text);
         }
 
         // GET: Recipes/Create

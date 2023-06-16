@@ -1,8 +1,68 @@
 ﻿@model Recipe
 
+@inject SignInManager<Account> SignInManager
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<Account> UserManager
+
 @{
     ViewData["Title"] = Model.Name;
 }
+
+<style>
+    body {
+        background-color: #eee;
+    }
+
+    .card {
+        background-color: #fff;
+        border: none;
+    }
+
+    .form-color {
+        background-color: #fafafa;
+    }
+
+    .form-control {
+        height: 48px;
+        border-radius: 25px;
+    }
+
+        .form-control:focus {
+            color: #495057;
+            background-color: #fff;
+            border-color: #35b69f;
+            outline: 0;
+            box-shadow: none;
+            text-indent: 10px;
+        }
+
+    .c-badge {
+        background-color: #35b69f;
+        color: white;
+        height: 20px;
+        font-size: 11px;
+        width: 92px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 2px;
+    }
+
+    .comment-text {
+        font-size: 13px;
+    }
+
+    .wish {
+        color: #35b69f;
+    }
+
+
+    .user-feed {
+        font-size: 14px;
+        margin-top: 12px;
+    }
+</style>
 
 <!-- Carousel -->
 <div class="container" style="margin-top: 40px;">
@@ -14,7 +74,7 @@
                     <div class="col-md"
                          style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
                         <div class="row">
-                            <div class="col-4" style="align-self: center;">
+                            <div class="col-4 px-0" style="align-self: center;">
                                 <div>
                                     <img class="img-fluid rounded-circle"
                                          src="@Model.FkUser?.ImgPath" style="height: 60px; width: 60px;">
@@ -31,11 +91,8 @@
                     <div class="col-md"
                          style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
                         <div class="row">
-                            <div class="col-2" style="align-self: center;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                     class="bi bi-clock-fill" viewBox="0 0 16 16">
-                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z" />
-                                </svg>
+                            <div class="col-2 mt-2" style="align-self: center;">
+                                <i class="fa-solid fa-clock"></i>
                             </div>
                             <div class="col-10">
                                 <h5 class="fs-6">PREPARATION TIME</h5>
@@ -47,15 +104,27 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md" style="align-self: center;">
+                    <div class="col-md"
+                         style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
                         <div class="row">
-                            <div class="col-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                    <path d="M416 0C400 0 288 32 288 176V288c0 35.3 28.7 64 64 64h32V480c0 17.7 14.3 32 32 32s32-14.3 32-32V352 240 32c0-17.7-14.3-32-32-32zM64 16C64 7.8 57.9 1 49.7 .1S34.2 4.6 32.4 12.5L2.1 148.8C.7 155.1 0 161.5 0 167.9c0 45.9 35.1 83.6 80 87.7V480c0 17.7 14.3 32 32 32s32-14.3 32-32V255.6c44.9-4.1 80-41.8 80-87.7c0-6.4-.7-12.8-2.1-19.1L191.6 12.5c-1.8-8-9.3-13.3-17.4-12.4S160 7.8 160 16V150.2c0 5.4-4.4 9.8-9.8 9.8c-5.1 0-9.3-3.9-9.8-9L127.9 14.6C127.2 6.3 120.3 0 112 0s-15.2 6.3-15.9 14.6L83.7 151c-.5 5.1-4.7 9-9.8 9c-5.4 0-9.8-4.4-9.8-9.8V16zm48.3 152l-.3 0-.3 0 .3-.7 .3 .7z" />
-                                </svg>
+                            <div class="col-2 mt-2" style="align-self: center;">
+                                <i class="fa-solid fa-user"></i>
                             </div>
                             <div class="col-10">
-                                @Model.FkRecipeCategory.Name
+                                <h5 class="fs-6">SERVING SIZE</h5>
+                                    <p>For @Model.ServingSize people</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md"
+                         style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
+                        <div class="row">
+                            <div class="col-2 mt-2" style="align-self: center;">
+                                <i class="fa-solid fa-list"></i>
+                            </div>
+                            <div class="col-10">
+                                <h5 class="fs-6">CATEGORY</h5>
+                                    <p>@Model.FkRecipeCategory.Name</p>
                             </div>
                         </div>
                     </div>
@@ -134,6 +203,44 @@
                 <h1 class="text-center mt-5 mb-5 label-font">Cooking Instruction</h1>
                 @Html.Raw(Model.Description)
                 <br></br>
+            </div>
+        </div>
+    </div>
+
+    <div class="row height d-flex justify-content-center align-items-center">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="p-3 pb-0">
+                    <h6>Feedbacks</h6>
+                </div>
+                <div class="mt-3 d-flex flex-row align-items-center row">
+                    <div class="col-md-1 mb-5 ms-2 me-2">
+                    <img src="@UserManager.GetUserAsync(User).Result.ImgPath" width="50" class="rounded-circle">
+                    </div>
+                    <form method="post" action="/UserRecipes/GetFeedback" class="col-md-9">
+                        <input type="hidden" name="recipeId" value="@Model.Id">
+                        <input type="text" class="form-control" placeholder="Enter your feedback..." name="feedbackText">
+                        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                    </form>
+                </div>
+                @for(int i = 0; i < 3; i++) {
+                    <div class="mt-2">
+                        <div class="d-flex flex-row p-3">
+                            <img src="" width="50" height="50" class="rounded-circle ms-2 me-2">
+                            <div class="w-100">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex flex-row align-items-center">
+                                        <span class="ms-2">Lionel Messi</span>
+                                    </div>
+                                </div>
+                                <p class="text-justify comment-text mb-0 ms-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam</p>
+                                <div class="d-flex flex-row user-feed">
+                                    <span class="wish"><i class="fa fa-heartbeat ms-2"></i>24</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>

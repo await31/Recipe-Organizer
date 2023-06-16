@@ -28,7 +28,6 @@ namespace CapstoneProject.Migrations
             migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) VALUES ('1', 'Admin', 'ADMIN')");
             migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) VALUES ('2', 'Cooker', 'COOKER')");
 
-
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
@@ -238,6 +237,7 @@ namespace CapstoneProject.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImgPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<bool>(type: "bit", nullable: true),
                     FkCategoryId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -258,6 +258,7 @@ namespace CapstoneProject.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImgPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ServingSize = table.Column<int>(type: "int", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ViewCount = table.Column<int>(type: "int", nullable: true),
                     FkRecipeCategoryId = table.Column<int>(type: "int", nullable: true),
