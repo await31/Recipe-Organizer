@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Log in";
 }
-
+<link rel="stylesheet" href="~/css/formSetting.css" />
 <section style="height: 75vh !important;">
     <div class="container h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -28,11 +28,15 @@
                                     <div class="d-flex flex-row align-items-center mb-4">
                                         <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
-                                            <input asp-for="Input.Password" type="password" id="form3Example4c" class="form-control" placeholder="Your password" />
+                                            <div class="password-field">
+                                                <input asp-for="Input.Password" type="password" id="form3Example4c" class="form-control" placeholder="Your password">
+                                                <i class="fas fa-eye-slash"></i>
+                                            </div>
                                             <label asp-for="Input.Password" class="form-label d-none" for="form3Example4c">Password</label>
                                             <span asp-validation-for="Input.Password" class="text-danger"></span>
                                         </div>
                                     </div>
+
                                     <div class="d-flex justify-content-between">
                                         <div class="checkbox">
                                             <label asp-for="Input.RememberMe" class="form-label">
@@ -54,7 +58,7 @@
                                         
                                     </div>
                                 </form>
-                                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal mx-1 mx-md-4">
+                                <form id="external-account account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal mx-1 mx-md-4">
                                     <div class="d-flex flex-column">
                                         @foreach (var provider in Model.ExternalLogins!) {
                                             if (@provider.Name.Equals("Google")) {
@@ -81,9 +85,11 @@
                 </section>
             </div>
         </div>
+        <img id="burger" src="/images/cute-burger.png" alt="Burger">
     </div>
-</section>
 
+</section>
+<script src="~/js/formSetting.js"></script>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

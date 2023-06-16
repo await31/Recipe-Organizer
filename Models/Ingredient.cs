@@ -16,6 +16,8 @@ public partial class Ingredient {
 
     public string? Description { get; set; }
 
+    public bool? Status { get; set; }
+
     [NotMapped]
     public IFormFile? file { get; set; }
     public int? FkCategoryId { get; set; }

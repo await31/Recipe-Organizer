@@ -16,11 +16,204 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
+    .background {
+        margin-top : 8%;
+        display: flex;
+        max-height: 100vh;
+    }
+
+    .container {
+        flex: 0 1 700px;
+        margin: auto;
+        padding: 10px;
+    }
+
+    .screen {
+        position: relative;
+        background: #3e3e3e;
+        border-radius: 15px;
+    }
+
+        .screen:after {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 20px;
+            right: 20px;
+            bottom: 0;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .4);
+            z-index: -1;
+        }
+
+    .screen-header {
+        display: flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: #4d4d4f;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+    }
+
+    .screen-header-left {
+        margin-right: auto;
+    }
+
+    .screen-header-button {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        margin-right: 3px;
+        border-radius: 8px;
+        background: white;
+    }
+
+        .screen-header-button.close {
+            background: #e7f9fd;
+        }
+
+        .screen-header-button.maximize {
+            background: #e8e925;
+        }
+
+        .screen-header-button.minimize {
+            background: #74c54f;
+        }
+
+    .screen-header-right {
+        display: flex;
+    }
+
+    .screen-header-ellipsis {
+        width: 3px;
+        height: 3px;
+        margin-left: 2px;
+        border-radius: 8px;
+        background: #999;
+    }
+
+    .screen-body {
+        display: flex;
+    }
+
+    .screen-body-item {
+        flex: 1;
+        padding: 50px;
+    }
+
+        .screen-body-item.left {
+            display: flex;
+            flex-direction: column;
+        }
+
+    .app-title {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        color: #e7f9fd;
+        font-size: 26px;
+    }
+
+        .app-title:after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            width: 25px;
+            height: 4px;
+            background: #e7f9fd;
+        }
+
+    .app-contact {
+        margin-top: auto;
+        font-size: 8px;
+        color: #888;
+    }
+
+    .app-form-group {
+        margin-bottom: 15px;
+    }
+
+        .app-form-group.message {
+            margin-top: 40px;
+        }
+
+        .app-form-group.buttons {
+            margin-bottom: 0;
+            text-align: right;
+        }
+
+    .app-form-control {
+        width: 100%;
+        padding: 10px 0;
+        background: none;
+        border: none;
+        border-bottom: 1px solid #666;
+        color: #ddd;
+        font-size: 14px;
+        text-transform: uppercase;
+        outline: none;
+        transition: border-color .2s;
+    }
+
+        .app-form-control::placeholder {
+            color: #666;
+        }
+
+        .app-form-control:focus {
+            border-bottom-color: #ddd;
+        }
+
+    .app-form-button {
+        background: none;
+        border: none;
+        color: #e7f9fd;
+        font-size: 14px;
+        cursor: pointer;
+        outline: none;
+    }
+
+        .app-form-button:hover {
+            color: #e7f9fd;
+        }
+
+    .credits {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        color: #888;
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 16px;
+        font-weight: normal;
+    }
+
+    .credits-link {
+        display: flex;
+        align-items: center;
+        color: #fff;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .dribbble {
+        width: 20px;
+        height: 20px;
+        margin: 0 5px;
+    }
+
+    hr {
+        border-color: rgba(255,255,255,.6);
+    }
 </style>
+
 @if (hotRecipe != null) {
     <div class="card col-md-12 rounded-5 overflow-hidden border-0 mb-5 mt-3">
         <div class="row g-0">
-            <div class="col-md-6" style="background-color: #e7f9fd;">
+            <div class="col-lg-6" style="background-color: #e7f9fd;">
                 <div class="card-body ms-5 mt-4">
                     <button type="button" class="pe-none btn btn-warning shadow rounded-5">
                         <i class=" fa-solid fa-fire text-danger bg-warning"></i> <span class="fw-bold">Hot Recipe</span>
@@ -49,14 +242,14 @@
                                 </div>
                             }
                         </div>
-                        <a asp-controller="Home" asp-action="RecipeDetail" asp-route-id="@hotRecipe.Id" type="button" class="btn btn-dark btn-lg rounded-3">
+                        <a type="button" class="btn btn-dark btn-lg rounded-3" asp-controller="UserRecipes" asp-action="Details" asp-route-id="@hotRecipe.Id">
                             <span class="text-light">View Detail</span>
                         </a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <img src="@hotRecipe.ImgPath" style="max-height:600px;" class="img-fluid h-100 w-100" alt="Food">
+            <div class="col-lg-6">
+                <img src="@hotRecipe.ImgPath" style="max-height:700px;" class="img-fluid h-100 w-100" alt="Food">
             </div>
         </div>
     </div>
@@ -64,301 +257,267 @@
 <hr />
 <div class="col-md-12 mt-5 mb-5">
     <div class="row d-flex mb-4">
-        <h1 class="text-center">Ingredient Categories</h1>
+        <h1 class="text-center label-font">Ingredient Categories</h1>
     </div>
-    <div class="row text-center ps-5 mt-5">
-        <div class="mx-3 shadow-sm rounded-4 col-md-2 col-sm-6" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,192,192,0.4086426807050946) 100%);">
-            <a class="text-decoration-none text-dark" asp-action="ViewIngredient" asp-route-id="1">
-                <img src="~/images/category-protein.png" class="img-fluid w-100 h-50" />
-                <p class="fw-bold fs-4 pt-4 text-danger">Protein</p>
-            </a>
-        </div>
-        <div class="mx-3 shadow-sm rounded-4 col-md-2 col-sm-6" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,219,192,0.4086426807050946) 100%);">
-            <a class="text-decoration-none text-dark" asp-action="ViewIngredient" asp-route-id="2">
-                <img src="~/images/category-carb.png" class="img-fluid w-100 h-50" />
-                <p class="fw-bold fs-4 pt-4 text-warning">Carbs</p>
-            </a>
-        </div>
-        <div class="mx-3 shadow-sm rounded-4 col-md-2 col-sm-6" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(217,255,192,0.4086426807050946) 100%);">
-            <a class="text-decoration-none text-dark" asp-action="ViewIngredient" asp-route-id="3">
-                <img src="~/images/category-fiber.png" class="img-fluid w-100 h-50" />
-                <p class="fw-bold fs-4 pt-4 text-success">Fiber</p>
-            </a>
-        </div>
-        <div class="mx-3 shadow-sm rounded-4 col-md-2 col-sm-6" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%);">
-            <a class="text-decoration-none text-dark" asp-action="ViewIngredient" asp-route-id="4">
-                <img src="~/images/category-fat.png" class="img-fluid w-100 h-50" />
-                <p class="fw-bold fs-4 pt-4 text-info">Fat</p>
-            </a>
-        </div>
-        <div class="mx-3 shadow-sm rounded-4 col-md-2 col-sm-6" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,190,143,0.4086426807050946) 100%);">
-            <a class="text-decoration-none text-dark" asp-action="ViewIngredient" asp-route-id="5">
-                <img src="~/images/category-spices.png" class="img-fluid w-100 h-50" />
-                <p class="fw-bold fs-4 pt-4" style="color: darkorange;">Spices</p>
-            </a>
-        </div>
-    </div>
-</div>
-<hr />
-<div class="col-md-12 mt-5 mb-5 h-auto">
-    <div class="row d-flex mb-5">
-        <h1 class="text-center">Lastest Recipes</h1>
-        @*
-        <div>
-        <a asp-controller="UserRecipes" asp-action="Index" type="button" class="btn rounded-3" style="background-color: #e7f9fd; width: 10%;">
-        <span class="text-dark fw-semibold">All recipes</span> &nbsp; <i class="fa-solid fa-list"></i>
-        </a>
-        </div>
-        *@
-    </div>
-</div>
-<div class="row text-center">
-    @foreach (var recipe in Model) {
-        <div class="card d-flex col-md-3 col-sm-6 mx-5 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%); height:300px;">
-            <div class="position-relative" style="height: 60%;">
-                @if (SignInManager.IsSignedIn(User)) {
-                    <div class="position-absolute rounded-circle bg-light p-2 pb-1" style="top: 3%; right: 3%;">
-                        
-                        <button class="unstyled-button add-favourite-button" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@recipe.Id">
-                            <i id="favourite-icon-@recipe.Id" class="fa fa-heart-o" style="font-size:48px;color:red"></i>
-                        </button>
-                    </div>
-                }
-                <img src="@recipe.ImgPath" class="img-fluid card-img-top" alt="Food" style="height: 100%">
+    <div class="container text-center">
+        <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+            <div class="col">
+                <div class="mx-3 shadow-sm rounded-4 p-3" style="height:100%; background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,192,192,0.4086426807050946) 100%);">
+                    <a class="text-decoration-none text-dark" asp-action="ViewIngredient" asp-route-id="1">
+                        <img src="~/images/category-protein.png" class="img-fluid w-100 h-50" />
+                        <p class="fw-bold fs-4 pt-4 text-danger">Protein</p>
+                    </a>
+                </div>
             </div>
-            <div class="mt-2" style="height: 40%;">
-                <a asp-controller="Home" asp-action="RecipeDetail" asp-route-id="@recipe.Id" class="text-decoration-none h-100">
-                    <div class="card-body pb-4 pt-3">
-                        <h4 class="card-title text-dark text-decoration-none text-center" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@recipe.Name</h4>
-                        <div class="d-flex row mt-4 ms-4 mb-3">
-                            <div class="rounded-5 col-6 text-dark px-0">
-                                @if (recipe.PrepTime < 360) {
-                                    <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@recipe.PrepTime minutes</span>
-                                } else {
-                                    <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@(recipe.PrepTime / 60) hours</span>
+            <div class="col">
+                <div class="mx-3 shadow-sm rounded-4 p-3" style="height:100%; background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,219,192,0.4086426807050946) 100%);">
+                    <a class="text-decoration-none text-dark" asp-action="ViewIngredient" asp-route-id="2">
+                        <img src="~/images/category-carb.png" class="img-fluid w-100 h-50" />
+                        <p class="fw-bold fs-4 pt-4 text-warning">Carbs</p>
+                    </a>
+                </div>
+            </div>
+            <div class="col">
+                <div class="mx-3 shadow-sm rounded-4 p-3" style="height:100%; background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(217,255,192,0.4086426807050946) 100%);">
+                    <a class="text-decoration-none text-dark" asp-action="ViewIngredient" asp-route-id="3">
+                        <img src="~/images/category-fiber.png" class="img-fluid w-100 h-50" />
+                        <p class="fw-bold fs-4 pt-4 text-success">Fiber</p>
+                    </a>
+                </div>
+            </div>
+            <div class="col">
+                <div class="mx-3 shadow-sm rounded-4 p-3" style="height:100%; background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%);">
+                    <a class="text-decoration-none text-dark" asp-action="ViewIngredient" asp-route-id="4">
+                        <img src="~/images/category-fat.png" class="img-fluid w-100 h-50" />
+                        <p class="fw-bold fs-4 pt-4 text-info">Fat</p>
+                    </a>
+                </div>
+            </div>
+            <div class="col">
+                <div class="mx-3 shadow-sm rounded-4 p-3" style="height:100%; background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,190,143,0.4086426807050946) 100%);">
+                    <a class="text-decoration-none text-dark" asp-action="ViewIngredient" asp-route-id="5">
+                        <img src="~/images/category-spices.png" class="img-fluid w-100 h-50" />
+                        <p class="fw-bold fs-4 pt-4" style="color: darkorange;">Spices</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="col-md-12 mt-5 mb-5 h-auto">
+            <div class="row d-flex mb-5">
+                <h1 class="text-center label-font">Lastest Recipes</h1>
+            </div>
+        </div>
+        <div class="container text-center">
+            <div class="row row-cols-1 row-cols-lg-3 g-2 g-lg-3">
+                @foreach (var recipe in Model) {
+                    <div class="col overflow-hidden border-0">
+                        <div class="card border-0 rounded-4" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%);">
+                            <div class="position-relative" style="height: 60%;">
+                                @if (SignInManager.IsSignedIn(User)) {
+                                    <div class="position-absolute rounded-circle bg-light p-2 pb-1" style="top: 3%; right: 3%;">
+                                        <button class="unstyled-button add-favourite-button" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@recipe.Id">
+                                            <i id="favourite-icon-@recipe.Id" class="fa fa-heart-o" style="font-size:32px;color:red"></i>
+                                        </button>
+                                    </div>
                                 }
+                                <img src="@recipe.ImgPath" class="img-fluid card-img-top" alt="Food" style="height: 100%">
                             </div>
-                            <div class="rounded-5 col-6 text-dark px-0">
-                                <i class="fa-solid fa-utensils"></i> <span class="text-dark" style="font-size: 14px;">@recipe.FkRecipeCategory?.Name</span>
+                            <div class="mt-2" style="height: 40%;">
+                                <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@recipe.Id" class="text-decoration-none h-100">
+                                    <div class="card-body pb-4 pt-3">
+                                        <h4 class="card-title text-dark text-decoration-none text-center" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@recipe.Name</h4>
+                                        <div class="d-flex row mt-4 ms-4 mb-3">
+                                            <div class="rounded-5 col-6 text-dark px-0">
+                                                @if (recipe.PrepTime < 360) {
+                                                    <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@recipe.PrepTime minutes</span>
+                                                } else {
+                                                    <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@(recipe.PrepTime / 60) hours</span>
+                                                }
+                                            </div>
+                                            <div class="rounded-5 col-6 text-dark px-0">
+                                                <i class="fa-solid fa-utensils"></i> <span class="text-dark" style="font-size: 14px;">@recipe.FkRecipeCategory?.Name</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
                         </div>
                     </div>
-                </a>
+                }
             </div>
         </div>
-    }
-</div>
 
-<!-- Contact Form -->
-<div class="container" style="margin-bottom: 80px;">
-    <h1 class="text-center" style="margin-top: 80px; margin-bottom: 40px;">Contact us</h1>
-    <form>
-        <div class="row">
-            <div class="col-4">
-                <img src="https://images.unsplash.com/photo-1583394293214-28ded15ee548?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGNoZWZ8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
-                     alt="" class="img-fluid">
-            </div>
-            <div class="col-8">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-6">
-                            <h6 style="font-weight: normal; color: #00000060; letter-spacing: 0.1em; font-size: 14px;">
-                                NAME
-                            </h6>
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="floatingInput" placeholder="John Smith">
-                                <label style="font-size:14px; font-weight: normal; color: #00000060;"
-                                       for="floatingInput">Enter your name...</label>
-                            </div>
+        <!-- Contact Form -->
+        <div class="background">
+            <div class="container">
+                <div class="screen">
+                    <div class="screen-header">
+                        <div class="screen-header-left">
+                            <div class="screen-header-button close"></div>
+                            <div class="screen-header-button maximize"></div>
+                            <div class="screen-header-button minimize"></div>
                         </div>
-                        <div class="col-6">
-                            <h6 style="font-weight: normal; color: #00000060; letter-spacing: 0.1em; font-size: 14px;">
-                                EMAIL ADDRESS
-                            </h6>
-                            <div class="form-floating mb-3">
-                                <input type="email" class="form-control" id="floatingInput"
-                                       placeholder="name@example.com">
-                                <label style="font-size:14px; font-weight: normal; color: #00000060;"
-                                       for="floatingInput">Your email address...</label>
+                        <div class="screen-header-right">
+                            <div class="screen-header-ellipsis"></div>
+                            <div class="screen-header-ellipsis"></div>
+                            <div class="screen-header-ellipsis"></div>
+                        </div>
+                    </div>
+                    <div class="screen-body">
+                        <div class="screen-body-item left">
+                            <div class="app-title text-start">
+                                <span>CONTACT</span>
+                                <span>US</span>
+                            </div>
+                            <div class="app-contact">CONTACT INFO : +62 81 314 928 595</div>
+                        </div>
+                        <div class="screen-body-item">
+                            <div class="app-form">
+                                <div class="app-form-group">
+                                    <input class="app-form-control" placeholder="NAME">
+                                </div>
+                                <div class="app-form-group">
+                                    <input class="app-form-control" placeholder="EMAIL">
+                                </div>
+                                <div class="app-form-group message">
+                                    <input class="app-form-control" placeholder="MESSAGE">
+                                </div>
+                                <div class="app-form-group buttons">
+                                    <button class="app-form-button">SEND</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <h6 style="font-weight: normal; color: #00000060; letter-spacing: 0.1em; font-size: 14px;">
-                                SUBJECT
-                            </h6>
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="floatingInput" placeholder="John Smith">
-                                <label style="font-size:14px; font-weight: normal; color: #00000060;"
-                                       for="floatingInput">Enter subject...</label>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <h6 style="font-weight: normal; color: #00000060; letter-spacing: 0.1em; font-size: 14px;">
-                                ENQUIRY TYPE
-                            </h6>
-                            <div class="form-floating">
-                                <select class="form-select" id="floatingSelect"
-                                        aria-label="Floating label select example">
-                                    <option selected>Open this select menu</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
-                                </select>
-                                <label for="floatingSelect">Advertising</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <h6 style="font-weight: normal; color: #00000060; letter-spacing: 0.1em; font-size: 14px;">
-                                MESSAGE
-                            </h6>
-                            <div class="form-floating">
-                                <textarea class="form-control" placeholder="Leave a comment here"
-                                          id="floatingTextarea2" style="height: 192px"></textarea>
-                                <label for="floatingTextarea2" style="color: #00000060;">
-                                    Enter your
-                                    message...
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
-            </div>
-            <div class="row" style="margin-top: 40px;">
-                <div class="col-4"></div>
-                <div class="col-4"></div>
-                <div class="col-4">
-                    <button type="submit" class="btn btn-primary float-end"
-                            style="background: black; border: none; height: 60px; width: 120px;">
-                        Submit
-                    </button>
+                <div class="credits">
+                    inspired by
+                    <a class="credits-link" href="/" target="_blank">
+                        &nbsp Cookez
+                    </a>
                 </div>
             </div>
         </div>
-    </form>
-</div>
 
-<!-- Modal -->
-<div class="modal fade" id="favouriteModal" tabindex="-1" aria-labelledby="favouriteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="favouriteModalLabel">Add to Collections</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                @{
-                    if (ViewBag.FavouriteList != null) {
-                        foreach (var item in ViewBag.FavouriteList) {
-                            <div class="form-check">
-                                <input class="form-check-input favourite-checkbox" type="checkbox" id="favourite-checkbox-@item.Id" value="@item.Id">
-                                <label class="form-check-label">@item.Name</label>
-                            </div>
+        <!-- Modal -->
+        <div class="modal fade" id="favouriteModal" tabindex="-1" aria-labelledby="favouriteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="favouriteModalLabel">Add to Collections</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        @{
+                            if (ViewBag.FavouriteList != null) {
+                                foreach (var item in ViewBag.FavouriteList) {
+                                    <div class="form-check">
+                                        <input class="form-check-input favourite-checkbox" type="checkbox" id="favourite-checkbox-@item.Id" value="@item.Id">
+                                        <label class="form-check-label">@item.Name</label>
+                                    </div>
+                                }
+                            }
                         }
-                    }
-                }
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button id="favourite-save" type="button" class="btn btn-primary" data-bs-dismiss="modal" data-recipe-id="0">Save</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button id="favourite-save" type="button" class="btn btn-primary" data-bs-dismiss="modal" data-recipe-id="0">Save</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-<script src="~/lib/jquery-3.7.0.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
-<script type="text/javascript">
-    function removeParameterFromUrl(urlString, parameterName, parameterValue) {
-        const url = new URL(urlString);
-        const parameterValues = url.searchParams.get(parameterName).split(',');
-        const updatedParameterValues = parameterValues.filter((item) => item != parameterValue);
-        url.searchParams.set(parameterName, updatedParameterValues.join(','));
-        console.log(url.href);
-        return url.href;
-    }
-    $(document).ready(function () {
-        UpdateIcon();
-        //This function will update the recipe id of modal
-        //also unchecked all checkboxes
-        $('.add-favourite-button').click(function () {
-            var recipeId = $(this).data('recipe-id');
-            $("#favourite-save").attr("data-recipe-id", recipeId);
-            UpdateCheckbox(recipeId);
-        });
-        //This function will add the recipe into all selected favourite lists on clicking button with class add-favourite
-        //currently only add in favourite list
-        $('#favourite-save').click(function () {
-            var recipeId = $(this).data('recipe-id');
-            //Get all checked boxes' favourite ids
-            var favouriteIds = $('input.favourite-checkbox:checkbox:checked').map(function () {
-                return $(this).val();
-            }).get();
-            //Get all boxes' favourite ids
-            var allfavouriteIds = $('.favourite-checkbox').map(function () {
-                return $(this).val();
-            }).get();
+        <script src="~/lib/jquery-3.7.0.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+        <script type="text/javascript">
+            function removeParameterFromUrl(urlString, parameterName, parameterValue) {
+                const url = new URL(urlString);
+                const parameterValues = url.searchParams.get(parameterName).split(',');
+                const updatedParameterValues = parameterValues.filter((item) => item != parameterValue);
+                url.searchParams.set(parameterName, updatedParameterValues.join(','));
+                console.log(url.href);
+                return url.href;
+            }
+            $(document).ready(function () {
+                UpdateIcon();
+                //This function will update the recipe id of modal
+                //also unchecked all checkboxes
+                $('.add-favourite-button').click(function () {
+                    var recipeId = $(this).data('recipe-id');
+                    $("#favourite-save").attr("data-recipe-id", recipeId);
+                    UpdateCheckbox(recipeId);
+                });
+                //This function will add the recipe into all selected favourite lists on clicking button with class add-favourite
+                //currently only add in favourite list
+                $('#favourite-save').click(function () {
+                    var recipeId = $(this).data('recipe-id');
+                    //Get all checked boxes' favourite ids
+                    var favouriteIds = $('input.favourite-checkbox:checkbox:checked').map(function () {
+                        return $(this).val();
+                    }).get();
+                    //Get all boxes' favourite ids
+                    var allfavouriteIds = $('.favourite-checkbox').map(function () {
+                        return $(this).val();
+                    }).get();
 
-            $.ajax({
-                url: '/Favourites/AddRecipe',
-                type: 'POST',
-                data: { recipeId: recipeId, favouriteIds: favouriteIds, allfavouriteIds: allfavouriteIds },
-                success: UpdateIcon,
-                error: function () {
-                    alert('Error adding recipes to favorites.');
-                }
+                    $.ajax({
+                        url: '/Favourites/AddRecipe',
+                        type: 'POST',
+                        data: { recipeId: recipeId, favouriteIds: favouriteIds, allfavouriteIds: allfavouriteIds },
+                        success: UpdateIcon,
+                        error: function () {
+                            alert('Error adding recipes to favorites.');
+                        }
+                    });
+                });
             });
-        });
-    });
-    function UpdateCheckbox(recipeId) {
-        var favouriteIds = $('.favourite-checkbox').map(function () {
-            return $(this).val();
-        }).get();
-        $('.favourite-checkbox').prop('checked', false); // Unchecks all boxes
+            function UpdateCheckbox(recipeId) {
+                var favouriteIds = $('.favourite-checkbox').map(function () {
+                    return $(this).val();
+                }).get();
+                $('.favourite-checkbox').prop('checked', false); // Unchecks all boxes
 
-        $.ajax({
-            url: '/Favourites/GetAllFavouriteLists',
-            type: 'POST',
-            data: { recipeId: recipeId, favouriteIds: favouriteIds },
-            success: function (data) {
-                for (var i = 0; i < data.length; i++) {
-                    if (data[i].isFavorite) {
-                        $('#favourite-checkbox-' + data[i].id).prop('checked', true); // Checks all boxes
-                        console.log('#favourite-checkbox-' + data[i].id)
+                $.ajax({
+                    url: '/Favourites/GetAllFavouriteLists',
+                    type: 'POST',
+                    data: { recipeId: recipeId, favouriteIds: favouriteIds },
+                    success: function (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            if (data[i].isFavorite) {
+                                $('#favourite-checkbox-' + data[i].id).prop('checked', true); // Checks all boxes
+                                console.log('#favourite-checkbox-' + data[i].id)
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert('Error getting favorite status.');
                     }
-                }
-            },
-            error: function () {
-                alert('Error getting favorite status.');
-            }
-        });
-    };
-    function UpdateIcon() {
-        var recipeId = @Html.Raw(Json.Serialize(@Model.Select(r=> r.Id).ToArray()));
+                });
+            };
+            function UpdateIcon() {
+                var recipeId = @Html.Raw(Json.Serialize(@Model.Select(r=> r.Id).ToArray()));
 
-        $.ajax({
-            url: '/Favourites/GetAllFavouriteRecipes',
-            type: 'POST',
-            data: { recipeIds: recipeId },
-            success: function (data) {
-                for (var i = 0; i < data.length; i++) {
-                    if (data[i].isFavorite) {
-                        console.log('#favourite-icon-' + data[i].recipeId)
-                        $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart');
-                        $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart-o');
+                $.ajax({
+                    url: '/Favourites/GetAllFavouriteRecipes',
+                    type: 'POST',
+                    data: { recipeIds: recipeId },
+                    success: function (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            if (data[i].isFavorite) {
+                                console.log('#favourite-icon-' + data[i].recipeId)
+                                $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart');
+                                $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart-o');
+                            }
+                            else {
+                                $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart');
+                                $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart-o');
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert('Error getting favorite status.');
                     }
-                    else {
-                        $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart');
-                        $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart-o');
-                    }
-                }
-            },
-            error: function () {
-                alert('Error getting favorite status.');
+                });
             }
-        });
-    }
-</script>
+        </script>
 
 

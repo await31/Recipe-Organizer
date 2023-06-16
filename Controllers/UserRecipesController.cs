@@ -39,14 +39,14 @@ namespace CapstoneProject.Controllers {
         [HttpPost]
         public JsonResult SearchAutoComplete(string term) {
             var result = (_context.Recipes.Where(t => t.Name.ToLower().Contains(term.ToLower()))
-                 .Select(t => new { Name = t.Name }))
+                 .Select(t => new { t.Name }))
                  .ToList();
             return Json(result);
         }
         [HttpPost]
         public JsonResult IngredientsAutoComplete(string term) {
             var result = (_context.Ingredients.Where(t => t.Name.ToLower().Contains(term.ToLower()))
-                 .Select(t => new { Name = t.Name }))
+                 .Select(t => new { t.Name }))
                  .ToList();
             return Json(result);
         }
@@ -57,7 +57,10 @@ namespace CapstoneProject.Controllers {
             const int pageSize = 6; // Number of recipes in 1 page
             if (pg < 1)
                 pg = 1;
-            var recipes = _context.Recipes.Include(b => b.Ingredients).Select(b => b);
+            var recipes = _context.Recipes
+                .Where(a => a.Status == true)
+                .Include(b => b.Ingredients)
+                .Select(b => b);
             if (recipes != null) {
                 string? searchString = Request.Query["SearchString"];
                 string? prepTime = Request.Query["PrepTime"];
@@ -230,29 +233,92 @@ namespace CapstoneProject.Controllers {
             return full;
         }
 
-        [Breadcrumb("Details", FromAction = "Index", FromController = typeof(UserRecipesController))]
+        [Breadcrumb("Details")]
         // GET: Recipes/Details/5
-        public async Task<IActionResult> Details(int? id) {
-            var entity = _context.Recipes.FirstOrDefault(item => item.Id == id);
-            if (entity != null) {
-                entity.ViewCount++;
-                await _context.SaveChangesAsync();
-            }
+        public IActionResult Details(int? id, int pg = 1) {
+            var recipe = _context.Recipes
+                .Where(a => a.Status == true)
+                .Include(x => x.FkUser)
+                .Include(y => y.FkRecipeCategory)
+                .Include(z => z.Ingredients)
+                .Include(t => t.Nutrition)
+                .Include(a => a.RecipeIngredients)
+                .FirstOrDefault(a => a.Id == id);
 
-            ViewBag.Title = "Create recipe";
-            if (id == null || _context.Recipes == null) {
-                return NotFound();
-            }
+            var feedbacks = _context.RecipeFeedbacks
+                .OrderByDescending(x => x.CreatedDate)
+                .Where(a => a.RecipeId == id)
+                .Include(a => a.User)
+                .ToList();
 
-            var recipe = await _context.Recipes
-                .Include(r => r.FkRecipe)
-                .Include(r => r.FkRecipeCategory)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (recipe == null) {
-                return NotFound();
-            }
+            const int pageSize = 5; // Number of ingredients in 1 page
 
+            if (pg < 1)
+                pg = 1;
+
+            int recsCount = feedbacks.Count();
+
+            var pager = new Pager(recsCount, pg, pageSize);
+
+            int recSkip = (pg - 1) * pageSize;
+
+            var data = feedbacks.Skip(recSkip).Take(pager.PageSize).ToList();
+
+            this.ViewBag.Pager = pager;
+
+            ViewData["feedbacks"] = data;
+
+            if (recipe != null) {
+                recipe.ViewCount++;
+            }
+            _context.SaveChanges();
             return View(recipe);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetFeedbackAsync(string feedbackText, int recipeId) {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (feedbackText != null) {
+                if (CompareLimitedWords(feedbackText) == true) {
+                    TempData["error"] = "Your feedback was ignored because it contains an invalid word.";
+                    return RedirectToAction("Details", new { id = recipeId });
+                } else {
+                    var feedback = new RecipeFeedback {
+                        RecipeId = recipeId,
+                        UserId = currentUser.Id,
+                        Description = feedbackText,
+                        Rating = 0,
+                        CreatedDate = DateTime.Now
+                    };
+                    _context.RecipeFeedbacks.Add(feedback);
+                    await _context.SaveChangesAsync(); // Save changes to the database
+                }
+                return RedirectToAction("Details", new { id = recipeId });
+            }
+            return RedirectToAction("Details", new { id = recipeId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteFeedbackAsync(int recipeId, int id) {
+            var feedback = await _context.RecipeFeedbacks.FirstOrDefaultAsync(x => x.Id == id);
+            if(feedback != null) {
+                _context.RecipeFeedbacks.Remove(feedback);
+                await _context.SaveChangesAsync(); // Save changes to the database
+                TempData["success"] = "Your feedback was deleted.";
+                return RedirectToAction("Details", new { id = recipeId });
+            }
+            return RedirectToAction("Details", new { id = recipeId });
+        }
+
+        public bool CompareLimitedWords(string text) {
+            List<string> words = new List<string>() { "stupid", "idiot", "disgusting", "shit", "jesus", "ass", "damn", "fuck", "asshole", "bastard", "bullshit", "cunt", "dick", "dyke", "hell", "holy shit", "holyshit", "motherfucker","mother fucker","nigga", "nigra", "n1gga", "pussy", "slut", "turd", "wanker" };
+            foreach (string word in words) {
+                if (text.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         // GET: Recipes/Create

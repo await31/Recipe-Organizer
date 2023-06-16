@@ -47,76 +47,7 @@ namespace CapstoneProject.Controllers {
                 .Include(x => x.FkUser)
                 .ToList();
 
-            /*
-             if (recipes != null) {
-                string? searchString = Request.Query["SearchString"];
-                string? prepTime = Request.Query["PrepTime"];
-                string? recipeCategory = Request.Query["RecipeCategory"];
-                string? difficulty = Request.Query["Difficulty"];
-                string? sortBy = Request.Query["SortBy"];
-
-                //Add all recipecategories
-                if (String.IsNullOrEmpty(prepTime))
-                    prepTime = "All";
-                if (String.IsNullOrEmpty(difficulty))
-                    difficulty = "All";
-                if (String.IsNullOrEmpty(recipeCategory))
-                    recipeCategory = "All";
-                if (String.IsNullOrEmpty(sortBy))
-                    sortBy = "SortPopular";
-                ViewBag.FkRecipeCategoryId = new SelectList(_context.RecipeCategories, "Id", "Name", recipeCategory);
-                ViewBag.SortBy = new SelectList(
-                new List<SelectListItem>
-                {
-                new SelectListItem { Text = "Sort By Popularity", Value = "SortPopular"},
-                new SelectListItem { Text = "Sort By Name", Value = "SortName"},
-                new SelectListItem { Text = "Sort By Date", Value = "SortDate"},
-                new SelectListItem { Text = "Sort By PrepTime", Value = "SortPrepTime"},
-                }
-                , "Value", "Text", sortBy);
-
-                ViewData["FilterSearch"] = searchString;
-                ViewData["FilterPrepTime"] = prepTime;
-                ViewData["FilterDifficulty"] = difficulty;
-                if (!prepTime.Equals("All")) {
-                    recipes = recipes.Where(b => b.PrepTime <= int.Parse(prepTime));
-                }
-                if (!difficulty.Equals("All")) {
-                    recipes = recipes.Where(b => b.Difficult == int.Parse(difficulty));
-                }
-                if (!recipeCategory.Equals("All")) {
-                    recipes = recipes.Where(b => b.FkRecipeCategoryId == int.Parse(recipeCategory));
-                }
-                if (!String.IsNullOrEmpty(searchString)) {
-                    recipes = recipes.Where(b => b.Name.ToLower().Contains(searchString.ToLower()));
-                }
-                switch (sortBy) {
-                    case "SortDate":
-                        recipes = recipes.OrderBy(b => b.CreatedDate);
-                        break;
-                    case "SortPrepTime":
-                        recipes = recipes.OrderBy(b => b.PrepTime);
-                        break;
-                    case "SortName":
-                        recipes = recipes.OrderBy(b => b.Name);
-                        break;
-                    default: // Sort by most popular
-                        recipes = recipes.OrderByDescending(b => b.ViewCount);
-                        break;
-                }
-            }
-            //Favorite
-            var currentUser = await _userManager.GetUserAsync(User);
-            ViewBag.FavoriteList = null;
-
-            if (currentUser != null) {
-                //Get user from dbContext which include favorites
-                var user = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id);
-                List<int> favoritedRecipes = user.Favourites.SelectMany(c => c.Recipes).Select(r => r.Id).ToList();
-                ViewBag.FavoriteList = favoritedRecipes;
-            }
-             */
-            const int pageSize = 10; // Number of recipes in 1 page
+            const int pageSize = 10; 
 
             if (pg < 1)
                 pg = 1;
@@ -135,15 +66,19 @@ namespace CapstoneProject.Controllers {
         }
 
         // GET: Recipes/Details/5
-        public async Task<IActionResult> Details(int? id) {
+        public IActionResult Details(int? id) {
             if (id == null || _context.Recipes == null) {
                 return NotFound();
             }
 
-            var recipe = await _context.Recipes
-                .Include(r => r.FkRecipe)
-                .Include(r => r.FkRecipeCategory)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var recipe = _context.Recipes
+                .Where(a => a.Status == true)
+                .Include(x => x.FkUser)
+                .Include(y => y.FkRecipeCategory)
+                .Include(t => t.Nutrition)
+                .Include(a => a.RecipeIngredients)
+                .FirstOrDefault(m => m.Id == id);
+
             if (recipe == null) {
                 return NotFound();
             }
@@ -181,6 +116,11 @@ namespace CapstoneProject.Controllers {
                 .Where(r => r.RecipeId == id)
                 .ToList();
             _context.RecipeIngredient.RemoveRange(recipeIngredient);
+
+            var recipeFeedbacks = _context.RecipeFeedbacks
+                .Where(r => r.RecipeId == id)
+                .ToList();
+            _context.RecipeFeedbacks.RemoveRange(recipeFeedbacks);
 
             var recipe = await _context.Recipes.FindAsync(id);
             if (recipe != null) {
@@ -221,6 +161,11 @@ namespace CapstoneProject.Controllers {
             if (recipe == null) {
                 return NotFound();
             }
+
+            var recipeIngredient = _context.RecipeIngredient
+               .Where(r => r.RecipeId == id)
+               .ToList();
+            _context.RecipeIngredient.RemoveRange(recipeIngredient);
 
             await DeleteFromFirebaseStorage(recipe.ImgPath);
             _context.Recipes.Remove(recipe);

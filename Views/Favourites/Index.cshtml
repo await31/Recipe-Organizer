@@ -1,28 +1,43 @@
 ﻿@model IEnumerable<Favourite>
 
 @{
-    ViewData["Title"] = "Collections";
+    ViewData["Title"] = "My Collections";
 }
 
-<h2>Collections</h2>
+<style>
+    .card-limit-1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+    .card-limit-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
+
 <div class="row ms-5">
-    @foreach (var collection in Model)
-    {
-        <div class="card d-flex col-md-3 col-sm-6 mx-4 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%); height:300px;">
-                
-            <div class="mt-2" style="height: 40%;">
-                <a asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id" class="text-decoration-none h-100">
-                    <div class="card-body pb-4 pt-3">
-                        <h4 class="card-title text-dark text-decoration-none text-center" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@collection.Name</h4>
-                        <div class="d-flex row mt-4 ms-4 mb-3">
-                            @collection.Description
-                        </div>
-                    </div>
-                </a>
+    <div class="row">
+        <a asp-action="Create" class="btn btn-success fw-bold mt-4 mb-4 ms-2 col-2">New collection</a>
+    </div>
+    @foreach (var collection in Model) {
+        <div class="card text-center mb-3 mx-2" style="width: 18rem;">
+            <div class="card-body">
+                <h6 class="card-title card-limit-1">@collection.Name</h6>
+                @if (collection.Description == null) {
+                    <p class="card-text card-limit-2">This collection doesn't have a description yet.</p>
+                } else {
+                    <p class="card-text card-limit-2">@collection.Description</p>
+                }
+                <a asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id" class="btn btn-outline-dark" class="">Watch</a>
             </div>
         </div>
-    } @*End of foreach*@</div>
+    }
+</div>

@@ -67,7 +67,10 @@
                     <option value="3">Hard</option>
                 </select>
             </div>
-
+            <div class="form-group mt-4">
+                <label asp-for="ServingSize" class="control-label mb-2 label-font">Serving Size (People)</label>
+                <input asp-for="ServingSize" class="form-control" type="number" min="1"/>
+            </div>
             <div class="form-group mt-5">
                 <p class="text-center text-dark fw-bolder fs-2 label-font mb-4">Nutrition &nbsp;Facts</p>
                 <div class="row">
@@ -120,8 +123,8 @@
                         <div class="col-md-4">
                             <label for="UnitOfMeasure" class="mb-2 label-font">Unit of Measure</label>
                             <select class="form-control" id="UnitOfMeasure" name="UnitOfMeasures[]" required>
-                                <option value="milliliters">milliliters (ml)</option>
-                                <option value="grams">grams (g)</option>
+                                <option value="milliliters">milliliter(s)</option>
+                                <option value="grams">gram(s)</option>
                             </select>
                         </div>
                         <div class="col-md-1" style="margin-top: 4%;">
