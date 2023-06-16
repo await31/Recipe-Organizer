@@ -60,7 +60,7 @@ namespace CapstoneProject.Controllers {
         }
 
         [Breadcrumb("Recipe Detail", FromAction = "Index", FromController = typeof(HomeController))]
-        public IActionResult RecipeDetail(int? id) {
+        public async Task<IActionResult> RecipeDetail(int? id) {
             var recipe = _context.Recipes
                 .Include(x => x.FkUser)
                 .Include(y => y.FkRecipeCategory)
@@ -70,6 +70,13 @@ namespace CapstoneProject.Controllers {
                 .FirstOrDefault(a=> a.Id == id);
             recipe.ViewCount++;
             _context.SaveChanges();
+
+            //Favourite list
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null)
+                ViewBag.FavouriteList = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.Select(f => new { f.Id, f.Name }).ToList();
+            else
+                ViewBag.FavouriteList = null;
             return View(recipe);
         }
 
