@@ -30,6 +30,7 @@ namespace CapstoneProject.Controllers {
         public async Task<IActionResult> Index() {
 
             var recipes = _context.Recipes
+                            .Where(a=> a.Status==true)
                             .OrderByDescending(b => b.CreatedDate)
                             .Take(6)
                             .Include(r => r.FkRecipeCategory)
@@ -37,6 +38,7 @@ namespace CapstoneProject.Controllers {
 
             if (recipes != null) {
                 var hotRecipe = _context.Recipes
+                            .Where(a=> a.Status == true)
                             .Include(r => r.FkRecipeCategory)
                             .Include(b => b.FkUser)
                             .OrderByDescending(a => a.CreatedDate)
@@ -59,19 +61,6 @@ namespace CapstoneProject.Controllers {
             return View();
         }
 
-        [Breadcrumb("Recipe Detail", FromAction = "Index", FromController = typeof(HomeController))]
-        public IActionResult RecipeDetail(int? id) {
-            var recipe = _context.Recipes
-                .Include(x => x.FkUser)
-                .Include(y => y.FkRecipeCategory)
-                .Include(z => z.Ingredients)
-                .Include(t => t.Nutrition)
-                .Include(a => a.RecipeIngredients)
-                .FirstOrDefault(a=> a.Id == id);
-            recipe.ViewCount++;
-            _context.SaveChanges();
-            return View(recipe);
-        }
 
         [Breadcrumb("View Ingredients", FromAction = "Index", FromController = typeof(HomeController))]
         public IActionResult ViewIngredient(int id, int pg = 1) {
@@ -102,6 +91,7 @@ namespace CapstoneProject.Controllers {
             List<int> recipeIds = _context.Favourites.Where(a => userFavouriteList.Contains(a)).Include(a => a.Recipes).SelectMany(c => c.Recipes).Select(r => r.Id).ToList();
 
             var recipes = await _context.Recipes
+                .Where(a=>a.Status == true)
                 .Where(r => recipeIds.Contains(r.Id))
                 .Include(r => r.FkRecipe)
                 .Include(r => r.FkRecipeCategory)

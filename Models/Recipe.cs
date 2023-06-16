@@ -16,6 +16,8 @@ public partial class Recipe {
 
     public string? ImgPath { get; set; }
 
+    public int? ServingSize { get; set; }
+
     public string? Description { get; set; }
     public int? ViewCount { get; set; }
     public int? FkRecipeCategoryId { get; set; }

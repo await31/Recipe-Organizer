@@ -39,14 +39,14 @@ namespace CapstoneProject.Controllers {
         [HttpPost]
         public JsonResult SearchAutoComplete(string term) {
             var result = (_context.Recipes.Where(t => t.Name.ToLower().Contains(term.ToLower()))
-                 .Select(t => new { Name = t.Name }))
+                 .Select(t => new { t.Name }))
                  .ToList();
             return Json(result);
         }
         [HttpPost]
         public JsonResult IngredientsAutoComplete(string term) {
             var result = (_context.Ingredients.Where(t => t.Name.ToLower().Contains(term.ToLower()))
-                 .Select(t => new { Name = t.Name }))
+                 .Select(t => new { t.Name }))
                  .ToList();
             return Json(result);
         }
@@ -57,7 +57,10 @@ namespace CapstoneProject.Controllers {
             const int pageSize = 6; // Number of recipes in 1 page
             if (pg < 1)
                 pg = 1;
-            var recipes = _context.Recipes.Include(b => b.Ingredients).Select(b => b);
+            var recipes = _context.Recipes
+                .Where(a => a.Status == true)
+                .Include(b => b.Ingredients)
+                .Select(b => b);
             if (recipes != null) {
                 string? searchString = Request.Query["SearchString"];
                 string? prepTime = Request.Query["PrepTime"];
@@ -230,29 +233,50 @@ namespace CapstoneProject.Controllers {
             return full;
         }
 
-        [Breadcrumb("Details", FromAction = "Index", FromController = typeof(UserRecipesController))]
+        [Breadcrumb("Details")]
         // GET: Recipes/Details/5
-        public async Task<IActionResult> Details(int? id) {
-            var entity = _context.Recipes.FirstOrDefault(item => item.Id == id);
-            if (entity != null) {
-                entity.ViewCount++;
-                await _context.SaveChangesAsync();
-            }
-
-            ViewBag.Title = "Create recipe";
-            if (id == null || _context.Recipes == null) {
-                return NotFound();
-            }
-
-            var recipe = await _context.Recipes
-                .Include(r => r.FkRecipe)
-                .Include(r => r.FkRecipeCategory)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (recipe == null) {
-                return NotFound();
-            }
-
+        public IActionResult Details(int? id) {
+            var recipe = _context.Recipes
+                .Where(a => a.Status == true)
+                .Include(x => x.FkUser)
+                .Include(y => y.FkRecipeCategory)
+                .Include(z => z.Ingredients)
+                .Include(t => t.Nutrition)
+                .Include(a => a.RecipeIngredients)
+                .Include(a => a.RecipeFeedbacks)
+                .FirstOrDefault(a => a.Id == id);
+            recipe.ViewCount++;
+            _context.SaveChanges();
             return View(recipe);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetFeedbackAsync(string feedbackText, int recipeId) {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (feedbackText != null) {
+                if (CompareLimitedWords(feedbackText) == true) {
+                    TempData["error"] = "Your feedback was ignored because it contains an invalid word.";
+                    return RedirectToAction("Index");
+                } else {
+                    var feedback = new RecipeFeedback {
+                        RecipeId = recipeId,
+                        UserId = currentUser.Id,
+                        Description = feedbackText,
+                        Rating = 0,
+                        CreatedDate = DateTime.Now
+                    };
+                    _context.RecipeFeedbacks.Add(feedback);
+                }
+                _context.SaveChanges(); // Save changes to the database
+                return RedirectToAction("Index");
+            }
+            return RedirectToAction("Index");
+        }
+
+        public bool CompareLimitedWords(string text) {
+            //Gioi han 1 vai tu de demo
+            List<string> words = new List<string>() { "stupid", "idiot", "disgusting", "shit" };
+            return words.Contains(text);
         }
 
         // GET: Recipes/Create

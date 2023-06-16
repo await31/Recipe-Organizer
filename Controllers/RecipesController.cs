@@ -222,6 +222,11 @@ namespace CapstoneProject.Controllers {
                 return NotFound();
             }
 
+            var recipeIngredient = _context.RecipeIngredient
+               .Where(r => r.RecipeId == id)
+               .ToList();
+            _context.RecipeIngredient.RemoveRange(recipeIngredient);
+
             await DeleteFromFirebaseStorage(recipe.ImgPath);
             _context.Recipes.Remove(recipe);
             await _context.SaveChangesAsync();
