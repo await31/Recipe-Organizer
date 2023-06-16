@@ -135,15 +135,19 @@ namespace CapstoneProject.Controllers {
         }
 
         // GET: Recipes/Details/5
-        public async Task<IActionResult> Details(int? id) {
+        public IActionResult Details(int? id) {
             if (id == null || _context.Recipes == null) {
                 return NotFound();
             }
 
-            var recipe = await _context.Recipes
-                .Include(r => r.FkRecipe)
-                .Include(r => r.FkRecipeCategory)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var recipe = _context.Recipes
+                .Where(a => a.Status == false)
+                .Include(x => x.FkUser)
+                .Include(y => y.FkRecipeCategory)
+                .Include(t => t.Nutrition)
+                .Include(a => a.RecipeIngredients)
+                .FirstOrDefault(m => m.Id == id);
+
             if (recipe == null) {
                 return NotFound();
             }

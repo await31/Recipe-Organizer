@@ -235,7 +235,7 @@ namespace CapstoneProject.Controllers {
 
         [Breadcrumb("Details")]
         // GET: Recipes/Details/5
-        public IActionResult Details(int? id) {
+        public IActionResult Details(int? id, int pg = 1) {
             var recipe = _context.Recipes
                 .Where(a => a.Status == true)
                 .Include(x => x.FkUser)
@@ -243,9 +243,34 @@ namespace CapstoneProject.Controllers {
                 .Include(z => z.Ingredients)
                 .Include(t => t.Nutrition)
                 .Include(a => a.RecipeIngredients)
-                .Include(a => a.RecipeFeedbacks)
                 .FirstOrDefault(a => a.Id == id);
-            recipe.ViewCount++;
+
+            var feedbacks = _context.RecipeFeedbacks
+                .OrderByDescending(x => x.CreatedDate)
+                .Where(a => a.RecipeId == id)
+                .Include(a => a.User)
+                .ToList();
+
+            const int pageSize = 5; // Number of ingredients in 1 page
+
+            if (pg < 1)
+                pg = 1;
+
+            int recsCount = feedbacks.Count();
+
+            var pager = new Pager(recsCount, pg, pageSize);
+
+            int recSkip = (pg - 1) * pageSize;
+
+            var data = feedbacks.Skip(recSkip).Take(pager.PageSize).ToList();
+
+            this.ViewBag.Pager = pager;
+
+            ViewData["feedbacks"] = data;
+
+            if (recipe != null) {
+                recipe.ViewCount++;
+            }
             _context.SaveChanges();
             return View(recipe);
         }
@@ -256,7 +281,7 @@ namespace CapstoneProject.Controllers {
             if (feedbackText != null) {
                 if (CompareLimitedWords(feedbackText) == true) {
                     TempData["error"] = "Your feedback was ignored because it contains an invalid word.";
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Details", new { id = recipeId });
                 } else {
                     var feedback = new RecipeFeedback {
                         RecipeId = recipeId,
@@ -266,17 +291,34 @@ namespace CapstoneProject.Controllers {
                         CreatedDate = DateTime.Now
                     };
                     _context.RecipeFeedbacks.Add(feedback);
+                    await _context.SaveChangesAsync(); // Save changes to the database
                 }
-                _context.SaveChanges(); // Save changes to the database
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", new { id = recipeId });
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { id = recipeId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteFeedbackAsync(int recipeId, int id) {
+            var feedback = await _context.RecipeFeedbacks.FirstOrDefaultAsync(x => x.Id == id);
+            if(feedback != null) {
+                _context.RecipeFeedbacks.Remove(feedback);
+                await _context.SaveChangesAsync(); // Save changes to the database
+                TempData["success"] = "Your feedback was deleted.";
+                return RedirectToAction("Details", new { id = recipeId });
+            }
+            return RedirectToAction("Details", new { id = recipeId });
         }
 
         public bool CompareLimitedWords(string text) {
-            //Gioi han 1 vai tu de demo
-            List<string> words = new List<string>() { "stupid", "idiot", "disgusting", "shit" };
-            return words.Contains(text);
+            List<string> words = new List<string>() { "stupid", "idiot", "disgusting", "shit", "jesus", "ass", "damn", "fuck", "asshole", "bastard", "bullshit", "cunt", "dick", "dyke", "hell", "holy shit", "holyshit", "motherfucker","mother fucker","nigga", "nigra", "n1gga", "pussy", "slut", "turd", "wanker" };
+            foreach (string word in words) {
+                if (text.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         // GET: Recipes/Create
