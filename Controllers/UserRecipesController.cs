@@ -19,6 +19,7 @@ using Firebase.Storage;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats;
+using System.Xml.Linq;
 
 namespace CapstoneProject.Controllers {
 
@@ -232,27 +233,18 @@ namespace CapstoneProject.Controllers {
             full = full.Replace(remove, "");
             return full;
         }
-
-        [Breadcrumb("Details")]
-        // GET: Recipes/Details/5
-        public IActionResult Details(int? id, int pg = 1) {
-            var recipe = _context.Recipes
-                .Where(a => a.Status == true)
-                .Include(x => x.FkUser)
-                .Include(y => y.FkRecipeCategory)
-                .Include(z => z.Ingredients)
-                .Include(t => t.Nutrition)
-                .Include(a => a.RecipeIngredients)
-                .FirstOrDefault(a => a.Id == id);
-
+        private List<RecipeFeedback> GetRecipeFeedbacks(int recipeId)
+        {
             var feedbacks = _context.RecipeFeedbacks
                 .OrderByDescending(x => x.CreatedDate)
-                .Where(a => a.RecipeId == id)
+                .Where(a => a.RecipeId == recipeId)
                 .Include(a => a.User)
                 .ToList();
-
-            const int pageSize = 5; // Number of ingredients in 1 page
-
+            return feedbacks;
+        }
+        private List<RecipeFeedback> GetRecipeFeedbackPage(List<RecipeFeedback> feedbacks, int pg)
+        {
+            const int pageSize = 5; // Number of comments in 1 page
             if (pg < 1)
                 pg = 1;
 
@@ -262,11 +254,26 @@ namespace CapstoneProject.Controllers {
 
             int recSkip = (pg - 1) * pageSize;
 
-            var data = feedbacks.Skip(recSkip).Take(pager.PageSize).ToList();
-
             this.ViewBag.Pager = pager;
 
+            var data = feedbacks.Skip(recSkip).Take(pager.PageSize).ToList();
+            return data;
+        }
+        [Breadcrumb("Details")]
+        // GET: Recipes/Details/5
+        public IActionResult Details(int id, int pg = 1) {
+            var recipe = _context.Recipes
+                .Where(a => a.Status == true)
+                .Include(x => x.FkUser)
+                .Include(y => y.FkRecipeCategory)
+                .Include(z => z.Ingredients)
+                .Include(t => t.Nutrition)
+                .Include(a => a.RecipeIngredients)
+                .FirstOrDefault(a => a.Id == id);
+            var feedbacks = GetRecipeFeedbacks(id);
+            var data = GetRecipeFeedbackPage(feedbacks, pg);
             ViewData["feedbacks"] = data;
+            ViewData["RecipeId"] = id;
 
             if (recipe != null) {
                 recipe.ViewCount++;
@@ -276,12 +283,11 @@ namespace CapstoneProject.Controllers {
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetFeedbackAsync(string feedbackText, int recipeId) {
+        public async Task<IActionResult> GetFeedbackAsync(string feedbackText, int recipeId, int pg = 1) {
             var currentUser = await _userManager.GetUserAsync(User);
             if (feedbackText != null) {
                 if (CompareLimitedWords(feedbackText) == true) {
                     TempData["error"] = "Your feedback was ignored because it contains an invalid word.";
-                    return RedirectToAction("Details", new { id = recipeId });
                 } else {
                     var feedback = new RecipeFeedback {
                         RecipeId = recipeId,
@@ -293,9 +299,10 @@ namespace CapstoneProject.Controllers {
                     _context.RecipeFeedbacks.Add(feedback);
                     await _context.SaveChangesAsync(); // Save changes to the database
                 }
-                return RedirectToAction("Details", new { id = recipeId });
             }
-            return RedirectToAction("Details", new { id = recipeId });
+            var feedbacks = GetRecipeFeedbacks(recipeId);
+            var data = GetRecipeFeedbackPage(feedbacks, pg);
+            return PartialView("_Feedback", data);
         }
 
         [HttpPost]
