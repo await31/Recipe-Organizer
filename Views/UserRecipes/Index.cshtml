@@ -141,7 +141,7 @@
                                 <div class="position-relative" style="height: 60%;">
                                     @if (SignInManager.IsSignedIn(User)) {
                                         <div class="position-absolute rounded-circle bg-light p-2 pb-1" style="top: 3%; right: 3%;">
-                                            <button class="unstyled-button add-favourite" data-recipe-id="@recipe.Id">
+                                            <button class="unstyled-button add-favourite-button" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@recipe.Id">
                                                 <i id="favourite-icon-@recipe.Id" class="fa fa-heart-o" style="font-size:48px;color:red"></i>
                                             </button>
                                         </div>
@@ -248,13 +248,30 @@
     });
     $(document).ready(function () {
         UpdateIcon();
-        $('.add-favourite').click(function () {
+        //This function will update the recipe id of modal
+        //also unchecked all checkboxes
+        $('.add-favourite-button').click(function () {
             var recipeId = $(this).data('recipe-id');
+            $("#favourite-save").attr("data-recipe-id", recipeId);
+            UpdateCheckbox(recipeId);
+        });
+        //This function will add the recipe into all selected favourite lists on clicking button with class add-favourite
+        //currently only add in favourite list
+        $('#favourite-save').click(function () {
+            var recipeId = $(this).data('recipe-id');
+            //Get all checked boxes' favourite ids
+            var favouriteIds = $('input.favourite-checkbox:checkbox:checked').map(function () {
+                return $(this).val();
+            }).get();
+            //Get all boxes' favourite ids
+            var allfavouriteIds = $('.favourite-checkbox').map(function () {
+                return $(this).val();
+            }).get();
 
             $.ajax({
                 url: '/Favourites/AddRecipe',
                 type: 'POST',
-                data: { recipeId: recipeId },
+                data: { recipeId: recipeId, favouriteIds: favouriteIds, allfavouriteIds: allfavouriteIds },
                 success: UpdateIcon,
                 error: function () {
                     alert('Error adding recipes to favorites.');
@@ -262,16 +279,40 @@
             });
         });
     });
+    function UpdateCheckbox(recipeId) {
+        var favouriteIds = $('.favourite-checkbox').map(function () {
+            return $(this).val();
+        }).get();
+        $('.favourite-checkbox').prop('checked', false); // Unchecks all boxes
+
+        $.ajax({
+            url: '/Favourites/GetAllFavouriteLists',
+            type: 'POST',
+            data: { recipeId: recipeId, favouriteIds: favouriteIds },
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].isFavorite) {
+                        $('#favourite-checkbox-' + data[i].id).prop('checked', true); // Checks all boxes
+                        console.log('#favourite-checkbox-' + data[i].id)
+                    }
+                }
+            },
+            error: function () {
+                alert('Error getting favorite status.');
+            }
+        });
+    };
     function UpdateIcon() {
         var recipeId = @Html.Raw(Json.Serialize(@Model.Select(r=> r.Id).ToArray()));
 
         $.ajax({
-            url: '/Favourites/GetFavourites',
+            url: '/Favourites/GetAllFavouriteRecipes',
             type: 'POST',
             data: { recipeIds: recipeId },
             success: function (data) {
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].isFavorite) {
+                        console.log('#favourite-icon-' + data[i].recipeId)
                         $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart');
                         $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart-o');
                     }

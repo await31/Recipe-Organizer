@@ -118,18 +118,7 @@
             <div class="position-relative" style="height: 60%;">
                 @if (SignInManager.IsSignedIn(User)) {
                     <div class="position-absolute rounded-circle bg-light p-2 pb-1" style="top: 3%; right: 3%;">
-                        @*
-                <a asp-controller="Home" asp-route-returnUrl="@Context.Request.Path" asp-route-parameters="@parameters" asp-action="Favorite" asp-route-id="@recipe.Id">
-                @{
-                List<int> favoriteList = ViewBag.FavoriteList;
-                }
-                @if ((favoriteList != null) && (favoriteList.Contains(recipe.Id))) {
-                <i class="fa fa-heart fs-3 text-danger"></i>
-                } else {
-                <i class="fa fa-heart-o fs-3 text-danger"></i>
-                }
-                </a>
-                *@
+                        
                         <button class="unstyled-button add-favourite-button" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@recipe.Id">
                             <i id="favourite-icon-@recipe.Id" class="fa fa-heart-o" style="font-size:48px;color:red"></i>
                         </button>
