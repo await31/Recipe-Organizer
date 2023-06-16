@@ -235,7 +235,7 @@ namespace CapstoneProject.Controllers {
 
         [Breadcrumb("Details")]
         // GET: Recipes/Details/5
-        public IActionResult Details(int? id, int pg=1) {
+        public IActionResult Details(int? id, int pg = 1) {
             var recipe = _context.Recipes
                 .Where(a => a.Status == true)
                 .Include(x => x.FkUser)
@@ -268,7 +268,7 @@ namespace CapstoneProject.Controllers {
 
             ViewData["feedbacks"] = data;
 
-            if(recipe!= null) {
+            if (recipe != null) {
                 recipe.ViewCount++;
             }
             _context.SaveChanges();
@@ -298,10 +298,28 @@ namespace CapstoneProject.Controllers {
             return RedirectToAction("Details", new { id = recipeId });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> DeleteFeedbackAsync(int recipeId, int id) {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var feedback = _context.RecipeFeedbacks.FirstOrDefault(x => x.Id == id);
+            if(feedback != null) {
+                _context.RecipeFeedbacks.Remove(feedback);
+                _context.SaveChanges(); // Save changes to the database
+                TempData["success"] = "Your feedback was deleted.";
+                return RedirectToAction("Details", new { id = recipeId });
+            }
+            return RedirectToAction("Details", new { id = recipeId });
+        }
+
         public bool CompareLimitedWords(string text) {
-            //Gioi han 1 vai tu de demo
-            List<string> words = new List<string>() { "stupid", "idiot", "disgusting", "shit" };
-            return words.Contains(text);
+            List<string> words = new List<string>() { "stupid", "idiot", "disgusting", "shit", "jesus", "ass", "damn", "fuck", "asshole", "bastard", "bullshit", "cunt", "dick", "dyke", "hell", "holy shit", "holyshit", "motherfucker","mother fucker","nigga", "nigra", "n1gga", "pussy", "slut", "turd", "wanker" };
+            foreach (string word in words) {
+                if (text.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         // GET: Recipes/Create
