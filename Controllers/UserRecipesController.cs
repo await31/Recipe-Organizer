@@ -291,8 +291,8 @@ namespace CapstoneProject.Controllers {
                         CreatedDate = DateTime.Now
                     };
                     _context.RecipeFeedbacks.Add(feedback);
+                    await _context.SaveChangesAsync(); // Save changes to the database
                 }
-                _context.SaveChanges(); // Save changes to the database
                 return RedirectToAction("Details", new { id = recipeId });
             }
             return RedirectToAction("Details", new { id = recipeId });
@@ -300,11 +300,10 @@ namespace CapstoneProject.Controllers {
 
         [HttpPost]
         public async Task<IActionResult> DeleteFeedbackAsync(int recipeId, int id) {
-            var currentUser = await _userManager.GetUserAsync(User);
-            var feedback = _context.RecipeFeedbacks.FirstOrDefault(x => x.Id == id);
+            var feedback = await _context.RecipeFeedbacks.FirstOrDefaultAsync(x => x.Id == id);
             if(feedback != null) {
                 _context.RecipeFeedbacks.Remove(feedback);
-                _context.SaveChanges(); // Save changes to the database
+                await _context.SaveChangesAsync(); // Save changes to the database
                 TempData["success"] = "Your feedback was deleted.";
                 return RedirectToAction("Details", new { id = recipeId });
             }
