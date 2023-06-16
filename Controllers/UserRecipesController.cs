@@ -235,7 +235,7 @@ namespace CapstoneProject.Controllers {
 
         [Breadcrumb("Details")]
         // GET: Recipes/Details/5
-        public IActionResult Details(int? id) {
+        public IActionResult Details(int? id, int pg=1) {
             var recipe = _context.Recipes
                 .Where(a => a.Status == true)
                 .Include(x => x.FkUser)
@@ -243,9 +243,33 @@ namespace CapstoneProject.Controllers {
                 .Include(z => z.Ingredients)
                 .Include(t => t.Nutrition)
                 .Include(a => a.RecipeIngredients)
-                .Include(a => a.RecipeFeedbacks)
                 .FirstOrDefault(a => a.Id == id);
-            recipe.ViewCount++;
+
+            var feedbacks = _context.RecipeFeedbacks
+                .Where(a => a.RecipeId == id)
+                .Include(a => a.User)
+                .ToList();
+
+            const int pageSize = 5; // Number of ingredients in 1 page
+
+            if (pg < 1)
+                pg = 1;
+
+            int recsCount = feedbacks.Count();
+
+            var pager = new Pager(recsCount, pg, pageSize);
+
+            int recSkip = (pg - 1) * pageSize;
+
+            var data = feedbacks.Skip(recSkip).Take(pager.PageSize).ToList();
+
+            this.ViewBag.Pager = pager;
+
+            ViewData["feedbacks"] = data;
+
+            if(recipe!= null) {
+                recipe.ViewCount++;
+            }
             _context.SaveChanges();
             return View(recipe);
         }
@@ -268,9 +292,9 @@ namespace CapstoneProject.Controllers {
                     _context.RecipeFeedbacks.Add(feedback);
                 }
                 _context.SaveChanges(); // Save changes to the database
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", new { id = recipeId });
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { id = recipeId });
         }
 
         public bool CompareLimitedWords(string text) {
