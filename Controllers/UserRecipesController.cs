@@ -246,6 +246,7 @@ namespace CapstoneProject.Controllers {
                 .FirstOrDefault(a => a.Id == id);
 
             var feedbacks = _context.RecipeFeedbacks
+                .OrderByDescending(x => x.CreatedDate)
                 .Where(a => a.RecipeId == id)
                 .Include(a => a.User)
                 .ToList();
@@ -280,7 +281,7 @@ namespace CapstoneProject.Controllers {
             if (feedbackText != null) {
                 if (CompareLimitedWords(feedbackText) == true) {
                     TempData["error"] = "Your feedback was ignored because it contains an invalid word.";
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Details", new { id = recipeId });
                 } else {
                     var feedback = new RecipeFeedback {
                         RecipeId = recipeId,
