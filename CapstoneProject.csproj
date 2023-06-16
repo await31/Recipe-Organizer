@@ -7,10 +7,6 @@
     <UserSecretsId>87225469-06fa-42fb-8d83-853df22e90d2</UserSecretsId>
   </PropertyGroup>
 
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\css\StyleSheet.css" />
-  </ItemGroup>
-
 	<ItemGroup>
 		<PackageReference Include="FirebaseAuthentication.net" Version="3.7.1" />
 		<PackageReference Include="FirebaseStorage.net" Version="1.0.3" />

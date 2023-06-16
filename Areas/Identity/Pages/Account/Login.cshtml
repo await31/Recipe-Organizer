@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Log in";
 }
-
+<link rel="stylesheet" href="~/css/formSetting.css" />
 <section style="height: 75vh !important;">
     <div class="container h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -54,7 +54,7 @@
                                         
                                     </div>
                                 </form>
-                                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal mx-1 mx-md-4">
+                                <form id="external-account account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal mx-1 mx-md-4">
                                     <div class="d-flex flex-column">
                                         @foreach (var provider in Model.ExternalLogins!) {
                                             if (@provider.Name.Equals("Google")) {
@@ -81,9 +81,11 @@
                 </section>
             </div>
         </div>
+        <img id="burger" src="/images/cute-burger.png" alt="Burger">
     </div>
-</section>
 
+</section>
+<script src="~/js/formSetting.js"></script>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
