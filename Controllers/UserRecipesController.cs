@@ -240,9 +240,9 @@ namespace CapstoneProject.Controllers {
                 .Where(a => a.Status == true)
                 .Include(x => x.FkUser)
                 .Include(y => y.FkRecipeCategory)
-                .Include(z => z.Ingredients)
                 .Include(t => t.Nutrition)
                 .Include(a => a.RecipeIngredients)
+                .ThenInclude(a => a.Ingredient)
                 .FirstOrDefault(a => a.Id == id);
 
             var feedbacks = _context.RecipeFeedbacks

@@ -43,6 +43,7 @@ namespace CapstoneProject.Controllers {
 
         public IActionResult Index(int pg = 1) {
             var recipes = _context.Recipes
+                .Where(a => a.Status == true)
                 .Include(x => x.FkRecipeCategory)
                 .Include(x => x.FkUser)
                 .ToList();
@@ -67,16 +68,17 @@ namespace CapstoneProject.Controllers {
 
         // GET: Recipes/Details/5
         public IActionResult Details(int? id) {
+
             if (id == null || _context.Recipes == null) {
                 return NotFound();
             }
 
             var recipe = _context.Recipes
-                .Where(a => a.Status == true)
                 .Include(x => x.FkUser)
                 .Include(y => y.FkRecipeCategory)
                 .Include(t => t.Nutrition)
                 .Include(a => a.RecipeIngredients)
+                .ThenInclude(a => a.Ingredient)
                 .FirstOrDefault(m => m.Id == id);
 
             if (recipe == null) {
