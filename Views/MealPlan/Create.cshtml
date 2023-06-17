@@ -1,5 +1,224 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model MealPlan
+
 @{
+    ViewBag.Title = "New Planning";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+
+<style>
+    a:hover {
+        cursor: pointer;
+    }
+
+    .label-font {
+        font-family: 'Comic Sans MS';
+    }
+</style>
+<hr />
+<div class="row d-flex mb-5">
+    <div class="col-2">
+    </div>
+
+    <div class="col-8 rounded-3 bg-white border border-dark border-2" style="background-color: #e7f9fd;">
+        <form asp-action="Create" id="recipe-form" class="p-5">
+            <h1 class="text-center mb-5 text-dark label-font">New Planning</h1>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label mb-2 label-font">Title</label>
+                <input asp-for="Title" class="form-control" placeholder="e.g. Recipes to make for mother's day" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-4">
+                <label asp-for="Description" class="control-label mb-2 label-font">Description</label>
+                <textarea asp-for="Description" class="form-control" placeholder="e.g. Make Mom happy with a homemade goodie or meal."></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-4">
+                <label asp-for="Color" class="control-label mb-2 label-font">Choose a custom color for your planning</label>
+                <select asp-for="Color" class="form-control">
+                    <option value="red">Red</option>
+                    <option value="white">White</option>
+                    <option value="green">Green</option>
+                    <option value="blue">Blue</option>
+                    <option value="violet">Violet</option>
+                    <option value="pink">Pink</option>
+                    <option value="orange">Orange</option>
+                    <option value="yellow">Yellow</option>
+                    <option value="cyan">Cyan</option>
+                    <option value="magenta">Magenta</option>
+                    <option value="purple">Purple</option>
+                    <option value="brown">Brown</option>
+                    <option value="ivory">Ivory</option>
+                    <option value="gold">Gold</option>
+                    <option value="skyblue">Skyblue</option>
+                    <option value="coral">Coral</option>
+                    <option value="tomato">Tomato</option>
+                    <option value="lavender">Lavender</option>
+                    <option value="plum">Plum</option>
+                    <option value="lime">Lime</option>
+                    <option value="gray">Gray</option>
+                </select>
+            </div>
+            <div class="form-group mt-4">
+                <label asp-for="Date" class="control-label mb-2 label-font">Pick a time</label>
+                <input class="form-control" asp-for="Date" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <!-- Ingredient -->
+            <div id="recipe-container" class="mt-5">
+                <!-- Initial ingredient select element -->
+                <p class="text-center text-dark fw-bolder fs-2 label-font">Choose recipes</p>
+                <p class="text-center text-secondary fw-bolder fs-6 label-font">Please ensure to verify the recipe ID prior to selecting the recipe name, in order to guarantee precise recipe selection.</p>
+                <div class="form-group row mt-4">
+                    <div class="col-md-10">
+                        <label for="RecipeName" class="mb-2 label-font">(#ID) Name</label>
+                        <input type="text" class="form-control recipes" id="RecipeName" name="RecipeNames[]" onchange="updateSpan(this.value,this)" required />
+                        <span id="recipe-span-1" class="text-danger" style="display: none;">This recipe doesn't exist!</span>
+                    </div>
+                    <div class="col-md-2" style="margin-top: 4%;">
+                        <a onclick="removeRecipe(this)" class="text-decoration-none text-danger ms-3 fw-bolder fs-4"><i class="fa-solid fa-trash-can"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3">
+                <a onclick="addRecipe()" class="text-decoration-none text-success label-font">Add Recipe <i class="fa-solid fa-plus"></i></a>
+            </div>
+            <div id="hidden-inputs-container"></div>
+            <div class="form-group mt-5 text-center">
+                <input type="submit" value="Create" class="btn btn-success btn-lg" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="~/lib/jquery-3.7.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+
+<script>
+    var recipeIndex = 1;
+    function addRecipe() {
+        var container = document.getElementById('recipe-container');
+        var originalFormGroup = container.querySelector('.form-group');
+
+        var newFormGroup = originalFormGroup.cloneNode(true);
+        var newInput = newFormGroup.querySelector('input[type="text"]');
+        var newSpan = newFormGroup.querySelector('span');
+
+        // Clear the selected option in the new select element
+        newInput.value = '';
+        //changeId
+        recipeIndex++;
+        newInput.id = 'recipe-id-' + (recipeIndex);
+        newSpan.id = 'recipe-span-' + (recipeIndex);
+        // Add the new form group to the container
+        container.appendChild(newFormGroup);
+        autocomplete();
+    }
+
+    function removeRecipe(button) {
+        var formGroup = button.closest('.form-group');
+        var recipeContainer = document.getElementById('recipe-container');
+        var recipeCount = recipeContainer.getElementsByClassName('form-group').length;
+
+        if (recipeCount === 1) {
+            // If there is only one ingredient, clear the input fields instead of removing the form group
+            var select = formGroup.querySelector('input[type="text"]');
+            select.value = '';
+        } else {
+            // If there are multiple ingredients, remove the form group
+            formGroup.remove();
+        }
+    }
+
+    // Submit event handler
+    $("#recipe-form").submit(function (event) {
+        // Prevent the form from submitting
+        event.preventDefault();
+
+        // Get all the select elements within the container
+        var inputElements = document.querySelectorAll('#recipe-container input[type="text"]');
+
+        // Create a hidden input for each ingredient ID
+        var hiddenInputsContainer = document.getElementById('hidden-inputs-container');
+        hiddenInputsContainer.innerHTML = ''; // Clear any existing hidden inputs
+
+        // Iterate over the select elements and create hidden inputs for each selected ID
+        var flag = false;
+        inputElements.forEach(function (input, index) {
+            //Check input
+            var inputValue = input.value;
+            if (!checkRecipeExists(input.value, input)) {
+                flag = true;
+            };
+
+            if (inputValue !== '') {
+                var hiddenInputId = document.createElement('input');
+                hiddenInputId.type = 'hidden';
+                hiddenInputId.name = 'RecipeNames[]';
+                hiddenInputId.value = inputValue;
+                hiddenInputsContainer.appendChild(hiddenInputId);
+            }
+        });
+
+        // Submit the form
+        if (!flag) {
+            this.submit();
+        }
+    });
+    function checkRecipeExists(recipe, element) {
+        var recipeId = element.id.match(/\d+/);
+        var exists = false;
+        $.ajax({
+            url: '/MealPlan/RecipeNameExists', // Update the URL to match the action method's route
+            type: 'POST',
+            data: { name: recipe },
+            async: false,
+            success: function (data) {
+                exists = data;
+            }
+        });
+        return exists;
+    };
+    function updateSpan(recipe, element) {
+        var data = checkRecipeExists(recipe, element);
+        var recipeId = element.id.match(/\d+/);
+        if (data) {
+            $('#recipe-span-' + recipeId).css("display", "none");
+        }
+        else {
+            $('#recipe-span-' + recipeId).css("display", "block");
+        }
+    };
+    function autocomplete() {
+        $(".recipes").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/MealPlan/RecipesAutoComplete",
+                    type: "POST",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                label: '(#' + item.id + ') ' + item.name,
+                                value: item.name
+                            };
+                        }));
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Error");
+                    },
+                    failure: function (response) {
+                        alert("Error");
+                    }
+                });
+            },
+            select: function (e, i) {
+                $(this).val(i.item.value);
+                return false; // Prevent default behavior of selecting the whole label
+            },
+            minLength: 1
+        });
+    };
+    autocomplete();
+</script>

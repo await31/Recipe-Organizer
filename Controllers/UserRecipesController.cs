@@ -327,7 +327,6 @@ namespace CapstoneProject.Controllers {
             if (feedback != null) {
                 _context.RecipeFeedbacks.Remove(feedback);
                 await _context.SaveChangesAsync(); // Save changes to the database
-                TempData["success"] = "Your feedback was deleted.";
                 return RedirectToAction("Details", new { id = recipeId });
             }
             return RedirectToAction("Details", new { id = recipeId });
