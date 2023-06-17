@@ -31,11 +31,9 @@
                             <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             </button>
                             <ul class="dropdown-menu p-0">
-                                <form method="post" action="/UserRecipes/DeleteFeedback" class="dropdown-item">
-                                    <input type="hidden" name="recipeId" value="@ViewData["RecipeId"]">
-                                    <input type="hidden" name="id" value="@feedback.Id">
-                                    <button type="submit" class="btn mt-2">Delete</button>
-                                </form>
+                                <li>
+                                    <button onclick="deleteFeedback(this)" data-recipe-id="@ViewData["RecipeId"]" data-feedback-id="@feedback.Id" class="btn mt-2">Delete</button>
+                                </li>
                             </ul>
                         </div>
                     }
@@ -53,3 +51,5 @@
         <partial name="_Pager" model="@pager" />
     </div>
 }
+<script type="text/javascript">
+</script>

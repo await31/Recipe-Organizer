@@ -332,6 +332,7 @@
         function sendFeedback() {
             var sendId = document.getElementById("sendId").value;
             var sendText = document.getElementById("sendText").value;
+            document.getElementById("sendText").value = "";
             $.ajax({
                 url: '/UserRecipes/GetFeedback',
                 type: 'POST',
@@ -341,6 +342,23 @@
                 },
                 error: function () {
                     alert('Error feedback.');
+                }
+            });
+        };
+
+        function deleteFeedback(element) {
+            var feedbackId = element.dataset.feedbackId;
+            var recipeId = element.dataset.recipeId;
+            $.ajax({
+                url: '/UserRecipes/DeleteFeedback',
+                type: 'POST',
+                data: { recipeId: recipeId, id: feedbackId },
+                success: function (data) {
+                    console.log('work i think');
+                    $('#feedbackDiv').html(data);
+                },
+                error: function () {
+                    alert('Error removing feedback.');
                 }
             });
         };
