@@ -171,8 +171,6 @@
     function addIngredient() {
         var container = document.getElementById('ingredient-container');
         var originalFormGroup = container.querySelector('.form-group');
-        var ingredientContainer = document.getElementById('ingredient-container');
-        var ingredientCount = ingredientContainer.getElementsByClassName('form-group').length;
 
         var newFormGroup = originalFormGroup.cloneNode(true);
         var newInput = newFormGroup.querySelector('input[type="text"]');
