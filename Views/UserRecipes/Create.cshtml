@@ -167,6 +167,7 @@
 <script src="~/lib/jquery-3.7.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 <script>
+    var ingredientIndex=1;
     function addIngredient() {
         var container = document.getElementById('ingredient-container');
         var originalFormGroup = container.querySelector('.form-group');
@@ -184,8 +185,9 @@
         newQuantityInput.value = '';
         newUnitOfMeasureSelect.value = '';
         //changeId
-        newInput.id = 'ingredient-id-' + (ingredientCount + 1);
-        newSpan.id = 'ingredient-span-' + (ingredientCount + 1);
+        ingredientIndex++;
+        newInput.id = 'ingredient-id-' + (ingredientIndex);
+        newSpan.id = 'ingredient-span-' + (ingredientIndex);
         // Add the new form group to the container
         container.appendChild(newFormGroup);
         autocomplete();
