@@ -1,0 +1,123 @@
+﻿@model IEnumerable<MealPlan>
+
+@{
+    ViewBag.Title = "My Planning";
+    Layout = "~/Views/Shared/_PlanningLayout.cshtml";
+}
+
+<style>
+    .fc-center h2 {
+        color: green;
+        font-family: 'Comic Sans MS';
+    }
+
+    .fc-center {
+        margin-right: 10%;
+        margin-bottom: 2%;
+    }
+
+    .fc-unthemed td.fc-today {
+        background: black !important;
+        position: relative;
+    }
+
+    .fc-today .fc-day-number {
+        color: white !important;
+    }
+
+    .fc-unthemed td.fc-today:first-child {
+        display: none !important;
+    }
+
+    .fc-unthemed td.fc-today::after {
+        content: "Today";
+        position: absolute;
+        bottom: -160%;
+        left: 15%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-weight: bold;
+    }
+
+    .fc-event-container {
+        border-radius: 50px !important;
+        margin-bottom: 10% !important;
+    }
+
+        .fc-event-container:hover {
+            cursor: pointer !important;
+            opacity: 0.8 !important;
+        }
+
+        .fc-event-container a {
+            text-decoration: none !important;
+        }
+</style>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
+
+<div class="container">
+    <a asp-action="Index" class="btn btn-warning mb-5">Back &nbsp;<i class="fa-solid fa-arrow-left"></i></a>
+    <div id="calendar">
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "/mealplan/GetEvents",
+                success: function (data) {
+                    GenerateCalendar(data);
+                },
+                error: function (error) {
+                    alert('failed');
+                }
+            })
+
+            function GenerateCalendar(events) {
+                $('#calendar').fullCalendar('destroy');
+                $('#calendar').fullCalendar({
+                    contentHeight: 400,
+                    defaultDate: new Date(),
+                    timeFormat: 'YYYY-MM-DD',
+                    header: {
+                        left: 'prev, next today',
+                        center: 'title',
+                        right: null
+                    },
+                    eventLimit: true,
+                    eventColor: '#378006',
+                    events: events.map(function (event) {
+                        return {
+                            id: event.id,
+                            title: event.title,
+                            description: event.description,
+                            start: moment(event.date).format('YYYY-MM-DD'),
+                            end: event.end != null ? moment(event.end).format('YYYY-MM-DD') : null,
+                            color: event.color,
+                            allDay: event.isFullDay,
+                        };
+                    }),
+                    eventRender: function (event, element) {
+                        element.find('.fc-content').html('<h6 style="color: black;">' + event.title + '</h6>');
+                        element.find('.fc-description').html('<h3>' + event.description + '</h3>');
+
+                        if (moment(event.start).isSame(new Date(), 'day')) {
+                            var todayLabel = $('<span class="fc-today-label">Today</span>');
+                            element.append(todayLabel);
+                        }
+
+                        element.find('.fc-content').wrap('<a style="text-decoration: none;" href="/MealPlan/Details/' + event.id + '"></a>');
+                    }
+                });
+            }
+        });
+    </script>
+}

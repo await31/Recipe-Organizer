@@ -1,5 +1,5 @@
 ﻿@model Recipe
-
+﻿
 @{
     ViewBag.Title = "Create recipe";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -112,8 +112,8 @@
                 <p class="text-center text-dark fw-bolder fs-2 label-font">Ingredients</p>
                 <div class="form-group row mt-4">
                     <div class="col-md-4">
-                        <label for="IngredientId" class="mb-2 label-font">Name</label>
-                        <input type="text" class="form-control ingredients" id="ingredient-id-1" name="IngredientIds[]" onchange="updateSpan(this.value,this)" required />
+                        <label for="IngredientName" class="mb-2 label-font">Name</label>
+                        <input type="text" class="form-control ingredients" id="IngredientName" name="IngredientNames[]" onchange="updateSpan(this.value,this)" required />
                         <span id="ingredient-span-1" class="text-danger" style="display: none;">This ingredient doesn't exists!</span>
                     </div>
                     <div class="col-md-3">
@@ -212,7 +212,7 @@
     }
 
     // Submit event handler
-    $("#recipe-form").submit( function (event) {
+    $("#recipe-form").submit(function (event) {
         // Prevent the form from submitting
         event.preventDefault();
 
@@ -314,3 +314,5 @@
     };
     autocomplete();
 </script>
+<script src="~/ckeditor/ckeditor.js"></script>
+

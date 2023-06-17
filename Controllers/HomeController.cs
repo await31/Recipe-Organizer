@@ -41,7 +41,7 @@ namespace CapstoneProject.Controllers {
                             .Where(a=> a.Status == true)
                             .Include(r => r.FkRecipeCategory)
                             .Include(b => b.FkUser)
-                            .OrderByDescending(a => a.CreatedDate)
+                            .OrderByDescending(a => a.ViewCount)
                             .FirstOrDefault();
                 ViewData["HotRecipe"] = hotRecipe;
             }

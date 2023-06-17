@@ -4,20 +4,20 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv='Content-Type' content='Type=text/html; charset=utf-8'>
-    <meta property="og:url" content="https://cookez.azurewebsites.net/"/>
-    <meta property="og:title" content="Place of foods and recipes"/>
+    <meta property="og:url" content="https://cookez.azurewebsites.net/" />
+    <meta property="og:title" content="Place of foods and recipes" />
     <meta property="og:site_name" content="Cookez" />
     <meta property="og:description" content="A place to store and create delicious, nutritious recipes for everyone's!" />
-    <meta property="og:type" content="website"/>
+    <meta property="og:type" content="website" />
     <meta property="og:image" content="https://www.howtocook.recipes/wp-content/uploads/2021/05/Ratatouille-recipe-500x500.jpg" />
-    <meta property="og:locale" content="vi"/>
+    <meta property="og:locale" content="vi" />
     <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/lib/bootstrap-5.3.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/lib/bootstrap-5.3.0/css/bootstrap.min.css" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-    <link rel="stylesheet" href="~/css/recipedetail.css"/>
+    <link rel="stylesheet" href="~/css/recipedetail.css" />
     <link rel="icon" type="image/x-icon" href="\images\logo.png">
     <script src="https://kit.fontawesome.com/08194921a9.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css"/>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css" />
     @RenderSection("scripts", required: false)
 </head>
 <style>
@@ -50,7 +50,7 @@
         background: none;
     }
 
-    
+
 
     .card-text-custom {
         max-height: 220px;
@@ -59,8 +59,7 @@
         text-overflow: ellipsis;
     }
 </style>
-
-<body style="background-color: rgb(248,246,242);">
+<body>
     <header class="pb-2 bg-light shadow-sm">
         <div class="container-fluid">
             <div class="d-flex flex-wrap align-items-center justify-content-between">
@@ -81,10 +80,8 @@
             </div>
         </div>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3 pt-3">
-            <partial name="_Notification" />
-            <breadcrumb></breadcrumb>
+    <div class="container-fluid">
+        <main class="my-5">
             @RenderBody()
         </main>
     </div>
@@ -107,39 +104,5 @@
             </div>
         </div>
     </footer>
-
-    <!-- Footer -->
-    <script src="~/lib/bootstrap-5.3.0/js/bootstrap.min.js"></script>
-    <script src="~/lib/bootstrap-5.3.0/js/bootstrap.bundle.min.js"></script>
-    @**@<script src="~/lib/jquery-3.7.0.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
-    <script>
-        $(function () {
-            $("#SearchString").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "/UserRecipes/SearchAutoComplete",
-                        type: "POST",
-                        data: { term: request.term },
-                        success: function (data) {
-                            response($.map(data, function (item) {
-                                return item.name;
-                            }));
-                        },
-                        error: function (xhr, status, error) {
-                            alert("Error");
-                        },
-                        failure: function (response) {
-                            alert("Error");
-                        }
-                    });
-                },
-                select: function (e, i) {
-                    $("#SearchString").val(i.item.val);
-                },
-                minLength: 1
-            })
-        });
-    </script>
 </body>
 </html>

@@ -11,9 +11,17 @@ public partial class MealPlan
 
     public string? FkUserId { get; set; }
 
-    public DateTime? PlannedDate { get; set; }
+    public string? Title { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public string? Description { get; set; }
+
+    public DateTime? Date { get; set; }
+
+    public string? Color { get; set; }
+
+    public bool IsFullDay { get; set; }
+
+    //public DateTime? CreatedDate { get; set; }
 
     public virtual Account? FkUser { get; set; }
 
