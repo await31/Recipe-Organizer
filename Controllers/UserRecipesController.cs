@@ -278,6 +278,13 @@ namespace CapstoneProject.Controllers {
             if (recipe != null) {
                 recipe.ViewCount++;
             }
+
+            //Favourite list
+            var currentUser = _userManager.GetUserId(User);
+            if (currentUser != null)
+                ViewBag.FavouriteList = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser).Favourites.Select(f => new { f.Id, f.Name }).ToList();
+            else
+                ViewBag.FavouriteList = null;
             _context.SaveChanges();
             return View(recipe);
         }
@@ -347,7 +354,7 @@ namespace CapstoneProject.Controllers {
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Recipe recipe, int[] IngredientIds, double[] Quantities, string[] UnitOfMeasures) {
+        public async Task<IActionResult> Create(Recipe recipe, string[] IngredientNames, double[] Quantities, string[] UnitOfMeasures) {
             if (ModelState.IsValid) {
                 if (recipe.file != null && recipe.file.Length > 0) {
                     IFormFile file = recipe.file;
@@ -366,8 +373,9 @@ namespace CapstoneProject.Controllers {
                         recipe.FkUserId = await _userManager.GetUserIdAsync(currentUser);
                         // Save ingredient, recipe to IngredientRecipe
                         // Save ingredient IDs to recipe
-                        if (IngredientIds != null && IngredientIds.Length > 0) {
-                            var ingredients = _context.Ingredients.Where(i => IngredientIds.Contains(i.Id)).ToList();
+                        if (IngredientNames != null) {
+                            var ingredients = _context.Ingredients.Where(i => i.Name.Equals(IngredientNames)).ToList();
+                            var IngredientIds = ingredients.Select(i=>i.Id).ToArray();
                             recipe.Ingredients.AddRange(ingredients);
                             _context.Recipes.Add(recipe);
                             await _context.SaveChangesAsync();
@@ -480,6 +488,10 @@ namespace CapstoneProject.Controllers {
 
         private bool RecipeExists(int id) {
             return (_context.Recipes?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        public bool IngredientNameExists(string name)
+        {
+            return (_context.Ingredients?.Any(e => e.Name.Equals(name))).GetValueOrDefault();
         }
 
         //firebase
