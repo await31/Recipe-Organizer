@@ -18,7 +18,7 @@
     </div>
     <div class="dropdown">
         <button class="btn btn-white border-0 dropdown-toggle p-0 mt-2" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
-            <img src="@UserManager.GetUserAsync(User).Result.ImgPath" class="img-fluid rounded-circle ms-2" style="width: 40px; height: 40px;" alt="avatar">
+             <img src="@UserManager.GetUserAsync(User).Result.ImgPath" class="img-fluid rounded-circle ms-2" style="width: 40px; height: 40px;" alt="avatar">
         </button>
         <ul class="dropdown-menu pb-0">
             @if (UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "Admin").Result) {

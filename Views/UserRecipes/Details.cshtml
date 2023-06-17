@@ -354,7 +354,6 @@
                 type: 'POST',
                 data: { recipeId: recipeId, id: feedbackId },
                 success: function (data) {
-                    console.log('work i think');
                     $('#feedbackDiv').html(data);
                 },
                 error: function () {
