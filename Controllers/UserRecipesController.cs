@@ -19,6 +19,8 @@ using Firebase.Storage;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats;
+using System.Xml.Linq;
+using SixLabors.ImageSharp.Formats.Webp;
 
 namespace CapstoneProject.Controllers {
 
@@ -232,27 +234,16 @@ namespace CapstoneProject.Controllers {
             full = full.Replace(remove, "");
             return full;
         }
-
-        [Breadcrumb("Details")]
-        // GET: Recipes/Details/5
-        public IActionResult Details(int? id, int pg = 1) {
-            var recipe = _context.Recipes
-                .Where(a => a.Status == true)
-                .Include(x => x.FkUser)
-                .Include(y => y.FkRecipeCategory)
-                .Include(t => t.Nutrition)
-                .Include(a => a.RecipeIngredients)
-                .ThenInclude(a => a.Ingredient)
-                .FirstOrDefault(a => a.Id == id);
-
+        private List<RecipeFeedback> GetRecipeFeedbacks(int recipeId) {
             var feedbacks = _context.RecipeFeedbacks
                 .OrderByDescending(x => x.CreatedDate)
-                .Where(a => a.RecipeId == id)
+                .Where(a => a.RecipeId == recipeId)
                 .Include(a => a.User)
                 .ToList();
-
-            const int pageSize = 5; // Number of ingredients in 1 page
-
+            return feedbacks;
+        }
+        private List<RecipeFeedback> GetRecipeFeedbackPage(List<RecipeFeedback> feedbacks, int pg) {
+            const int pageSize = 5; // Number of comments in 1 page
             if (pg < 1)
                 pg = 1;
 
@@ -262,26 +253,57 @@ namespace CapstoneProject.Controllers {
 
             int recSkip = (pg - 1) * pageSize;
 
-            var data = feedbacks.Skip(recSkip).Take(pager.PageSize).ToList();
-
             this.ViewBag.Pager = pager;
 
+            var data = feedbacks.Skip(recSkip).Take(pager.PageSize).ToList();
+            return data;
+        }
+        [Breadcrumb("Details")]
+        // GET: Recipes/Details/5
+        public IActionResult Details(int id, int pg = 1) {
+            var recipe = _context.Recipes
+                .Where(a => a.Status == true)
+                .Include(x => x.FkUser)
+                .Include(y => y.FkRecipeCategory)
+                .Include(t => t.Nutrition)
+                .Include(a => a.RecipeIngredients)
+                .ThenInclude(a => a.Ingredient)
+                .Where(Ingredient => Ingredient.Status == true)
+                .FirstOrDefault(a => a.Id == id);
+            var feedbacks = GetRecipeFeedbacks(id);
+            var data = GetRecipeFeedbackPage(feedbacks, pg);
             ViewData["feedbacks"] = data;
+            ViewData["RecipeId"] = id;
 
             if (recipe != null) {
                 recipe.ViewCount++;
             }
+
+            var footerRecipes = _context.Recipes
+                .Where(a => a.Status == true)
+                .Where(a => a.Id != id)
+                .OrderByDescending(x => x.ViewCount)
+                .Take(4)
+                .ToList();
+
+            ViewData["footerRecipes"] = footerRecipes;
+
+            //Favourite list
+            var currentUser = _userManager.GetUserId(User);
+            if (currentUser != null)
+                ViewBag.FavouriteList = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser).Favourites.Select(f => new { f.Id, f.Name }).ToList();
+            else
+                ViewBag.FavouriteList = null;
             _context.SaveChanges();
             return View(recipe);
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetFeedbackAsync(string feedbackText, int recipeId) {
+        public async Task<IActionResult> GetFeedbackAsync(string feedbackText, int recipeId, int pg = 1) {
             var currentUser = await _userManager.GetUserAsync(User);
             if (feedbackText != null) {
                 if (CompareLimitedWords(feedbackText) == true) {
                     TempData["error"] = "Your feedback was ignored because it contains an invalid word.";
-                    return RedirectToAction("Details", new { id = recipeId });
                 } else {
                     var feedback = new RecipeFeedback {
                         RecipeId = recipeId,
@@ -293,15 +315,16 @@ namespace CapstoneProject.Controllers {
                     _context.RecipeFeedbacks.Add(feedback);
                     await _context.SaveChangesAsync(); // Save changes to the database
                 }
-                return RedirectToAction("Details", new { id = recipeId });
             }
-            return RedirectToAction("Details", new { id = recipeId });
+            var feedbacks = GetRecipeFeedbacks(recipeId);
+            var data = GetRecipeFeedbackPage(feedbacks, pg);
+            return PartialView("_Feedback", data);
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteFeedbackAsync(int recipeId, int id) {
             var feedback = await _context.RecipeFeedbacks.FirstOrDefaultAsync(x => x.Id == id);
-            if(feedback != null) {
+            if (feedback != null) {
                 _context.RecipeFeedbacks.Remove(feedback);
                 await _context.SaveChangesAsync(); // Save changes to the database
                 TempData["success"] = "Your feedback was deleted.";
@@ -311,7 +334,7 @@ namespace CapstoneProject.Controllers {
         }
 
         public bool CompareLimitedWords(string text) {
-            List<string> words = new List<string>() { "stupid", "idiot", "disgusting", "shit", "jesus", "ass", "damn", "fuck", "asshole", "bastard", "bullshit", "cunt", "dick", "dyke", "hell", "holy shit", "holyshit", "motherfucker","mother fucker","nigga", "nigra", "n1gga", "pussy", "slut", "turd", "wanker" };
+            List<string> words = new List<string>() { "stupid", "idiot", "disgusting", "shit", "jesus", "ass", "damn", "fuck", "asshole", "bastard", "bullshit", "cunt", "dick", "dyke", "hell", "holy shit", "holyshit", "motherfucker", "mother fucker", "nigga", "nigra", "n1gga", "pussy", "slut", "turd", "wanker" };
             foreach (string word in words) {
                 if (text.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0) {
                     return true;
@@ -340,7 +363,7 @@ namespace CapstoneProject.Controllers {
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Recipe recipe, int[] IngredientIds, double[] Quantities, string[] UnitOfMeasures) {
+        public async Task<IActionResult> Create(Recipe recipe, string[] IngredientNames, double[] Quantities, string[] UnitOfMeasures) {
             if (ModelState.IsValid) {
                 if (recipe.file != null && recipe.file.Length > 0) {
                     IFormFile file = recipe.file;
@@ -359,8 +382,23 @@ namespace CapstoneProject.Controllers {
                         recipe.FkUserId = await _userManager.GetUserIdAsync(currentUser);
                         // Save ingredient, recipe to IngredientRecipe
                         // Save ingredient IDs to recipe
-                        if (IngredientIds != null && IngredientIds.Length > 0) {
-                            var ingredients = _context.Ingredients.Where(i => IngredientIds.Contains(i.Id)).ToList();
+                        if (IngredientNames != null) {
+                            /*
+                             var ingredients = _context.Ingredients
+                               .Where(i => i.Status == true)
+                               .Where(i => IngredientNames.Any(input => i.Name.Contains(input)))
+                               .ToList();
+                             */
+
+                            var allIngredients = await _context.Ingredients
+                                               .Where(i => i.Status == true)
+                                               .ToListAsync();
+
+                            var ingredients = allIngredients
+                                              .Where(i => IngredientNames.Any(input => i.Name.Contains(input)))
+                                              .ToList();
+
+                            var IngredientIds = ingredients.Select(i => i.Id).ToArray();
                             recipe.Ingredients.AddRange(ingredients);
                             _context.Recipes.Add(recipe);
                             await _context.SaveChangesAsync();
@@ -383,7 +421,7 @@ namespace CapstoneProject.Controllers {
                     }
 
                     await _context.SaveChangesAsync();
-
+                    TempData["success"] = "The recipe has been submitted for review. We sincerely appreciate your contribution in sharing this valuable recipe with the community!";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -474,6 +512,9 @@ namespace CapstoneProject.Controllers {
         private bool RecipeExists(int id) {
             return (_context.Recipes?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+        public bool IngredientNameExists(string name) {
+            return (_context.Ingredients?.Any(e => e.Name.Equals(name))).GetValueOrDefault();
+        }
 
         //firebase
         public static async Task<string> UploadFirebase(Stream stream, string fileName) {
@@ -491,19 +532,8 @@ namespace CapstoneProject.Controllers {
                     }));
                 }
 
-                // Compress the image
-                IImageEncoder imageEncoder;
-                string fileExtension = Path.GetExtension(fileName).ToLower();
-                if (fileExtension == ".png") {
-                    imageEncoder = new PngEncoder { CompressionLevel = PngCompressionLevel.BestCompression };
-                } else if (fileExtension == ".webp") {
-                    imageEncoder = new SixLabors.ImageSharp.Formats.Webp.WebpEncoder { Quality = 100 }; // Adjust the quality level as needed
-                } else {
-                    imageEncoder = new JpegEncoder { Quality = 80 }; // Adjust the quality level as needed
-                }
-
                 using (MemoryStream webpStream = new MemoryStream()) {
-                    image.Save(webpStream, new SixLabors.ImageSharp.Formats.Webp.WebpEncoder());
+                    await image.SaveAsync(webpStream, new WebpEncoder());
 
                     webpStream.Position = 0;
 

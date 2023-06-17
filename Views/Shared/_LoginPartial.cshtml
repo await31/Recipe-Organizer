@@ -30,6 +30,9 @@
                 <a id="manage" class="nav-link text-dark ps-3 py-1" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">My Profile</a>
             </li>
             <li class="mt-0">
+                <a id="manage" class="nav-link text-dark ps-3 py-1" asp-controller="MealPlan" asp-action="Index" title="My Planning">My Planning</a>
+            </li>
+            <li class="mt-0">
                 <a id="manage" class="nav-link text-dark ps-3 py-1" asp-controller="Favourites" asp-action="Index" title="My Collections">My Collections</a>
             </li>
             <li style="height: 0.5px; width: 100%; opacity: 0.5;" class="bg-secondary mt-2"></li>
@@ -44,4 +47,7 @@
     <a class="btn btn-outline-dark me-2" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
     <a class="btn btn-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
 }
+
+<script src="~/lib/bootstrap-5.3.0/js/bootstrap.min.js"></script>
+<script src="~/lib/bootstrap-5.3.0/js/bootstrap.bundle.min.js"></script>
 
