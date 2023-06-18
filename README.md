@@ -2,7 +2,7 @@
 
 
 ## List of technologies
-[![My Skills](https://skills.thijs.gg/icons?i=js,html,css,cs,dotnet,firebase,github,jquery,visualstudio,azure)](https://skills.thijs.gg)
+[![My Skills](https://skills.thijs.gg/icons?i=html,css,js,bootstrap,cs,dotnet,firebase,github,jquery,visualstudio,azure,figma)](https://skills.thijs.gg)
 
 ## Purpose
 
