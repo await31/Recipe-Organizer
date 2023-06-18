@@ -4,9 +4,17 @@
     ViewData["Title"] = "Details";
 }
 
+<div class="row">
+    <div>
+    <button id="editButton" class="unstyled-button" data-bs-toggle="modal" data-bs-target="#editModal">
+        EDIT
+        <i class="fa fa-pencil" aria-hidden="true"></i>
+    </button>
+    </div>
+</div>
 <div class="mt-5 mb-5">
-    <h2 class="text-center">@ViewData["Name"]</h2>
-    <h5 class="text-center text-secondary">@ViewData["Description"]</h5>
+    <h2 id="collectionName" class="text-center">@ViewData["Name"]</h2>
+    <h5 id="collectionDescription" class="text-center text-secondary">@ViewData["Description"]</h5>
 </div>
 
 
@@ -39,3 +47,55 @@
     } @*End of foreach*@
 
 </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editModalLabel">Edit Collection</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div>Collection Name</div>
+                <input type="text" id="editName" placeholder="Name your collection" required />
+                <div>Collection Description (Optional)</div>
+                <input type="text" id="editDescription" placeholder="Describe your collection"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="edit-save" type="button" class="btn btn-primary" data-bs-dismiss="modal" data-collection-id="@ViewData["Id"]">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/lib/jquery-3.7.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+
+    <script>
+    $(document).ready(function () {
+        $('#editButton').click(function () {
+            document.getElementById("editName").value = document.getElementById("collectionName").innerHTML;
+            document.getElementById("editDescription").value = document.getElementById("collectionDescription").innerHTML;
+        });
+        $('#edit-save').click(function () {
+            var collectionId = $(this).data('collection-id');
+            var newName = document.getElementById("editName").value;
+            var newDescription = document.getElementById("editDescription").value;
+
+            $.ajax({
+                url: '/Favourites/Edit',
+                type: 'POST',
+                data: { id: collectionId, name: newName, description: newDescription },
+                success: function (data) {
+                    $('#collectionName').html(data.name);
+                    $('#collectionDescription').html(data.description);
+                },
+                error: function () {
+                    alert('Error adding recipes to favorites.');
+                }
+            });
+        });
+    });
+    </script>

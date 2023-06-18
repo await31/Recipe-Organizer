@@ -318,18 +318,21 @@ namespace CapstoneProject.Controllers {
             }
             var feedbacks = GetRecipeFeedbacks(recipeId);
             var data = GetRecipeFeedbackPage(feedbacks, pg);
+            ViewData["RecipeId"] = recipeId;
             return PartialView("_Feedback", data);
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteFeedbackAsync(int recipeId, int id) {
+        public async Task<IActionResult> DeleteFeedbackAsync(int recipeId, int id, int pg = 1) {
             var feedback = await _context.RecipeFeedbacks.FirstOrDefaultAsync(x => x.Id == id);
             if (feedback != null) {
                 _context.RecipeFeedbacks.Remove(feedback);
                 await _context.SaveChangesAsync(); // Save changes to the database
-                return RedirectToAction("Details", new { id = recipeId });
             }
-            return RedirectToAction("Details", new { id = recipeId });
+            var feedbacks = GetRecipeFeedbacks(recipeId);
+            var data = GetRecipeFeedbackPage(feedbacks, pg);
+            ViewData["RecipeId"] = recipeId;
+            return PartialView("_Feedback", data);
         }
 
         public bool CompareLimitedWords(string text) {

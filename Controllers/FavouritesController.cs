@@ -150,25 +150,21 @@ namespace CapstoneProject.Controllers {
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Favourite favourite) {
-            if (id != favourite.Id) {
-                return NotFound();
-            }
-            if (ModelState.IsValid) {
-                try {
-                    _context.Update(favourite);
-                    await _context.SaveChangesAsync();
-                } catch (DbUpdateConcurrencyException) {
-                    if (!FavouriteExists(favourite.Id)) {
-                        return NotFound();
-                    } else {
-                        throw;
-                    }
+        public async Task<JsonResult> Edit(int id, string name, string description) {
+            var favourite = _context.Favourites.FirstOrDefault(f => f.Id == id);
+            try {
+                favourite.Name = name;
+                favourite.Description = description;
+                _context.Update(favourite);
+                await _context.SaveChangesAsync();
+            } catch (DbUpdateConcurrencyException) {
+                if (!FavouriteExists(favourite.Id)) {
+                    return null;
+                } else {
+                    throw;
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(favourite);
+            return Json(new { name = name, description = description });
         }
 
         // GET: Favourites/Delete/5

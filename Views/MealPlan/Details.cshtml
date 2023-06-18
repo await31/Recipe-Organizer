@@ -1,5 +1,160 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model MealPlan
 @{
+    ViewBag.Title = "Test";
 }
+<hr />
+<h1 class="text-center label-font">Planning Details</h1>
+<hr />
+<hr />
+
+<style>
+    .card-limit-1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 1; /* Maximum number of lines to show */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
+<hr />
+<div class="row">
+    <div class="col-8">
+        <ul class="list-group">
+            <li class="list-group-item bg-dark text-light fw-bold">
+                General Information
+            </li>
+            <li class="list-group-item">
+                Title: @Model.Title
+            </li>
+            <li class="list-group-item">
+                Description: @Model.Description
+            </li>
+            <li class="list-group-item">
+                Date: @Model.Date?.ToLongDateString()
+            </li>
+            <li class="list-group-item">
+                Number of recipes: &nbsp; @Model.Recipes.Count()
+            </li>
+            <li class="list-group-item">
+                Customize color: @(new System.Globalization.CultureInfo("en-US").TextInfo.ToTitleCase(Model.Color))
+            </li>
+        </ul>
+    </div>
+    @if (((Nutrition)ViewData["TotalNutrition"]) != null) {
+        <div class="col-4 h-100">
+            <ul class="list-group">
+                <li class="list-group-item bg-dark text-light fw-bold">
+                    Nutrition Facts (for reference purposes only)
+                </li>
+                <li class="list-group-item">
+                    Calories: @(((Nutrition)ViewData["TotalNutrition"]).Calories) (kcal)
+                </li>
+                <li class="list-group-item">
+                    Fat: @(((Nutrition)ViewData["TotalNutrition"]).Fat) (g)
+                </li>
+                <li class="list-group-item">
+                    Protein: @(((Nutrition)ViewData["TotalNutrition"]).Protein) (g)
+                </li>
+                <li class="list-group-item">
+                    Carbohydrate: @(((Nutrition)ViewData["TotalNutrition"]).Carbohydrate) (g)
+                </li>
+                <li class="list-group-item">
+                    Cholesterol: @(((Nutrition)ViewData["TotalNutrition"]).Cholesterol) (g)
+                </li>
+            </ul>
+        </div>
+    }
+</div>
+
+
+<hr />
+<h2 class="label-font text-center text-success">Grocery list</h2>
+<hr />
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-8">
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#all" aria-expanded="false" aria-controls="all">
+                        Ingredients for this Planning
+                    </button>
+                </h2>
+                <div id="all" class="accordion-collapse collapse show" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">
+                        <ul class="list-group">
+                            @foreach (var item in (List<RecipeIngredient>)ViewData["GroupedIngredients"]) {
+                                <li class="list-group-item">
+                                    @item.Quantity @item.UnitOfMeasure @item.Ingredient.Name
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            @foreach (var item in Model.Recipes) {
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#@item.Id" aria-expanded="false" aria-controls="@item.Id">
+                            Ingredients for @item.Name
+                        </button>
+                    </h2>
+                    <div id="@item.Id" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                        <div class="accordion-body">
+                            <ul class="list-group">
+                                @foreach (var ingredient in item.RecipeIngredients) {
+                                    <li class="list-group-item"> @ingredient.Quantity @ingredient.UnitOfMeasure @ingredient.Ingredient.Name</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    
+</div>
+
+
+<hr />
+<hr />
+
+<h2 class="label-font text-center text-success">List of recipes</h2>
+<hr />
+<hr />
+
+<div class="row row-cols-1 row-cols-md-4 g-4">
+    @foreach (var item in Model.Recipes) {
+        <a class="text-decoration-none" asp-controller="UserRecipes" asp-action="Details" asp-route-id="@item.Id" target="_blank">
+            <div class="col">
+                <div class="card h-100">
+                    <img src="@item.ImgPath" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title text-center card-limit-1 mb-3">@item.Name abc xyz nwc dsan dsankdas</h5>
+                        <p class="card-text">Preparation time: @item.PrepTime mins</p>
+                        <p class="card-text">Serving size: @item.ServingSize people</p>
+                        @switch (item.Difficult) {
+                            case 1:
+                                <p class="card-text">Difficult: Easy</p>
+                                break;
+                            case 2:
+                                <p class="card-text">Difficult: Medium</p>
+                                break;
+                            case 3:
+                                <p class="card-text">Difficult: Hard</p>
+                                break;
+                            default:
+                                <p class="card-text">Difficult: No Information</p>
+                                break;
+                        }
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-body-secondary">Author: @item.FkUser.UserName</small>
+                        <small class="text-body-secondary float-end">@item.CreatedDate?.ToShortDateString()</small>
+                    </div>
+                </div>
+            </div>
+        </a>
+    }
+</div>
