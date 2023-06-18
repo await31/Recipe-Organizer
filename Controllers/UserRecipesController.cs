@@ -49,7 +49,7 @@ namespace CapstoneProject.Controllers {
         public JsonResult IngredientsAutoComplete(string term) {
             var result = (_context.Ingredients.Where(i=>i.Status==true).Where(t => t.Name.ToLower().Contains(term.ToLower()))
                  .Select(t => new { t.Name }))
-                 .ToList();
+                 .ToList(); 
             return Json(result);
         }
 
