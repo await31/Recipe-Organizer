@@ -1,21 +1,30 @@
 ﻿@model IEnumerable<Recipe>
-
+@inject SignInManager<Account> SignInManager
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<Account> UserManager
 @{
     ViewData["Title"] = "Details";
+    var currentUser = await UserManager.GetUserAsync(User);
 }
 
 <div class="row">
-    <div>
-    <button id="editButton" class="unstyled-button" data-bs-toggle="modal" data-bs-target="#editModal">
-        EDIT
-        <i class="fa fa-pencil" aria-hidden="true"></i>
-    </button>
-    <button id="deleteButton" class="unstyled-button" data-bs-toggle="modal" data-bs-target="#deleteModal">
-        DELETE
-        <i class="fa fa-trash" aria-hidden="true"></i>
-    </button>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        @if (currentUser.Id == @ViewData["UserId"])
+        {
+            <div>
+                <button id="editButton" class="unstyled-button" data-bs-toggle="modal" data-bs-target="#editModal">
+                    EDIT
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                </button>
+                <button id="deleteButton" class="unstyled-button" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    DELETE
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                </button>
 
-    </div>
+            </div>
+        }
+    }
 </div>
 <div class="mt-5 mb-5">
     <h2 id="collectionName" class="text-center">@ViewData["Name"]</h2>

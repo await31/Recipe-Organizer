@@ -92,13 +92,7 @@ namespace CapstoneProject.Controllers {
 
             var currentUser = await _userManager.GetUserAsync(User);
 
-            var userFavouriteList = _context.Accounts
-                .Include(u => u.Favourites)
-                .FirstOrDefault(u => u.Id == currentUser.Id)?.Favourites
-                .ToList();
-
             var favouriteList = _context.Favourites
-                .Where(a => userFavouriteList.Contains(a))
                 .Include(a => a.Recipes)
                 .ThenInclude(recipe => recipe.FkRecipeCategory)
                 .FirstOrDefault(a => a.Id == id);
@@ -106,6 +100,8 @@ namespace CapstoneProject.Controllers {
             ViewData["Name"] = favouriteList?.Name;
             ViewData["Description"] = favouriteList.Description;
             ViewData["Id"] = id;
+            if(favouriteList.Account!=null)
+            ViewData["UserId"] = favouriteList.Account.Id;
 
             var recipes = favouriteList.Recipes
                 .ToList();
