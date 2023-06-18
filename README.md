@@ -1,4 +1,4 @@
-# Recipe Organizer
+# Cookez Platform
 
 
 ## List of technologies
