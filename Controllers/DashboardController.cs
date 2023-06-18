@@ -30,8 +30,13 @@ namespace CapstoneProject.Controllers {
             IEnumerable<Contact> contact = _context.Contacts
                 .ToList();
 
+            IEnumerable<Account> accounts = _context.Accounts
+                .ToList();
+
+
             //Get counts of ingredients, recipes, and pending request
             ViewData["Contact"] = contact;
+            ViewData["accCount"] = accounts.Count();
             ViewData["IngredientsCount"] = _context.Ingredients
                 .Count();
             ViewData["RecipesCount"] = _context.Recipes
