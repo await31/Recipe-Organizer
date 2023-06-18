@@ -2,6 +2,9 @@
 
 ## Purpose
 
+##List of technologies
+[![My Skills](https://skills.thijs.gg/icons?i=js,html,css,cs,dotnet,firebase,github,jquery,visualstudio,azure)](https://skills.thijs.gg)
+
 A recipe organizer's purpose is to offer a centralized area for storing and organizing recipes, making meal planning and preparation simpler for users.
 
 A recipe organizer may help users save time and decrease the stress of meal planning and preparation by offering features such as search and filtering, meal planning, and recipe sharing.
