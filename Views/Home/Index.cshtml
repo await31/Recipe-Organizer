@@ -10,6 +10,19 @@
 }
 
 <style>
+    .wrapper textarea {
+        width: 100%;
+        resize: none;
+    }
+
+    textarea {
+        border: solid 1px black;
+    }
+
+    textarea::-webkit-scrollbar {
+       width: 0px;
+    }
+
     .card-text-custom {
         max-height: 300px;
         max-width: 100%;
@@ -375,16 +388,34 @@
                         <div class="screen-body-item">
                             <div class="app-form">
                                 <div class="app-form-group">
-                                    <input class="app-form-control" placeholder="NAME">
+                                    <input id="name" class="app-form-control" placeholder="NAME" required>
                                 </div>
                                 <div class="app-form-group">
-                                    <input class="app-form-control" placeholder="EMAIL">
+                                    <input id="email" class="app-form-control" placeholder="EMAIL" required>
                                 </div>
+                                <div class="wrapper app-form-group message">
+                                    <textarea id="message" class="app-form-control" placeholder="MESSAGE" required></textarea>
+                                </div>
+                                <script>
+                                    const textarea = document.querySelector("textarea");
+                                    textarea.addEventListener("keyup", e => {
+                                        textarea.style.height = "auto";
+                                        let scHeight = e.target.scrollHeight;
+
+                                        textarea.style.height = `${scHeight}px`;
+                                    });
+
+                                </script>
                                 <div class="app-form-group message">
-                                    <input class="app-form-control" placeholder="MESSAGE">
+                                    @if (SignInManager.IsSignedIn(User)) {
+                                        <input id="userid" type="hidden" value="@UserManager.GetUserAsync(User).Result.Id" />
+                                    } else {
+                                        <input id="userid" type="hidden" value="" />
+                                    }
+
                                 </div>
                                 <div class="app-form-group buttons">
-                                    <button class="app-form-button">SEND</button>
+                                    <button class="app-form-button text-success" id="sendContactBtn">SEND</button>
                                 </div>
                             </div>
                         </div>
@@ -518,6 +549,53 @@
                     }
                 });
             }
+
+            $("#sendContactBtn").click(function () {
+                // Get the form values
+                var name = $("#name").val();
+                var email = $("#email").val();
+                var message = $("#message").val();
+                var userId = $("#userid").val();
+                console.log(name + email + message + userId);
+
+                var formData = new FormData();
+                formData.append("UserName", name);
+                formData.append("Email", email);
+                formData.append("Message", message);
+                formData.append("UserId", userId);
+
+                console.log(formData);
+
+
+                $.ajax({
+                    url: '/Contacts/CreateAjax',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            // Handle success response
+                            alert('Contact created successfully!');
+                        } else {
+                            // Handle failure response
+                            alert('Failed to create contact.');
+                        }
+                    },
+
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        alert('An error occurred while creating the contact.');
+                    }
+                });
+                // Clear input values
+                $("#name").val("");
+                $("#email").val("");
+                $("#message").val("");
+                $("#userid").val("");
+
+            });
+        </script>
         </script>
 
 

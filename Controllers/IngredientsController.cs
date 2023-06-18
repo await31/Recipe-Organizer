@@ -72,6 +72,47 @@ namespace CapstoneProject.Controllers {
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateAjax(Ingredient model) {
+            if (ModelState.IsValid) {
+                if (model.file != null && model.file.Length > 0) {
+                    IFormFile file = model.file;
+                    // Generate a unique file name
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                    // Upload the file to Firebase Storage
+                    string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
+                    Uri imageUrlUri = new Uri(imageUrl);
+                    string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
+                    model.ImgPath = baseUrl;
+                    model.Status = false;
+                    _context.Ingredients.Add(model);
+                    await _context.SaveChangesAsync();
+                    TempData["success"] = "Ingredient created successfully";
+                    return Json(new { success = true });
+                }
+            }
+
+            return Json(new { success = false });
+        }
+
+        // GET: Ingredient/Detail/id
+        public IActionResult Detail(int? id) {
+
+            if (id == null || _context.Ingredients == null) {
+                return NotFound();
+            }
+
+            var ingredient = _context.Ingredients
+                        .FirstOrDefault(m => m.Id == id);
+
+            if (ingredient == null) {
+                return NotFound();
+            }
+
+            return View(ingredient);
+        }
+
+
         public static async Task<string> UploadFirebase(Stream stream, string fileName) {
             string imageFromFirebaseStorage = "";
             using (Image image = Image.Load(stream)) {
@@ -195,6 +236,39 @@ namespace CapstoneProject.Controllers {
             return RedirectToAction("Index");
         }
 
+
+        // POST: Recipes/Approve
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Approve(int id) {
+            var ingredient = await _context.Ingredients.FindAsync(id);
+            if (ingredient == null) {
+                return NotFound();
+            }
+
+            ingredient.Status = true; // Set the status to approved
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Dashboard");
+        }
+        [Authorize]
+        // POST: Recipes/Deny
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Deny(int id) {
+            var ingredient = await _context.Ingredients.FindAsync(id);
+            if (ingredient == null) {
+                return NotFound();
+            }
+
+            _context.Ingredients.RemoveRange(ingredient);
+
+            await DeleteFromFirebaseStorage(ingredient.ImgPath);
+            _context.Ingredients.Remove(ingredient);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Dashboard");
+        }
 
         private async Task DeleteFromFirebaseStorage(string fileName) {
             if (!string.IsNullOrEmpty(fileName)) {

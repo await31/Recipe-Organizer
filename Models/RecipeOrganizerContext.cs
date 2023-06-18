@@ -31,6 +31,8 @@ public partial class RecipeOrganizerContext : IdentityDbContext<Account> {
 
     public virtual DbSet<RecipeIngredient> RecipeIngredient { get; set; }
 
+    public virtual DbSet<Contact>? Contacts { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
         // Create a configuration object
         var configuration = new ConfigurationBuilder()
