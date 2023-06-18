@@ -117,7 +117,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("Favourites");
+                    b.ToTable("Favourites", (string)null);
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.Ingredient", b =>
@@ -148,7 +148,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("FkCategoryId");
 
-                    b.ToTable("Ingredients");
+                    b.ToTable("Ingredients", (string)null);
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.IngredientCategory", b =>
@@ -164,7 +164,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("IngredientCategories");
+                    b.ToTable("IngredientCategories", (string)null);
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.MealPlan", b =>
@@ -197,7 +197,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("FkUserId");
 
-                    b.ToTable("MealPlans");
+                    b.ToTable("MealPlans", (string)null);
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.Nutrition", b =>
@@ -222,7 +222,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Nutrition");
+                    b.ToTable("Nutrition", (string)null);
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.Recipe", b =>
@@ -278,7 +278,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("FkUserId");
 
-                    b.ToTable("Recipes");
+                    b.ToTable("Recipes", (string)null);
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.RecipeCategory", b =>
@@ -295,7 +295,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RecipeCategories");
+                    b.ToTable("RecipeCategories", (string)null);
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.RecipeFeedback", b =>
@@ -327,7 +327,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RecipeFeedbacks");
+                    b.ToTable("RecipeFeedbacks", (string)null);
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.RecipeIngredient", b =>
@@ -356,7 +356,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("RecipeId");
 
-                    b.ToTable("RecipeIngredient");
+                    b.ToTable("RecipeIngredient", (string)null);
                 });
 
             modelBuilder.Entity("FavouriteRecipe", b =>
@@ -371,7 +371,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("RecipesId");
 
-                    b.ToTable("FavouriteRecipe");
+                    b.ToTable("FavouriteRecipe", (string)null);
                 });
 
             modelBuilder.Entity("IngredientRecipe", b =>
@@ -386,7 +386,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("RecipesId");
 
-                    b.ToTable("IngredientRecipe");
+                    b.ToTable("IngredientRecipe", (string)null);
                 });
 
             modelBuilder.Entity("MealPlanRecipe", b =>
@@ -401,7 +401,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("RecipesId");
 
-                    b.ToTable("MealPlanRecipe");
+                    b.ToTable("MealPlanRecipe", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

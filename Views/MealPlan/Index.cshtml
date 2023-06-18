@@ -39,6 +39,8 @@
 
 <hr />
 <hr />
+<h1 class="label-font text-center">My Planning</h1>
+<hr />
 <div class="row row-cols-1 row-cols-lg-3 g-2 g-lg-3">
         @foreach (var item in Model) {
         <div class="col overflow-hidden">
@@ -58,3 +60,5 @@
         </div>
         }
 </div>
+        <partial name="_Pager" model="@pager"/>
+
