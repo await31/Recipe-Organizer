@@ -105,14 +105,11 @@ namespace CapstoneProject.Controllers {
 
             return View(data);
         }
-        public async Task<IActionResult> FavouriteList() {
+        public async Task<IActionResult> MyRecipes() {
             var currentUser = await _userManager.GetUserAsync(User);
-            var userFavouriteList = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToList();
-            List<int> recipeIds = _context.Favourites.Where(a => userFavouriteList.Contains(a)).Include(a => a.Recipes).SelectMany(c => c.Recipes).Select(r => r.Id).ToList();
 
             var recipes = await _context.Recipes
-                .Where(a=>a.Status == true)
-                .Where(r => recipeIds.Contains(r.Id))
+                .Where(a=>a.Status == true && a.FkUser ==currentUser)
                 .Include(r => r.FkRecipe)
                 .Include(r => r.FkRecipeCategory)
                 .Include(r => r.FkUser).ToListAsync();

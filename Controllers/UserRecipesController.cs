@@ -21,6 +21,8 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats;
 using System.Xml.Linq;
 using SixLabors.ImageSharp.Formats.Webp;
+using Microsoft.AspNetCore;
+
 
 namespace CapstoneProject.Controllers {
 
@@ -387,12 +389,6 @@ namespace CapstoneProject.Controllers {
                         // Save ingredient, recipe to IngredientRecipe
                         // Save ingredient IDs to recipe
                         if (IngredientNames != null) {
-                            /*
-                             var ingredients = _context.Ingredients
-                               .Where(i => i.Status == true)
-                               .Where(i => IngredientNames.Any(input => i.Name.Contains(input)))
-                               .ToList();
-                             */
 
                             var allIngredients = await _context.Ingredients
                                                .Where(i => i.Status == true)
@@ -442,37 +438,129 @@ namespace CapstoneProject.Controllers {
                 return NotFound();
             }
 
-            var recipe = await _context.Recipes.FindAsync(id);
+            var recipe = await _context.Recipes.Include(r => r.RecipeIngredients).Include(r => r.Ingredients).Include(r => r.Nutrition).FirstOrDefaultAsync(r=>r.Id==id);
             if (recipe == null) {
                 return NotFound();
             }
+
             ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id", recipe.FkRecipeId);
             ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.FkRecipeCategoryId);
+            ViewBag.IngredientDetails = recipe.RecipeIngredients;
+            ViewBag.Ingredients = recipe.Ingredients;
             return View(recipe);
         }
 
         // POST: Recipes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ImgPath,Description,FkRecipeCategoryId,FkRecipeId,Nutrition,PrepTime,Difficult,FkUserId,CreatedDate")] Recipe recipe)
+        //{
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ImgPath,Description,FkRecipeCategoryId,FkRecipeId,Nutrition,PrepTime,Difficult,FkUserId,CreatedDate")] Recipe recipe) {
-            if (id != recipe.Id) {
+        public async Task<IActionResult> Edit(int id, Recipe recipe, string[] IngredientNames, double[] Quantities, string[] UnitOfMeasures) {
+            if (id != recipe.Id)
+            {
                 return NotFound();
             }
+            var existingRecipe = _context.Recipes.Include(r => r.Nutrition).Include(r => r.Ingredients).Include(r => r.RecipeIngredients).Single(r => r.Id == id);
+            _context.Entry(existingRecipe).CurrentValues.SetValues(recipe);
+            if (recipe.file != null && recipe.file.Length > 0)
+            {
+                IFormFile file = recipe.file;
+                // Generate a unique file name
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser != null)
+                {
+                    // Upload the file to Firebase Storage
+                    string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
+                    Uri imageUrlUri = new(imageUrl);
+                    string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
+                    existingRecipe.ImgPath = baseUrl;
+                }
+            }
+            ////Nutrition
+            //existingRecipe.Nutrition.Calories = recipe.Nutrition.Calories;
+            //existingRecipe.Nutrition.Fat = recipe.Nutrition.Fat;
+            //existingRecipe.Nutrition.Carbohydrate = recipe.Nutrition.Carbohydrate;
+            //existingRecipe.Nutrition.Cholesterol = recipe.Nutrition.Cholesterol;
+            //existingRecipe.Nutrition.Protein = recipe.Nutrition.Protein;
+            if (IngredientNames != null)
+            {
 
-            if (ModelState.IsValid) {
-                try {
-                    _context.Update(recipe);
+                existingRecipe.Ingredients.Clear();
+                var allIngredients = await _context.Ingredients
+                                   .Where(i => i.Status == true)
+                                   .ToListAsync();
+
+                var ingredients = allIngredients
+                                  .Where(i => IngredientNames.Any(input => i.Name.Contains(input)))
+                                  .ToList();
+
+                var IngredientIds = ingredients.Select(i => i.Id).ToArray();
+                existingRecipe.Ingredients.AddRange(ingredients);
+                existingRecipe.RecipeIngredients.Clear();
+                // Create recipe ingredients with quantities and unit of measure
+                var recipeIngredients = new List<RecipeIngredient>();
+
+                for (int i = 0; i < IngredientIds.Length; i++)
+                {
+                    recipeIngredients.Add(new RecipeIngredient
+                    {
+                        IngredientId = IngredientIds[i],
+                        RecipeId = recipe.Id,
+                        Quantity = Quantities[i],
+                        UnitOfMeasure = UnitOfMeasures[i]
+                    });
+                }
+                existingRecipe.RecipeIngredients = recipeIngredients;
+                _context.RecipeIngredient.AddRange(recipeIngredients);
+
+                // Create recipe ingredients with quantities and unit of measure
+                //var recipeIngredients = new List<RecipeIngredient>();
+
+                //for (int i = 0; i < IngredientIds.Length; i++)
+                //{
+                //    var check = existingRecipe.RecipeIngredients.FirstOrDefault(r => r.IngredientId==IngredientIds[i]);
+                //    if(check !=null)
+                //    {
+                //        check.Quantity = Quantities[i];
+                //        check.UnitOfMeasure = UnitOfMeasures[i];
+                //    }
+                //    else
+                //    {
+                //        recipeIngredients.Add(new RecipeIngredient
+                //        {
+                //            IngredientId = IngredientIds[i],
+                //            RecipeId = recipe.Id,
+                //            Quantity = Quantities[i],
+                //            UnitOfMeasure = UnitOfMeasures[i]
+                //        });
+                //    }
+                //}
+                //if(recipeIngredients!=null)
+                //_context.RecipeIngredient.AddRange(recipeIngredients);
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
                     await _context.SaveChangesAsync();
-                } catch (DbUpdateConcurrencyException) {
-                    if (!RecipeExists(recipe.Id)) {
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!RecipeExists(recipe.Id))
+                    {
                         return NotFound();
-                    } else {
+                    }
+                    else
+                    {
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("MyRecipes","Home");
             }
             ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id", recipe.FkRecipeId);
             ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.FkRecipeCategoryId);
