@@ -4,7 +4,8 @@
 @{
     ViewData["Title"] = "Log in";
 }
-<link rel="stylesheet" href="~/css/formSetting.css" />
+<link rel="stylesheet" href="~/css/burgerAnimation.css" />
+<link rel="stylesheet" href="~/css/pwdReveal.css" />
 <section style="height: 75vh !important;">
     <div class="container h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -40,7 +41,7 @@
                                     <div class="d-flex justify-content-between">
                                         <div class="checkbox">
                                             <label asp-for="Input.RememberMe" class="form-label">
-                                                <input class="form-check-input" asp-for="Input.RememberMe" />
+                                                <input class="form-check-input p-2" asp-for="Input.RememberMe" />
                                                 @Html.DisplayNameFor(m => m.Input.RememberMe)
                                             </label>
                                         </div>
@@ -89,10 +90,7 @@
     </div>
 </section>
 
-
-
-
-<script src="~/js/formSetting.js"></script>
+<script src="~/js/burgerAnimation.js"></script>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

@@ -44,4 +44,3 @@ document.querySelector('.password-field i').addEventListener('click', function (
         document.getElementById('burger').src = '/images/cute-burger-eyecover.png';
     }
 });
-
