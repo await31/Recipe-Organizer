@@ -1,0 +1,143 @@
+﻿@model IEnumerable<Recipe>
+
+@inject SignInManager<Account> SignInManager
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<Account> UserManager
+@{
+    ViewData["Title"] = "Details";
+    var currentUser = await UserManager.GetUserAsync(User);
+}
+
+<div class="row">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        @if (currentUser.Id == @ViewData["UserId"])
+        {
+            <div>
+                <button id="editButton" class="unstyled-button" data-bs-toggle="modal" data-bs-target="#editModal">
+                    EDIT
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                </button>
+                <button id="deleteButton" class="unstyled-button" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    DELETE
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                </button>
+
+            </div>
+        }
+    }
+</div>
+<div class="mt-5 mb-5">
+    <h2 id="collectionName" class="text-center">@ViewData["Name"]</h2>
+    <h5 id="collectionDescription" class="text-center text-secondary">@ViewData["Description"]</h5>
+</div>
+
+
+<div class="row">
+    @foreach (var recipe in Model) {
+        <div class="card d-flex col-md-3 col-sm-6 mx-4 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%); height:300px;">
+            <div class="position-relative" style="height: 60%;">
+                <img src="@recipe.ImgPath" class="img-fluid card-img-top" alt="Food" style="height: 100%">
+            </div>
+            <div class="mt-2" style="height: 40%;">
+                <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@recipe.Id" class="text-decoration-none h-100">
+                    <div class="card-body pb-4 pt-3">
+                        <h4 class="card-title text-dark text-decoration-none text-center" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@recipe.Name</h4>
+                        <div class="d-flex row mt-4 ms-4 mb-3">
+                            <div class="rounded-5 col-6 text-dark px-0">
+                                @if (recipe.PrepTime < 360) {
+                                    <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@recipe.PrepTime minutes</span>
+                                } else {
+                                    <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@(recipe.PrepTime / 60) hours</span>
+                                }
+                            </div>
+                            <div class="rounded-5 col-6 text-dark px-0">
+                                <i class="fa-solid fa-utensils"></i> <span class="text-dark" style="font-size: 14px;">@recipe.FkRecipeCategory?.Name</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    } @*End of foreach*@
+
+</div>
+
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editModalLabel">Edit Collection</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div>Collection Name</div>
+                <input type="text" id="editName" placeholder="Name your collection" required />
+                <div>Collection Description (Optional)</div>
+                <input type="text" id="editDescription" placeholder="Describe your collection"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="edit-save" type="button" class="btn btn-primary" data-bs-dismiss="modal" data-collection-id="@ViewData["Id"]">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModalLabel">Delete Collection</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div>Are you sure you want to delete this collection?</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                @using (Html.BeginForm("Delete", "Favourites", new { id = ViewData["Id"] }, FormMethod.Post, false,new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Delete" class="btn btn-danger" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/lib/jquery-3.7.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+
+    <script>
+    $(document).ready(function () {
+        $('#editButton').click(function () {
+            document.getElementById("editName").value = document.getElementById("collectionName").innerHTML;
+            document.getElementById("editDescription").value = document.getElementById("collectionDescription").innerHTML;
+        });
+        $('#edit-save').click(function () {
+            var collectionId = $(this).data('collection-id');
+            var newName = document.getElementById("editName").value;
+            var newDescription = document.getElementById("editDescription").value;
+
+            $.ajax({
+                url: '/Favourites/Edit',
+                type: 'POST',
+                data: { id: collectionId, name: newName, description: newDescription },
+                success: function (data) {
+                    $('#collectionName').html(data.name);
+                    $('#collectionDescription').html(data.description);
+                },
+                error: function () {
+                    alert('Error adding recipes to favorites.');
+                }
+            });
+        });
+    });
+    </script>

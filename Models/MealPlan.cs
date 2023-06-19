@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -9,11 +10,20 @@ public partial class MealPlan
     [Key]
     public int Id { get; set; }
 
-    public int? FkUserId { get; set; }
+    public string? FkUserId { get; set; }
 
-    public DateTime? PlannedDate { get; set; }
+    public string? Title { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public string? Description { get; set; }
+
+    [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+    public DateTime? Date { get; set; }
+
+    public string? Color { get; set; }
+
+    public bool IsFullDay { get; set; }
+
+    //public DateTime? CreatedDate { get; set; }
 
     public virtual Account? FkUser { get; set; }
 

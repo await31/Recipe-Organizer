@@ -1,0 +1,20 @@
+﻿@model Ingredient
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="@Model.ImgPath" alt="..." /></div>
+            <div class="col-md-6">
+                <div class="small mb-1">@Model.FkCategory?.Name</div>
+                <h1 class="display-5 fw-bolder">@Model.Name</h1>
+                <p class="lead">@Model.Description</p>
+                <div class="d-flex"><a asp-controller="UserRecipes" asp-action="Index" asp-route-IncludeList="@Model.Name" class="btn btn-outline-dark flex-shrink-0"><i class="bi-cart-fill me-1"></i>Related recipes</a></div>
+            </div>
+        </div>
+    </div>
+</section>
+       

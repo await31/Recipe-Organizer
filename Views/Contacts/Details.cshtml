@@ -1,0 +1,21 @@
+﻿@model CapstoneProject.Models.Contact
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+<div style="margin-top: 25px" class="card">
+    <div class="card-header">
+        <h4 style="margin: 10px 0px">
+            Contact Information
+        </h4>
+    </div>
+    <div class="card-body">
+        <h6 class="card-title">From user: @Model.UserName</h6>
+        <p class="fst-italic">@Model.Email</p>
+        <p class="card-text">@Model.Message</p>
+
+        <a asp-action="Index" asp-controller="Dashboard" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+</div>

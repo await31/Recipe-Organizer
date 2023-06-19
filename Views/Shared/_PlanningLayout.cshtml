@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv='Content-Type' content='Type=text/html; charset=utf-8'>
+    <meta property="og:url" content="https://cookez.azurewebsites.net/" />
+    <meta property="og:title" content="Place of foods and recipes" />
+    <meta property="og:site_name" content="Cookez" />
+    <meta property="og:description" content="A place to store and create delicious, nutritious recipes for everyone's!" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://www.howtocook.recipes/wp-content/uploads/2021/05/Ratatouille-recipe-500x500.jpg" />
+    <meta property="og:locale" content="vi" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap-5.3.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    <link rel="stylesheet" href="~/css/recipedetail.css" />
+    <link rel="icon" type="image/x-icon" href="\images\logo.png">
+    <script src="https://kit.fontawesome.com/08194921a9.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css" />
+    @RenderSection("scripts", required: false)
+</head>
+<style>
+    hr {
+        clear: both;
+        visibility: hidden;
+    }
+
+    li {
+        list-style: none;
+    }
+
+    .breadcrumb a {
+        text-decoration: none;
+        font-weight: bold;
+        color: cadetblue;
+    }
+
+    .breadcrumb {
+        margin-bottom: 0;
+    }
+
+    .label-font {
+        font-family: Comic Sans MS;
+    }
+
+    .unstyled-button {
+        padding: 0;
+        border: none;
+        background: none;
+    }
+
+
+
+    .card-text-custom {
+        max-height: 220px;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+<body>
+    <header class="pb-2 bg-light shadow-sm">
+        <div class="container-fluid">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <div>
+                    <a class="navbar-brand mb-xs-2 mb-sm-2" asp-area="" asp-controller="Home" asp-action="Index">
+                        <img src="\images\logo.png" alt="Logo" width="80" height="80" class="d-inline-block align-text-top">
+                    </a>
+                </div>
+                <div class="d-flex col-12 col-lg-auto mb-md-0 justify-content-center mt-1">
+                    <form class="d-flex" asp-controller="UserRecipes" asp-action="Filter">
+                        <input style="width: 400px;" class="form-control" id="SearchString" name="SearchString" type="text" placeholder="What's your food choice for today?" aria-label="Search" value="@ViewData["FilterSearch"]" />
+                        <button class="btn btn-dark my-2 my-sm-0 ms-2" type="submit" value="Find"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </form>
+                </div>
+                <div class="text-end d-flex">
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container-fluid">
+        <main class="my-5">
+            @RenderBody()
+        </main>
+    </div>
+    <!-- Footer -->
+    <footer class="mb-1">
+        <div class="container">
+            <div class="position-relative overflow-hidden row py-5" style="background-color: #e7f9fd; border-radius: 2rem;">
+                <div class="col-md-6 text-center offset-md-3 mb-3">
+                    <h1>Connect with us</h1>
+                    <p>
+                        Subscribe and stay up to date with the latest recipes that will tantalize your taste buds.
+                    </p>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control form-control-lg" placeholder="Your email address..." aria-label="Your email address..." aria-describedby="button-addon2">
+                        <button class="btn btn-dark" type="button" id="button-addon2">Subscribe</button>
+                    </div>
+                </div>
+                <img src="~/images/footer-dish1.png" class="d-none d-lg-block position-absolute img-fluid" alt="Food" style="width: 200px; height: 200px; bottom:-25%; left:-3%;">
+                <img src="~/images/footer-dish2.png" class="d-none d-lg-block position-absolute img-fluid" alt="Food" style="width: 200px; height: 200px; bottom:-25%; right:-3%;">
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
