@@ -11,7 +11,7 @@
 <div class="row">
     @if (SignInManager.IsSignedIn(User))
     {
-        @if (currentUser.Id == @ViewData["UserId"])
+        if (currentUser.Id.Equals(@ViewData["UserId"] as string))
         {
             <div>
                 <button id="editButton" class="unstyled-button" data-bs-toggle="modal" data-bs-target="#editModal">
