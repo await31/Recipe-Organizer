@@ -1,7 +1,8 @@
-﻿@inject SignInManager<Account> SignInManager
+﻿@model IEnumerable<RecipeFeedback>
+
+@inject SignInManager<Account> SignInManager
 @using Microsoft.AspNetCore.Identity;
 @inject UserManager<Account> UserManager
-@model IEnumerable<RecipeFeedback>
 @{
     Pager pager = new Pager();
     int pageNo = 0;
@@ -11,7 +12,7 @@
         pageNo = pager.CurrentPage;
     }
 }
-@if (@Model != null)
+@if (Model != null)
 {
     @foreach (var feedback in Model)
     {

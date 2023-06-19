@@ -85,7 +85,9 @@ namespace CapstoneProject.Controllers {
         [Breadcrumb("View Ingredients", FromAction = "Index", FromController = typeof(HomeController))]
         public IActionResult ViewIngredient(int id, int pg = 1) {
 
-            IEnumerable<Ingredient> obj = _context.Ingredients.Where(i => i.FkCategoryId == id).ToList();
+            IEnumerable<Ingredient> obj = _context.Ingredients
+                .Where(i => i.Status == true)
+                .Where(i => i.FkCategoryId == id).ToList();
 
 
             const int pageSize = 10; // Number of ingredients in 1 page

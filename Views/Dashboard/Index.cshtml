@@ -1,4 +1,4 @@
-﻿﻿@{
+﻿﻿﻿@{
     ViewBag.Title = "Dashboard";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
@@ -19,12 +19,12 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col me-2">
                             <div class="text-xs fw-bold text-primary text-uppercase mb-1">
-                                Visitors Count (Monthly)
+                                Number of users
                             </div>
-                            <div class="h5 mb-0 fw-bold text-dark">11418</div>
+                            <div class="h5 mb-0 fw-bold text-dark">@ViewData["accCount"]</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fa-solid fa-eye fa-2x text-secondary"></i>
+                            <i class="fa-solid fa-user fa-2x text-secondary"></i>
                         </div>
                     </div>
                 </div>
@@ -157,33 +157,36 @@
                         <thead class="table-dark">
                             <tr>
                                 <th>Name</th>
-                                <th>Owner</th>
+                                <th>Category</th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model) {
+                            @{
+                                var pendingIngredients = ViewData["IngredientsPending"] as IEnumerable<Ingredient>;
+                            }
+                            @foreach (var item in pendingIngredients) {
                                 if (item.Status != null) {
                                     <tr>
                                         <td>
                                             @item.Name
                                         </td>
                                         <td>
-                                            @item.FkUser
+                                            @item.FkCategory
                                         </td>
                                         <td>
-                                            <a asp-controller="Recipes" asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
+                                            <a asp-controller="Ingredients" asp-action="Detail" asp-route-id="@item.Id" class="btn btn-info">Details</a>
                                         </td>
                                         <td>
-                                            <form method="post" asp-controller="Recipes" asp-action="Approve">
+                                            <form method="post" asp-controller="Ingredients" asp-action="Approve">
                                                 <input type="hidden" name="id" value="@item.Id" />
                                                 <button type="submit" class="btn btn-success">Approve</button>
                                             </form>
                                         </td>
                                         <td>
-                                            <form method="post" asp-controller="Recipes" asp-action="Deny">
+                                            <form method="post" asp-controller="Ingredients" asp-action="Deny">
                                                 <input type="hidden" name="id" value="@item.Id" />
                                                 <button type="submit" class="btn btn-danger">Deny</button>
                                             </form>
@@ -197,7 +200,52 @@
             </div>
         </div>
     </div>
+    <div class="row">
 
+        <!-- Content Column -->
+        <div class="col-lg-6 mb-4">
+
+            <!-- Project Card Example -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Contact from user</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped w-100">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Name</th>
+                                <th>Owner</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                var contact = ViewData["Contact"] as IEnumerable<Contact>;
+                            }
+                            @foreach (var item in contact) {
+                                <tr>
+                                    <td>
+                                        @item.UserName
+                                    </td>
+                                    <td>
+                                        @item.Message
+                                    </td>
+                                    <td>
+                                        <form asp-action="Details" asp-controller="Contacts">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button type="submit" class="btn btn-success">Detail</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
 <!-- /.container-fluid -->
             </div>

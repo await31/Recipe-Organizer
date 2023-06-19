@@ -100,8 +100,8 @@ namespace CapstoneProject.Controllers {
             ViewData["Name"] = favouriteList?.Name;
             ViewData["Description"] = favouriteList.Description;
             ViewData["Id"] = id;
-            if(favouriteList.Account!=null)
-            ViewData["UserId"] = favouriteList.Account.Id;
+            if (favouriteList.Account != null)
+                ViewData["UserId"] = favouriteList.Account.Id;
 
             var recipes = favouriteList.Recipes
                 .ToList();

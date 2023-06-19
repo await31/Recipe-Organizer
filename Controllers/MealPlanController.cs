@@ -23,6 +23,7 @@ using SixLabors.ImageSharp.Formats;
 using System.Text.Json;
 using System.Drawing.Printing;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace CapstoneProject.Controllers {
     public class MealPlanController : Controller {
@@ -44,22 +45,22 @@ namespace CapstoneProject.Controllers {
             return Json(mealplans);
         }
 
-        private bool IsRecipeNameExists(string name) {
-            return (_context.Recipes?.Any(e => e.Name == name)).GetValueOrDefault();
+        [HttpPost]
+        public JsonResult RecipeNameExists(string recipe) {
+            ExtractIntegerAndString(recipe, out int id, out string name);
+            var exists = _context.Recipes?.Any(r => r.Id == id && r.Name.Equals(name)) ?? false;
+            return Json(new { exists });
         }
 
-        [HttpPost]
-        public JsonResult RecipeNameExists(string name) {
-            bool exists = IsRecipeNameExists(name); // Call the existing private method
-            return Json(exists);
-        }
-
-        [HttpPost]
-        public JsonResult SearchAutoComplete(string term) {
-            var result = (_context.Recipes.Where(t => t.Name.ToLower().Contains(term.ToLower()))
-                 .Select(t => new { t.Name }))
-                 .ToList();
-            return Json(result);
+        public static void ExtractIntegerAndString(string inputString, out int integer, out string stringValue) {
+            Match integerMatch = Regex.Match(inputString, @"\#(\d+)");
+            if (integerMatch.Success) {
+                integer = int.Parse(integerMatch.Groups[1].Value);
+            } else {
+                integer = 0;
+            }
+            string strippedString = Regex.Replace(inputString, @"\(\#\d+\)", "").Trim();
+            stringValue = strippedString;
         }
 
         [HttpPost]
@@ -78,14 +79,8 @@ namespace CapstoneProject.Controllers {
             var mealPlans = _context.MealPlans
                 .Where(a => a.FkUserId == currentUser)
             .ToList();
-            int recsCount = mealPlans.Count();
-            int pageSize = 6;
-            var pager = new Pager(recsCount, pg, pageSize);
-            int recSkip = (pg - 1) * pageSize;
-            var data = mealPlans.Skip(recSkip).Take(pager.PageSize).ToList();
 
-            this.ViewBag.Pager = pager;
-            return View(data);
+            return View(mealPlans);
         }
 
         [Breadcrumb("Schedule")]
@@ -98,8 +93,51 @@ namespace CapstoneProject.Controllers {
         }
 
         [Breadcrumb("Details")]
-        public IActionResult Details() {
-            return View();
+        public IActionResult Details(int? id) {
+
+            var mealplan = _context.MealPlans
+                .Include(r => r.FkUser)
+                .Include(r => r.Recipes)
+                .ThenInclude(r => r.RecipeIngredients)
+                .ThenInclude(r => r.Ingredient)
+                .FirstOrDefault(a => a.Id == id);
+
+            if (mealplan == null) {
+                return NotFound(); 
+            }
+
+            var mealPlanWithNutrition = _context.MealPlans
+                .Include(r => r.Recipes)
+                .ThenInclude(r => r.Nutrition)
+                .FirstOrDefault(a => a.Id == id);
+
+
+            var ingredientQuantities = mealplan.Recipes
+        .SelectMany(r => r.RecipeIngredients)
+        .GroupBy(ri => new { ri.IngredientId, ri.UnitOfMeasure })
+        .Select(group => new RecipeIngredient {
+            IngredientId = group.Key.IngredientId,
+            Ingredient = group.FirstOrDefault().Ingredient,
+            UnitOfMeasure = group.Key.UnitOfMeasure,
+            Quantity = group.Sum(ri => ri.Quantity)
+        })
+        .ToList();
+
+            var totalNutrition = new Nutrition() {
+                Calories =  mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Calories),
+                Fat = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Fat),
+                Protein = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Protein),
+                Carbohydrate = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Carbohydrate),
+                Cholesterol = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Cholesterol)
+            };
+            
+
+            ViewData["TotalNutrition"] = totalNutrition;
+            ViewData["GroupedIngredients"] = ingredientQuantities;
+
+
+
+            return View(mealplan);
         }
 
         [Breadcrumb("Create")]
@@ -112,7 +150,7 @@ namespace CapstoneProject.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(MealPlan mealplan,string[] RecipeNames) {
+        public async Task<IActionResult> Create(MealPlan mealplan, string[] RecipeNames) {
             if (ModelState.IsValid) {
                 var currentUser = await _userManager.GetUserAsync(User);
                 if (currentUser != null) {
@@ -122,16 +160,17 @@ namespace CapstoneProject.Controllers {
                         var allRecipes = _context.Recipes
                                                .Where(i => i.Status == true)
                                                .ToList();
-                        var recipes = allRecipes
-                                          .Where(i => RecipeNames
-                                          .Any(input => i.Name
-                                          .Equals(input)))
-                                          .ToList();
-
-                        mealplan.Recipes.AddRange(recipes);
+                        foreach (var recipeName in RecipeNames) {
+                            int id;
+                            string name;
+                            ExtractIntegerAndString(recipeName, out id, out name);
+                            var recipe = allRecipes.FirstOrDefault(r => r.Id == id && r.Name == name);
+                            if (recipe != null) {
+                                mealplan.Recipes.Add(recipe);
+                            }
+                        }
                         _context.MealPlans.Add(mealplan);
-
-                        await _context.SaveChangesAsync();
+                        _context.SaveChanges();
                         TempData["success"] = "Meal planning created successfully!";
                         return RedirectToAction(nameof(Index));
                     }
@@ -139,6 +178,7 @@ namespace CapstoneProject.Controllers {
             }
             return View(mealplan);
         }
+
 
     }
 }

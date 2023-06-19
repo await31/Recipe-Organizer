@@ -96,6 +96,35 @@ namespace CapstoneProject.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("CapstoneProject.Models.Contact", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Contacts");
+                });
+
             modelBuilder.Entity("CapstoneProject.Models.Favourite", b =>
                 {
                     b.Property<int>("Id")
@@ -117,7 +146,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("Favourites", (string)null);
+                    b.ToTable("Favourites");
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.Ingredient", b =>
@@ -148,7 +177,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("FkCategoryId");
 
-                    b.ToTable("Ingredients", (string)null);
+                    b.ToTable("Ingredients");
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.IngredientCategory", b =>
@@ -164,7 +193,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("IngredientCategories", (string)null);
+                    b.ToTable("IngredientCategories");
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.MealPlan", b =>
@@ -197,7 +226,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("FkUserId");
 
-                    b.ToTable("MealPlans", (string)null);
+                    b.ToTable("MealPlans");
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.Nutrition", b =>
@@ -222,7 +251,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Nutrition", (string)null);
+                    b.ToTable("Nutrition");
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.Recipe", b =>
@@ -278,7 +307,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("FkUserId");
 
-                    b.ToTable("Recipes", (string)null);
+                    b.ToTable("Recipes");
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.RecipeCategory", b =>
@@ -295,7 +324,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RecipeCategories", (string)null);
+                    b.ToTable("RecipeCategories");
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.RecipeFeedback", b =>
@@ -327,7 +356,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RecipeFeedbacks", (string)null);
+                    b.ToTable("RecipeFeedbacks");
                 });
 
             modelBuilder.Entity("CapstoneProject.Models.RecipeIngredient", b =>
@@ -356,7 +385,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("RecipeId");
 
-                    b.ToTable("RecipeIngredient", (string)null);
+                    b.ToTable("RecipeIngredient");
                 });
 
             modelBuilder.Entity("FavouriteRecipe", b =>
@@ -371,7 +400,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("RecipesId");
 
-                    b.ToTable("FavouriteRecipe", (string)null);
+                    b.ToTable("FavouriteRecipe");
                 });
 
             modelBuilder.Entity("IngredientRecipe", b =>
@@ -386,7 +415,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("RecipesId");
 
-                    b.ToTable("IngredientRecipe", (string)null);
+                    b.ToTable("IngredientRecipe");
                 });
 
             modelBuilder.Entity("MealPlanRecipe", b =>
@@ -401,7 +430,7 @@ namespace CapstoneProject.Migrations
 
                     b.HasIndex("RecipesId");
 
-                    b.ToTable("MealPlanRecipe", (string)null);
+                    b.ToTable("MealPlanRecipe");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

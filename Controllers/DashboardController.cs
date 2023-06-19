@@ -23,7 +23,20 @@ namespace CapstoneProject.Controllers {
                 .Where(b=>b.Status == false)
                 .ToList();
 
+            IEnumerable<Ingredient> pendingIngredients = _context.Ingredients
+                 .Where(a => a.Status == false)
+                 .ToList();
+
+            IEnumerable<Contact> contact = _context.Contacts
+                .ToList();
+
+            IEnumerable<Account> accounts = _context.Accounts
+                .ToList();
+
+
             //Get counts of ingredients, recipes, and pending request
+            ViewData["Contact"] = contact;
+            ViewData["accCount"] = accounts.Count();
             ViewData["IngredientsCount"] = _context.Ingredients
                 .Count();
             ViewData["RecipesCount"] = _context.Recipes
@@ -31,6 +44,7 @@ namespace CapstoneProject.Controllers {
                 .Count();
             ViewData["PendingRequestsCount"] = objRecipe
                 .Count();
+            ViewData["IngredientsPending"] = pendingIngredients;
             return View(objRecipe);
         }
     }

@@ -1,5 +1,4 @@
 ﻿@model MealPlan
-
 @{
     ViewBag.Title = "New Planning";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -26,7 +25,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label mb-2 label-font">Title</label>
-                <input asp-for="Title" class="form-control" placeholder="e.g. Recipes to make for mother's day" />
+                <input asp-for="Title" class="form-control" placeholder="e.g. Recipes to make for mother's day" required/>
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group mt-4">
@@ -36,7 +35,7 @@
             </div>
             <div class="form-group mt-4">
                 <label asp-for="Color" class="control-label mb-2 label-font">Choose a custom color for your planning</label>
-                <select asp-for="Color" class="form-control">
+                <select asp-for="Color" class="form-control" required>
                     <option value="red">Red</option>
                     <option value="white">White</option>
                     <option value="green">Green</option>
@@ -62,7 +61,7 @@
             </div>
             <div class="form-group mt-4">
                 <label asp-for="Date" class="control-label mb-2 label-font">Pick a time</label>
-                <input class="form-control" asp-for="Date" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+                <input class="form-control" asp-for="Date" asp-format="{0:yyyy-MM-ddTHH:mm}" required/>
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
             <!-- Ingredient -->
@@ -72,7 +71,7 @@
                 <p class="text-center text-secondary fw-bolder fs-6 label-font">Please ensure to verify the recipe ID prior to selecting the recipe name, in order to guarantee precise recipe selection.</p>
                 <div class="form-group row mt-4">
                     <div class="col-md-10">
-                        <label for="RecipeName" class="mb-2 label-font">(#ID) Name</label>
+                        <label for="RecipeName" class="mb-2 label-font">(#ID)Name</label>
                         <input type="text" class="form-control recipes" id="RecipeName" name="RecipeNames[]" onchange="updateSpan(this.value,this)" required />
                         <span id="recipe-span-1" class="text-danger" style="display: none;">This recipe doesn't exist!</span>
                     </div>
@@ -96,6 +95,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 
 <script>
+
     var recipeIndex = 1;
     function addRecipe() {
         var container = document.getElementById('recipe-container');
@@ -166,20 +166,24 @@
             this.submit();
         }
     });
+
     function checkRecipeExists(recipe, element) {
-        var recipeId = element.id.match(/\d+/);
+        var recipeId = recipe.match(/\d+/); // Extract the recipe ID from the recipe string
+        var recipeName = recipe.substring(recipe.indexOf(')') + 1).trim(); // Extract the recipe name after the closing parenthesis and trim any whitespace
+        var recipeString = '(#' + recipeId + ')' + recipeName; // Concatenate id and name in the required format
         var exists = false;
         $.ajax({
-            url: '/MealPlan/RecipeNameExists', // Update the URL to match the action method's route
+            url: '/MealPlan/RecipeNameExists',
             type: 'POST',
-            data: { name: recipe },
+            data: { recipe: recipeString }, // Pass the recipeString as the data parameter
             async: false,
             success: function (data) {
-                exists = data;
+                exists = data.exists; // Access the 'exists' property from the response data
             }
         });
         return exists;
     };
+     
     function updateSpan(recipe, element) {
         var data = checkRecipeExists(recipe, element);
         var recipeId = element.id.match(/\d+/);
@@ -200,8 +204,8 @@
                     success: function (data) {
                         response($.map(data, function (item) {
                             return {
-                                label: '(#' + item.id + ') ' + item.name,
-                                value: item.name
+                                label: '(#' + item.id + ')' + item.name,
+                                value: '(#' + item.id + ')' + item.name
                             };
                         }));
                     },

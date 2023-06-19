@@ -49,9 +49,9 @@ namespace CapstoneProject.Controllers {
         }
         [HttpPost]
         public JsonResult IngredientsAutoComplete(string term) {
-            var result = (_context.Ingredients.Where(t => t.Name.ToLower().Contains(term.ToLower()))
+            var result = (_context.Ingredients.Where(i=>i.Status==true).Where(t => t.Name.ToLower().Contains(term.ToLower()))
                  .Select(t => new { t.Name }))
-                 .ToList();
+                 .ToList(); 
             return Json(result);
         }
 
@@ -355,10 +355,14 @@ namespace CapstoneProject.Controllers {
         public IActionResult Create() {
             ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id");
             ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name");
+            IEnumerable<IngredientCategory> ingCategoryList = _context.IngredientCategories.ToList();
 
             // lay danh sach ingredient tu database
-            var ingredients = _context.Ingredients.ToList();
-
+            var ingredients = _context
+                .Ingredients
+                .Where(i => i.Status == true)
+                .ToList();
+            ViewData["IngCategories"] = ingCategoryList;
             ViewData["Ingredients"] = new SelectList(ingredients, "Id", "Name"); // truyen qua view create
 
             return View();

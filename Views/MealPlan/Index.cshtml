@@ -5,12 +5,6 @@
 @inject UserManager<Account> UserManager
 
 @{
-    Pager pager = new Pager();
-    int pageNo = 0;
-    if (ViewBag.Pager != null) {
-        pager = ViewBag.Pager;
-        pageNo = pager.CurrentPage;
-    }
     ViewBag.Title = "My Planning";
     var dateNow = DateTime.Now;
 }
@@ -39,26 +33,59 @@
 
 <hr />
 <hr />
-<h1 class="label-font text-center">My Planning</h1>
+<h1 class="label-font text-center">Today's Planning</h1>
 <hr />
+
+<div class="row row-cols-1 row-cols-lg-3 g-2 g-lg-3">
+    @foreach (var item in Model) {
+        @if (item.Date?.ToShortDateString() == dateNow.ToShortDateString()) {
+            <div class="col">
+                <div class="card text-start mb-3 px-0 position-relative border border-4 border-dark rounded mx-2">
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-dark">
+                        TODAY
+                    </span>
+                    <div class="card-body" style="background: @item.Color;">
+                        <h5 class="card-title label-font card-limit-1">@item.Title</h5>
+                        <h6 class="card-subtitle">@item.Date?.ToShortDateString()</h6>
+                        @if(item.Description == null) {
+                            <p class="card-text card-limit-2">...</p>
+                        } else {
+                            <p class="card-text card-limit-2">@item.Description</p>
+                        }
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-dark float-end">Details</a>
+                    </div>
+                </div>
+            </div>
+        }        
+    }
+</div>
+
+<hr />
+<hr />
+<h1 class="label-font text-center">All Planning</h1>
+<hr />
+
 <div class="row row-cols-1 row-cols-lg-3 g-2 g-lg-3">
         @foreach (var item in Model) {
-        <div class="col overflow-hidden">
-            <div class="card text-start mb-3 px-0 position-relative border border-3 border-dark rounded rounded-3 overflow-hidden">
+        <div class="col">
+            <div class="card text-start mb-3 px-0 position-relative border border-4 border-dark rounded mx-2">
                 @if (item.Date?.ToShortDateString() == dateNow.ToShortDateString()) {
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-dark">
                         TODAY
                     </span>
                 }
                 <div class="card-body" style="background: @item.Color;">
                     <h5 class="card-title label-font card-limit-1">@item.Title</h5>
                     <h6 class="card-subtitle">@item.Date?.ToShortDateString()</h6>
-                    <p class="card-text card-limit-2">@item.Description</p>
+                    @if (item.Description == null) {
+                        <p class="card-text card-limit-2">...</p>
+                    } else {
+                        <p class="card-text card-limit-2">@item.Description</p>
+                    }
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-dark float-end">Details</a>
                 </div>
             </div>
         </div>
         }
 </div>
-        <partial name="_Pager" model="@pager"/>
 
