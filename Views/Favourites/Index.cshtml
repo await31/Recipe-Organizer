@@ -23,21 +23,64 @@
 </style>
 
 
-<div class="row ms-5">
+<div class="container ms-5">
     <div class="row">
         <a asp-action="Create" class="btn btn-success fw-bold mt-4 mb-4 ms-2 col-2">New collection</a>
     </div>
-    @foreach (var collection in Model) {
-        <div class="card text-center mb-3 mx-2" style="width: 18rem;">
-            <div class="card-body">
-                <h6 class="card-title card-limit-1">@collection.Name</h6>
-                @if (collection.Description == null) {
+    <div class="row">
+    @foreach (var collection in Model)
+    {
+        <div class="card mb-3 mx-2" style="height:450px; width: 18rem; padding: 0;display: flex;">
+            <div class="card-img-top" style="height: 45%; width: 100%;background-color: darkgray">
+                <a asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id">
+                    @if (collection.Recipes.FirstOrDefault() != null)
+                    {
+                        if (collection.Recipes.First().ImgPath != null)
+                        {
+                            <img src="@collection.Recipes.First().ImgPath" class="img-fluid " alt="Food" style="height: 100%;width: 100%; object-fit: cover;">
+                        }
+                    }
+                </a>
+            </div>
+            <div class="card-body" style="padding: 0">
+                <div class="d-flex justify-content-around" style="height: 30%;width: 100%; padding: 0; margin: 0;">
+                    @for (var i = 0; i < 3; i++)
+                    {
+                        <div class="col-4" style="height: 100%; width:30%;background-color: darkgray; padding: 0; margin-top: 4px; margin-bottom: 4px">
+                            @if (i + 1 < collection.Recipes.Count())
+                            {
+                                @if (collection.Recipes.ElementAt(1 + i) != null)
+                                {
+                                    <a asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id">
+                                        @if (collection.Recipes.ElementAt(1 + i).ImgPath != null)
+                                        {
+                                            <img src="@collection.Recipes.ElementAt(1+i).ImgPath" class="img-fluid" alt="Food" style="height: 100%; width: 100%;object-fit: cover;">
+                                        }
+                                    </a>
+                                }
+                            }
+                        </div>
+                    }
+                </div>
+                <div style="margin: 8px">
+                <a class="card-title card-limit-1 link-info link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id">
+
+                    <h5 style="font-weight: bold;">@collection.Name</h5>
+                </a>
+                @if (collection.Description == null)
+                {
                     <p class="card-text card-limit-2">This collection doesn't have a description yet.</p>
-                } else {
+                }
+                else
+                {
                     <p class="card-text card-limit-2">@collection.Description</p>
                 }
-                <a asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id" class="btn btn-outline-dark" class="">Watch</a>
+
+                <h6 class="card-text card-limit-1">@collection.Recipes.Count() items in this collection</h6>
+                </div>
             </div>
         </div>
-    }
+        }@*END OF FOREACH*@
+    </div>
 </div>

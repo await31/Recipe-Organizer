@@ -82,7 +82,11 @@ namespace CapstoneProject.Controllers {
         [Breadcrumb("My Collections")]
         public async Task<IActionResult> Index() {
             var currentUser = await _userManager.GetUserAsync(User);
-            var userFavourite = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToList();
+            var userFavourite = _context.Accounts
+                .Include(u => u.Favourites)
+                .ThenInclude(f => f.Recipes)
+                .FirstOrDefault(u => u.Id == currentUser.Id)
+                .Favourites.ToList();
             return View(userFavourite);
         }
 
