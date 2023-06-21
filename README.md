@@ -1,7 +1,7 @@
 # Cookez Platform
 
 
-## List of technologies
+## In-use technologies
 [![My Skills](https://skills.thijs.gg/icons?i=html,css,js,bootstrap,cs,dotnet,firebase,github,jquery,visualstudio,azure,figma)](https://skills.thijs.gg)
 
 ## Purpose
