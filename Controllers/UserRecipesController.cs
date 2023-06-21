@@ -349,6 +349,7 @@ namespace CapstoneProject.Controllers {
 
         // GET: Recipes/Create
         [Breadcrumb("Create recipe")]
+        [Authorize]
         public IActionResult Create() {
             ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id");
             ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name");
@@ -447,6 +448,7 @@ namespace CapstoneProject.Controllers {
         }
 
         // GET: Recipes/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id) {
             if (id == null || _context.Recipes == null) {
                 return NotFound();
@@ -543,6 +545,7 @@ namespace CapstoneProject.Controllers {
         }
 
         // GET: Recipes/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id) {
             ViewBag.Title = "Create recipe";
             if (id == null || _context.Recipes == null) {
@@ -621,7 +624,6 @@ namespace CapstoneProject.Controllers {
                         .Child("recipes")
                         .Child(fileName)
                         .PutAsync(webpStream, cancellationToken.Token);
-
                     try {
                         imageFromFirebaseStorage = await storageManager;
                         firebaseConfiguration.Dispose();

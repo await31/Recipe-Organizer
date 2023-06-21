@@ -8,8 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using CapstoneProject.Models;
 using Microsoft.AspNetCore.Identity;
 using SmartBreadcrumbs.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CapstoneProject.Controllers {
+
     public class FavouritesController : Controller {
         private readonly RecipeOrganizerContext _context;
         private readonly UserManager<Account> _userManager;
@@ -58,6 +60,7 @@ namespace CapstoneProject.Controllers {
             return Json(favourites);
         }
         [HttpPost]
+        [Authorize]
         public async Task<JsonResult> AddRecipe(int recipeId, int[] favouriteIds, int[] allfavouriteIds) {
             var entity = _context.Recipes.FirstOrDefault(item => item.Id == recipeId);
             if (entity != null) {
@@ -80,6 +83,7 @@ namespace CapstoneProject.Controllers {
         }
         // GET: Favourites
         [Breadcrumb("My Collections")]
+        [Authorize]
         public async Task<IActionResult> Index() {
             var currentUser = await _userManager.GetUserAsync(User);
             var userFavourite = _context.Accounts
@@ -92,6 +96,7 @@ namespace CapstoneProject.Controllers {
 
         // GET: Favourites/Details/5
         [Breadcrumb("Collection Details")]
+        [Authorize]
         public async Task<IActionResult> Details(int? id) {
 
             var currentUser = await _userManager.GetUserAsync(User);
@@ -114,6 +119,7 @@ namespace CapstoneProject.Controllers {
         }
 
         // GET: Favourites/Create
+        [Authorize]
         public IActionResult Create() {
             return View();
         }
@@ -123,7 +129,7 @@ namespace CapstoneProject.Controllers {
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Favourite favourite) {
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,isPrivate")] Favourite favourite) {
             favourite.Account = await _userManager.GetUserAsync(User);
             if (ModelState.IsValid) {
                 _context.Add(favourite);
@@ -134,6 +140,7 @@ namespace CapstoneProject.Controllers {
         }
 
         // GET: Favourites/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id) {
             if (id == null || _context.Favourites == null) {
                 return NotFound();
@@ -168,6 +175,7 @@ namespace CapstoneProject.Controllers {
         }
 
         // GET: Favourites/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id) {
             if (id == null || _context.Favourites == null) {
                 return NotFound();
