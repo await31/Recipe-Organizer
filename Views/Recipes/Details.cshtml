@@ -95,12 +95,9 @@
                             </div>
                             <div class="col-10">
                                 <h5 class="fs-6">PREPARATION TIME</h5>
-                                @if (Model.PrepTime <= 360)
-                                {
+                                @if (Model.PrepTime <= 360) {
                                     <p>@Model.PrepTime minutes</p>
-                                }
-                                else
-                                {
+                                } else {
                                     <p>@(Model.PrepTime / 60) hours</p>
                                 }
                             </div>
@@ -218,8 +215,8 @@
             <button type="submit" class="btn btn-danger">Deny</button>
         </form>
     </div>
-   
-<div>
-    <a asp-controller="Dashboard" asp-action="Index" class="btn btn-warning">Back to Dashboard</a>
-</div>
+
+    <div>
+        <a asp-controller="Dashboard" asp-action="Index" class="btn btn-warning">Back to Dashboard</a>
+    </div>
 </div>

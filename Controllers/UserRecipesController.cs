@@ -260,7 +260,7 @@ namespace CapstoneProject.Controllers {
             return data;
         }
         [Breadcrumb("Details")]
-        // GET: Recipes/Details/5
+        // GET: UserRecipes/Details/5
         public IActionResult Details(int id, int pg = 1) {
             var recipe = _context.Recipes
                 .Where(a => a.Status == true)
@@ -284,7 +284,7 @@ namespace CapstoneProject.Controllers {
                 .Where(a => a.Status == true)
                 .Where(a => a.Id != id)
                 .OrderByDescending(x => x.ViewCount)
-                .Take(4)
+                .Take(6)
                 .ToList();
 
             ViewData["footerRecipes"] = footerRecipes;
@@ -602,7 +602,7 @@ namespace CapstoneProject.Controllers {
                     }));
                 }
 
-                using (MemoryStream webpStream = new MemoryStream()) {
+                using (MemoryStream webpStream = new ()) {
                     await image.SaveAsync(webpStream, new WebpEncoder());
 
                     webpStream.Position = 0;
