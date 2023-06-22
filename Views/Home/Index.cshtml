@@ -517,7 +517,6 @@
                         for (var i = 0; i < data.length; i++) {
                             if (data[i].isFavorite) {
                                 $('#favourite-checkbox-' + data[i].id).prop('checked', true); // Checks all boxes
-                                console.log('#favourite-checkbox-' + data[i].id)
                             }
                         }
                     },
@@ -536,7 +535,6 @@
                     success: function (data) {
                         for (var i = 0; i < data.length; i++) {
                             if (data[i].isFavorite) {
-                                console.log('#favourite-icon-' + data[i].recipeId)
                                 $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart');
                                 $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart-o');
                             }
@@ -598,6 +596,4 @@
 
             });
         </script>
-        </script>
-
 

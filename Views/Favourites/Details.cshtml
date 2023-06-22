@@ -8,6 +8,13 @@
     var currentUser = await UserManager.GetUserAsync(User);
 }
 
+<style>
+    .info {
+        background-color: rgb(220,255,255);
+        display: inline-block;
+        padding: 0 5px 0 5px;
+    }
+</style>
 <div class="row">
     @if (SignInManager.IsSignedIn(User))
     {
@@ -34,25 +41,56 @@
 
 
 <div class="row">
-    @foreach (var recipe in Model) {
-        <div class="card d-flex col-md-3 col-sm-6 mx-4 mb-4 px-0 overflow-hidden rounded-4 border-0" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%); height:300px;">
-            <div class="position-relative" style="height: 60%;">
-                <img src="@recipe.ImgPath" class="img-fluid card-img-top" alt="Food" style="height: 100%">
+    @foreach (var recipe in Model)
+    {
+        <div class="card d-flex col-3 mx-4 mb-4 px-0 overflow-hidden rounded-2" style="width: 300px;height:400px;">
+            <div class="" style="height: 50%;">
+                <img src="@recipe.ImgPath" class="img-fluid card-img-top" alt="Food" style="height: 100%; width: 100%;object-fit: cover;">
             </div>
             <div class="mt-2" style="height: 40%;">
                 <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@recipe.Id" class="text-decoration-none h-100">
                     <div class="card-body pb-4 pt-3">
-                        <h4 class="card-title text-dark text-decoration-none text-center" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@recipe.Name</h4>
-                        <div class="d-flex row mt-4 ms-4 mb-3">
-                            <div class="rounded-5 col-6 text-dark px-0">
-                                @if (recipe.PrepTime < 360) {
-                                    <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@recipe.PrepTime minutes</span>
-                                } else {
-                                    <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@(recipe.PrepTime / 60) hours</span>
-                                }
+                        <h4 class="card-title text-dark text-decoration-none" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@recipe.Name</h4>
+                        <div class="container mt-3 mb-3">
+                            <div class="row mb-2">
+                                <div class="col-6 text-dark">
+                                    <div class="rounded-5 info">
+                                        @if (recipe.PrepTime < 360)
+                                        {
+                                            <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@recipe.PrepTime minutes</span>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@(recipe.PrepTime / 60) hours</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-6 text-dark">
+                                    <div class="rounded-5 info">
+                                        <i class="fa-solid fa-utensils"></i> <span class="text-dark" style="font-size: 14px;">@recipe.FkRecipeCategory?.Name</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="rounded-5 col-6 text-dark px-0">
-                                <i class="fa-solid fa-utensils"></i> <span class="text-dark" style="font-size: 14px;">@recipe.FkRecipeCategory?.Name</span>
+                            <div class="row mb-2">
+                            @if (@recipe.ServingSize!=null)
+                            {
+                                    <div class="col-6 text-dark">
+                                    <div class="rounded-5 info">
+                                        <i class="fa-solid fa-user"></i> <span class="text-dark" style="font-size: 14px;">For @recipe.ServingSize people</span>
+                                    </div>
+                                </div>
+                            }
+                                <div class="col-6 text-dark">
+                                    <div class="rounded-5 info">
+                                        <i class="fa-solid fa-exclamation-triangle"></i>
+                                        <span class="text-dark" style="font-size: 14px;">
+                                            @for(var i = 0; i < recipe.Difficult; i++)
+                                            {
+                                                <i class="fa fa-star" style="color: red;"aria-hidden="true"></i>
+                                            }
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -76,7 +114,7 @@
                 <div>Collection Name</div>
                 <input type="text" id="editName" placeholder="Name your collection" required />
                 <div>Collection Description (Optional)</div>
-                <input type="text" id="editDescription" placeholder="Describe your collection"/>
+                <input type="text" id="editDescription" placeholder="Describe your collection" />
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -99,7 +137,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 
-                @using (Html.BeginForm("Delete", "Favourites", new { id = ViewData["Id"] }, FormMethod.Post, false,new { @class = "form-horizontal", role = "form" }))
+                @using (Html.BeginForm("Delete", "Favourites", new { id = ViewData["Id"] }, FormMethod.Post, false, new { @class = "form-horizontal", role = "form" }))
                 {
                     @Html.AntiForgeryToken()
                     <div class="form-group">
@@ -115,7 +153,7 @@
 <script src="~/lib/jquery-3.7.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 
-    <script>
+<script>
     $(document).ready(function () {
         $('#editButton').click(function () {
             document.getElementById("editName").value = document.getElementById("collectionName").innerHTML;
@@ -140,4 +178,4 @@
             });
         });
     });
-    </script>
+</script>

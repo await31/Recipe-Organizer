@@ -20,6 +20,18 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
+    .box {
+        width: 100px;
+        height: 100px;
+        background-color: #ccc;
+        box-shadow: 0 0 0px rgba(0, 0, 0, 0.5);
+        transition: box-shadow 0.3s ease-in-out;
+    }
+
+    .box:hover {
+        box-shadow: 0 0 20px rgba(0, 0, 0, 1);
+    }
 </style>
 
 
@@ -31,13 +43,13 @@
     @foreach (var collection in Model)
     {
         <div class="card mb-3 mx-2" style="height:450px; width: 18rem; padding: 0;display: flex;">
-            <div class="card-img-top" style="height: 45%; width: 100%;background-color: darkgray">
+            <div class="card-img-top box" style="height: 45%; width: 100%;background-color: darkgray">
                 <a asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id">
                     @if (collection.Recipes.FirstOrDefault() != null)
                     {
                         if (collection.Recipes.First().ImgPath != null)
                         {
-                            <img src="@collection.Recipes.First().ImgPath" class="img-fluid " alt="Food" style="height: 100%;width: 100%; object-fit: cover;">
+                            <img src="@collection.Recipes.First().ImgPath" class="img-fluid" alt="Food" style="height: 100%;width: 100%; object-fit: cover;">
                         }
                     }
                 </a>
@@ -50,11 +62,11 @@
                             @if (i + 1 < collection.Recipes.Count())
                             {
                                 @if (collection.Recipes.ElementAt(1 + i) != null)
-                                {
+                                    {
                                     <a asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id">
                                         @if (collection.Recipes.ElementAt(1 + i).ImgPath != null)
                                         {
-                                            <img src="@collection.Recipes.ElementAt(1+i).ImgPath" class="img-fluid" alt="Food" style="height: 100%; width: 100%;object-fit: cover;">
+                                                <img src="@collection.Recipes.ElementAt(1+i).ImgPath" class="img-fluid" alt="Food" style="height: 100%; width: 100%;object-fit: cover;">
                                         }
                                     </a>
                                 }
