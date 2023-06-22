@@ -26,6 +26,8 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace CapstoneProject.Controllers {
+
+    [Authorize]
     public class MealPlanController : Controller {
 
         private readonly RecipeOrganizerContext _context;
@@ -161,9 +163,7 @@ namespace CapstoneProject.Controllers {
                                                .Where(i => i.Status == true)
                                                .ToList();
                         foreach (var recipeName in RecipeNames) {
-                            int id;
-                            string name;
-                            ExtractIntegerAndString(recipeName, out id, out name);
+                            ExtractIntegerAndString(recipeName, out int id, out string name);
                             var recipe = allRecipes.FirstOrDefault(r => r.Id == id && r.Name == name);
                             if (recipe != null) {
                                 mealplan.Recipes.Add(recipe);

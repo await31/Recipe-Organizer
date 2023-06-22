@@ -15,7 +15,9 @@
     <link rel="stylesheet" href="~/lib/bootstrap-5.3.0/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <link rel="stylesheet" href="~/css/recipedetail.css"/>
+    <link rel="stylesheet" href="~/css/togglestyle.css"/>
     <link rel="icon" type="image/x-icon" href="\images\logo.png">
+    <link id="favicon" rel="icon" href="favicon-dark.svg" color="#DDD" />
     <script src="https://kit.fontawesome.com/08194921a9.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css"/>
     @RenderSection("scripts", required: false)
@@ -59,8 +61,7 @@
         text-overflow: ellipsis;
     }
 </style>
-
-<body style="background-color: rgb(248,246,242);">
+<body class="dark">
     <header class="pb-2 bg-light shadow-sm">
         <div class="container-fluid">
             <div class="d-flex flex-wrap align-items-center justify-content-between">
@@ -75,6 +76,14 @@
                         <button class="btn btn-dark my-2 my-sm-0 ms-2" type="submit" value="Find"><i class="fa-solid fa-magnifying-glass"></i></button>
                     </form>
                 </div>
+
+                <div class="load-flash"></div>
+                <div class="mode-toggle noselect">
+                    <h6 class="label-dark">Dark</h6>
+                    <div class="toggle-switch"></div>
+                    <h6 class="label-light">Light</h6>
+                </div>
+
                 <div class="text-end d-flex">
                     <partial name="_LoginPartial" />
                 </div>
@@ -113,6 +122,7 @@
     <script src="~/lib/bootstrap-5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/jquery-3.7.0.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+    <script src="~/js/togglescript.js"></script>
     <script>
         $(function () {
             $("#SearchString").autocomplete({

@@ -23,7 +23,7 @@ using Microsoft.AspNetCore.Identity;
 namespace CapstoneProject.Controllers {
 
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class RecipesController : Controller {
         private readonly RecipeOrganizerContext _context;
         private readonly UserManager<Account> _userManager;

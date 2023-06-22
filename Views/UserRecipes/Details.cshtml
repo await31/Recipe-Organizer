@@ -133,27 +133,27 @@
                 </div>
             </div>
             <div class="col-sm-4 col-md-2 excludePrint" style="align-self: center; padding-right: 0;">
-                <div class="row" style="float: right;">
-                    <div class="col-12">
-                        @if (SignInManager.IsSignedIn(User)) {
-                            <button class="btn btn-sm add-favourite-button" style="background-color: #e7f9fd; border-radius: 50%;" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@Model.Id">
-                                <i id="favourite-icon-@Model.Id" class="fa fa-heart-o fa-3x" style="color:red"></i>
+                <div class="row">
+                    <div class="col-12 p-0 d-flex flex-row">
+                            @if (SignInManager.IsSignedIn(User)) {
+                                <button class="btn btn-sm add-favourite-button" style="background-color: #e7f9fd; border-radius: 50%;" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@Model.Id">
+                                    <i id="favourite-icon-@Model.Id" class="fa fa-heart-o fa-3x" style="color:red"></i>
+                                </button>
+                            }
+                            <button class="btn btn-sm" style="background: #E7FAFE; border-radius: 50%;" onclick="printDiv('printableArea')" value="Print">
+                                <i class="fa fa-print fa-3x" aria-hidden="true"></i>
                             </button>
-                        }
-                        <button class="btn btn-sm" style="background: #E7FAFE; border-radius: 50%;" onclick="printDiv('printableArea')" value="Print">
-                            <i class="fa fa-print fa-3x" aria-hidden="true"></i>
-                        </button>
-                        @*CURRENTLY DOESN'T WORK. WAIT UNTIL DEPLOY*@
-                        <button class="btn btn-sm" style="background: #E7FAFE; border-radius: 50%;" onclick="window.open('http://www.facebook.com/share.php?u=' + encodeURIComponent(window.location.href))">
-                            <i class="fa fa-facebook fa-3x" aria-hidden="true"></i>
-                        </button>
-                        @*<button onclick="window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href));">Share on Twitter</button>*@
-                        <button type="button" class="btn btn-sm" id="share-email" style="background: #E7FAFE; border-radius: 50%;">
-                            <svg style="width: 80%;" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
-                                 fill="currentColor" class="bi bi-share" viewBox="0 0 16 16">
-                                <path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" />
-                            </svg>
-                        </button>
+                            @*CURRENTLY DOESN'T WORK. WAIT UNTIL DEPLOY*@
+                            <button class="btn btn-sm" style="background: #E7FAFE; border-radius: 50%;" onclick="window.open('http://www.facebook.com/share.php?u=' + encodeURIComponent(window.location.href))">
+                                <i class="fa fa-facebook fa-3x" aria-hidden="true"></i>
+                            </button>
+                            @*<button onclick="window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href));">Share on Twitter</button>*@
+                            <button type="button" class="btn btn-sm" id="share-email" style="background: #E7FAFE; border-radius: 50%;">
+                                <svg style="width: 80%;" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                                     fill="currentColor" class="bi bi-share" viewBox="0 0 16 16">
+                                    <path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" />
+                                </svg>
+                            </button>
                     </div>
                 </div>
             </div>
@@ -167,36 +167,31 @@
         </div>
         <div class="col-lg-4" style="background: #E7FAFE; border-radius: 4ch; padding: 0 40px 0 40px">
             <h5 class="text-start label-font" style="margin-top: 40px;">Nutrition Information</h5>
-            @if (Model.Nutrition.Calories != null)
-            {
+            @if (Model.Nutrition.Calories != null) {
                 <div class="nutrition row justify-content-between">
                     <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Calories</div>
                     <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Calories kcal</div>
                 </div>
             }
-            @if (Model.Nutrition.Fat != null)
-            {
+            @if (Model.Nutrition.Fat != null) {
                 <div class="nutrition row justify-content-between">
                     <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Fat</div>
                     <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Fat gam</div>
                 </div>
             }
-            @if (Model.Nutrition.Protein != null)
-            {
+            @if (Model.Nutrition.Protein != null) {
                 <div class="nutrition row justify-content-between">
                     <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Protein</div>
                     <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Protein gam</div>
                 </div>
             }
-            @if (Model.Nutrition.Carbohydrate != null)
-            {
+            @if (Model.Nutrition.Carbohydrate != null) {
                 <div class="nutrition row justify-content-between">
                     <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Carbohydrate</div>
                     <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Carbohydrate gam</div>
                 </div>
             }
-            @if (Model.Nutrition.Cholesterol != null)
-            {
+            @if (Model.Nutrition.Cholesterol != null) {
                 <div class="nutrition row justify-content-between">
                     <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Cholesterol</div>
                     <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Cholesterol gam</div>
