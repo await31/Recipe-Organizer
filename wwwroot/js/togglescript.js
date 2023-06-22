@@ -8,13 +8,12 @@ function goDark() {
     console.log("Dark mode is active");
     labelDark();
     $("body").addClass("dark");
-    refreshFavicon();
 }
 function stayDark() {
     goDark();
     localStorage.setItem("darkmode", true);
     darkmodeactive = localStorage.getItem("darkmode");
-    console.log("Dark mode is: " + darkmodeactive + " and it will stay dark");
+    console.log("Updated");
 }
 function labelLight() {
     $(".toggle-switch").attr("alt", "Go dark");
@@ -24,7 +23,6 @@ function goLight() {
     console.log("Light mode is active");
     labelLight();
     $("body").removeClass("dark");
-    refreshFavicon();
 }
 function stayLight() {
     goLight();
@@ -84,18 +82,3 @@ $(window).resize(function () {
         tempDisableAnim();
     }, 0);
 });
-function refreshFavicon() {
-    if (matchMedia('(prefers-color-scheme: dark)').matches) {
-        var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-        link.type = 'image/x-icon';
-        link.rel = 'icon';
-        link.href = 'favicon-dark.svg';
-        document.getElementsByTagName('head')[0].appendChild(link);
-    } else {
-        var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-        link.type = 'image/x-icon';
-        link.rel = 'icon';
-        link.href = 'favicon.svg';
-        document.getElementsByTagName('head')[0].appendChild(link);
-    }
-}

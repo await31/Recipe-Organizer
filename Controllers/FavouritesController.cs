@@ -96,23 +96,22 @@ namespace CapstoneProject.Controllers {
 
         // GET: Favourites/Details/5
         [Breadcrumb("Collection Details")]
-        [Authorize]
         public async Task<IActionResult> Details(int? id) {
 
-            var currentUser = await _userManager.GetUserAsync(User);
-
             var favouriteList = _context.Favourites
+                .Include(a => a.Account)
                 .Include(a => a.Recipes)
                 .ThenInclude(recipe => recipe.FkRecipeCategory)
                 .FirstOrDefault(a => a.Id == id);
 
             ViewData["Name"] = favouriteList?.Name;
-            ViewData["Description"] = favouriteList.Description;
+            ViewData["Description"] = favouriteList?.Description;
+            ViewData["IsPrivate"] = favouriteList?.isPrivate;
             ViewData["Id"] = id;
-            if (favouriteList.Account != null)
+            if (favouriteList?.Account != null)
                 ViewData["UserId"] = favouriteList.Account.Id;
 
-            var recipes = favouriteList.Recipes
+            var recipes = favouriteList?.Recipes
                 .ToList();
 
             return View(recipes);
@@ -157,13 +156,14 @@ namespace CapstoneProject.Controllers {
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<JsonResult> Edit(int id, string name, string description)
+        public async Task<JsonResult> Edit(int id, string name, string description, bool isPrivate)
         {
             var favourite = _context.Favourites.FirstOrDefault(f => f.Id == id);
             try
             {
                 favourite.Name = name;
                 favourite.Description = description;
+                favourite.isPrivate = isPrivate;
                 _context.Update(favourite);
                 await _context.SaveChangesAsync();
             }
@@ -178,7 +178,7 @@ namespace CapstoneProject.Controllers {
                     throw;
                 }
             }
-            return Json(new { name = name, description = description });
+            return Json(new { name = name, description = description, isPrivate= isPrivate });
         }
 
         // GET: Favourites/Delete/5
