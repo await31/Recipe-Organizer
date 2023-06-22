@@ -32,6 +32,14 @@ namespace CapstoneProject.Controllers {
         public IngredientsController(RecipeOrganizerContext context) {
             _context = context;
         }
+        [HttpPost]
+        public JsonResult AutoComplete(string term)
+        {
+            var result = (_context.Ingredients.Where(i => i.Status == true).Where(t => t.Name.ToLower().Contains(term.ToLower()))
+                 .Select(t => new { t.Name }))
+                 .ToList();
+            return Json(result);
+        }
 
         [Authorize(Roles = "Admin")]
         [Breadcrumb("Ingredients Management")]

@@ -52,38 +52,14 @@
                         <select asp-for="FkRecipeCategoryId" class="form-control" asp-items="ViewBag.FkRecipeCategoryId"></select>
                     </div>
                     <div class="form-group mt-4">
-                        <label asp-for="PrepTime" class="control-label mb-2 label-font">Preparation time</label>
-                        <select asp-for="PrepTime" class="form-control">
-                            @for (int i = 5; i < 30; i += 5)
-                            {
-                                <option value="@i">
-                                    @i minutes
-                                </option>
-                            }
-                            @for (int i = 30; i <= 360; i += 30)
-                            {
-                                <option value="@i">
-                                    @i minutes
-                                </option>
-                            }
-                            @for (int i = 420; i <= 720; i += 60)
-                            {
-                                <option value="@i">
-                                    @(
-                                    i / 60
-                                    ) hours
-                                </option>
-                            }
+                        <label asp-for="PrepTime" class="control-label mb-2 label-font">Preparation Time</label>
+                        <select asp-for="PrepTime" asp-items="ViewBag.PrepTime" class="form-control">
                         </select>
                         <span asp-validation-for="PrepTime" class="text-danger"></span>
                     </div>
                     <div class="form-group mt-4">
                         <label asp-for="Difficult" class="control-label mb-2 label-font">Difficult Level</label>
-                        <select asp-for="Difficult" class="form-control">
-                            <option value="0">Choose an option</option>
-                            <option value="1">Easy</option>
-                            <option value="2">Medium</option>
-                            <option value="3">Hard</option>
+                        <select asp-for="Difficult" asp-items="ViewBag.Difficulty" class="form-control">
                         </select>
                     </div>
                     <div class="form-group mt-4">
@@ -144,9 +120,7 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label for="UnitOfMeasure" class="mb-2 label-font">Unit of Measure</label>
-                                        <select class="form-control" id="UnitOfMeasure" name="UnitOfMeasures[]" value="@ingredient.UnitOfMeasure" required>
-                                            <option value="milliliters">milliliter(s)</option>
-                                            <option value="grams">gram(s)</option>
+                                        <select class="form-control" id="UnitOfMeasure" name="UnitOfMeasures[]" asp-items="@ViewData["Unit" +ingredient.IngredientId] as SelectList" required>
                                         </select>
                                     </div>
                                     <div class="col-md-1" style="margin-top: 4%;">
@@ -324,7 +298,7 @@ else
         $(".ingredients").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: "/UserRecipes/IngredientsAutoComplete",
+                    url: "/Ingredients/AutoComplete",
                     type: "POST",
                     data: { term: request.term },
                     success: function (data) {

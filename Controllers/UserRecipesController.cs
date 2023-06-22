@@ -22,6 +22,7 @@ using SixLabors.ImageSharp.Formats;
 using System.Xml.Linq;
 using SixLabors.ImageSharp.Formats.Webp;
 using Microsoft.AspNetCore;
+using System.Globalization;
 
 
 namespace CapstoneProject.Controllers {
@@ -41,20 +42,47 @@ namespace CapstoneProject.Controllers {
         }
 
         [HttpPost]
-        public JsonResult SearchAutoComplete(string term) {
+        public JsonResult AutoComplete(string term) {
             var result = (_context.Recipes.Where(t => t.Name.ToLower().Contains(term.ToLower()))
                  .Select(t => new { t.Name }))
                  .ToList();
             return Json(result);
         }
-        [HttpPost]
-        public JsonResult IngredientsAutoComplete(string term) {
-            var result = (_context.Ingredients.Where(i => i.Status == true).Where(t => t.Name.ToLower().Contains(term.ToLower()))
-                 .Select(t => new { t.Name }))
-                 .ToList();
-            return Json(result);
-        }
 
+        private List<SelectListItem> GetDifficultyList()
+        {
+            return new List<SelectListItem>
+                    {
+                    new SelectListItem { Text = "Easy", Value = "1"},
+                    new SelectListItem { Text = "Medium", Value = "2"},
+                    new SelectListItem { Text = "Hard", Value = "3"},
+                    };
+        }
+        private List<SelectListItem> GetPrepTimeList()
+        {
+            var list = new List<SelectListItem>();
+            for (int i = 5; i < 30; i += 5)
+            {
+                list.Add(new SelectListItem { Text = i + " minutes", Value = i.ToString() });
+            }
+            for (int i = 30; i <= 360; i += 30)
+            {
+                list.Add(new SelectListItem { Text = i + " minutes", Value = i.ToString() });
+            }
+            for (int i = 420; i <= 720; i += 60)
+            {
+                list.Add(new SelectListItem { Text = i/60 + " hours", Value = i.ToString() });
+            }
+            return list;
+        }
+        private List<SelectListItem> GetUnitsofMeasureList()
+        {
+            return new List<SelectListItem>
+                    {
+                    new SelectListItem { Text = "milliliters", Value = "milliliters"},
+                    new SelectListItem { Text = "grams", Value = "grams"},
+                    };
+        }
         // GET: Recipes
         [Breadcrumb("Recipes")]
         public async Task<IActionResult> Index(int pg = 1) {
@@ -84,12 +112,15 @@ namespace CapstoneProject.Controllers {
                 if (String.IsNullOrEmpty(sortBy))
                     sortBy = "SortPopular";
                 ViewBag.FkRecipeCategoryId = new SelectList(_context.RecipeCategories, "Id", "Name", recipeCategory);
+                ViewBag.PrepTime = new SelectList(GetPrepTimeList(), "Value", "Text", prepTime);
+                ViewBag.Difficulty = new SelectList(GetDifficultyList(), "Value", "Text", difficulty);
                 ViewBag.SortBy = new SelectList(
                 new List<SelectListItem>
                 {
                 new SelectListItem { Text = "Popularity", Value = "SortPopular"},
                 new SelectListItem { Text = "Name", Value = "SortName"},
-                new SelectListItem { Text = "Date", Value = "SortDate"},
+                new SelectListItem { Text = "Newest", Value = "SortNewest"},
+                new SelectListItem { Text = "Oldest", Value = "SortOldest"},
                 new SelectListItem { Text = "Preparation time", Value = "SortPrepTime"},
                 }
                 , "Value", "Text", sortBy);
@@ -115,8 +146,11 @@ namespace CapstoneProject.Controllers {
                 }
                 //Sort
                 switch (sortBy) {
-                    case "SortDate":
+                    case "SortOldest":
                         recipes = recipes.OrderBy(b => b.CreatedDate);
+                        break;
+                    case "SortNewest":
+                        recipes = recipes.OrderByDescending(b => b.CreatedDate);
                         break;
                     case "SortPrepTime":
                         recipes = recipes.OrderBy(b => b.PrepTime);
@@ -464,6 +498,11 @@ namespace CapstoneProject.Controllers {
 
             ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id", recipe.FkRecipeId);
             ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.FkRecipeCategoryId);
+            ViewBag.PrepTime = new SelectList(GetPrepTimeList(), "Value", "Text", recipe.PrepTime);
+            ViewBag.Difficulty = new SelectList(GetDifficultyList(), "Value", "Text", recipe.Difficult);
+            foreach (var item in recipe.RecipeIngredients) {
+                ViewData["Unit" +item.IngredientId] = new SelectList(GetUnitsofMeasureList(), "Value", "Text", item.UnitOfMeasure);
+            }
             ViewBag.IngredientDetails = recipe.RecipeIngredients;
             ViewBag.Ingredients = recipe.Ingredients;
             return View(recipe);

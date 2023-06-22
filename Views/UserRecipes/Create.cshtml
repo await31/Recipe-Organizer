@@ -336,7 +336,7 @@
         $(".ingredients").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: "/UserRecipes/IngredientsAutoComplete",
+                    url: "/Ingredients/AutoComplete",
                     type: "POST",
                     data: { term: request.term },
                     success: function (data) {

@@ -127,7 +127,7 @@
             $("#SearchString").autocomplete({
                 source: function (request, response) {
                     $.ajax({
-                        url: "/UserRecipes/SearchAutoComplete",
+                        url: "/UserRecipes/AutoComplete",
                         type: "POST",
                         data: { term: request.term },
                         success: function (data) {
