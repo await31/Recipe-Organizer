@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using CapstoneProject.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
@@ -13,15 +15,18 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<Models.Account> _userManager;
         private readonly SignInManager<Models.Account> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
+        private readonly RecipeOrganizerContext _context;
 
         public DeletePersonalDataModel(
             UserManager<Models.Account> userManager,
             SignInManager<Models.Account> signInManager,
-            ILogger<DeletePersonalDataModel> logger)
+            ILogger<DeletePersonalDataModel> logger,
+            RecipeOrganizerContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _context = context;
         }
 
         [BindProperty]
@@ -65,9 +70,12 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
                     return Page();
                 }
             }
+            var userId = await _userManager.GetUserIdAsync(user);
+            _context.Favourites.RemoveRange(_context.Favourites.Include(f => f.Account).Where(f=>f.Account.Id==userId));
+            await _context.SaveChangesAsync();
 
             var result = await _userManager.DeleteAsync(user);
-            var userId = await _userManager.GetUserIdAsync(user);
+
             if (!result.Succeeded)
             {
                 throw new InvalidOperationException($"Unexpected error occurred deleting user with ID '{userId}'.");
