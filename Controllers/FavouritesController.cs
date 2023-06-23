@@ -21,6 +21,22 @@ namespace CapstoneProject.Controllers {
             _userManager = userManager;
         }
         [HttpPost]
+        public async Task<JsonResult> AddToFavourite(int favouriteId, int recipeId) {
+            var favouriteList = _context.Favourites.Include(f => f.Recipes).FirstOrDefault(f => f.Id == favouriteId);
+            var recipe = _context.Recipes.FirstOrDefault(f => f.Id == recipeId);
+            favouriteList.Recipes.Add(recipe);
+            await _context.SaveChangesAsync();
+            return Json(true);
+        }
+        [HttpPost]
+        public async Task<JsonResult> RemoveFromFavourite(int favouriteId, int recipeId) {
+            var favouriteList = _context.Favourites.Include(f => f.Recipes).FirstOrDefault(f => f.Id == favouriteId);
+            var recipe = _context.Recipes.FirstOrDefault(f => f.Id == recipeId);
+            favouriteList.Recipes.Remove(recipe);
+            await _context.SaveChangesAsync();
+            return Json(true);
+        }
+        [HttpPost]
         public async Task<JsonResult> GetAllFavouriteRecipes(int[] recipeIds) {
             var favourites = new List<object>();
 
@@ -96,10 +112,7 @@ namespace CapstoneProject.Controllers {
 
         // GET: Favourites/Details/5
         [Breadcrumb("Collection Details")]
-        [Authorize]
         public async Task<IActionResult> Details(int? id) {
-
-            var currentUser = await _userManager.GetUserAsync(User);
 
             var favouriteList = _context.Favourites
                 .Include(a => a.Account)
@@ -159,7 +172,7 @@ namespace CapstoneProject.Controllers {
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<JsonResult> Edit(int id, string name, string description, bool isPrivate) { 
+        public async Task<JsonResult> Edit(int id, string name, string description, bool isPrivate) {
             var favourite = _context.Favourites.FirstOrDefault(f => f.Id == id);
             try {
                 favourite.Name = name;

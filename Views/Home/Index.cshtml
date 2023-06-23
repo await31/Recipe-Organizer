@@ -491,7 +491,7 @@
                 //This function will add the recipe into all selected favourite lists on clicking button with class add-favourite
                 //currently only add in favourite list
                 $('#favourite-save').click(function () {
-                    var recipeId = $(this).data('recipe-id');
+                    var recipeId = document.getElementById("favourite-save").dataset.recipeId;
                     //Get all checked boxes' favourite ids
                     var favouriteIds = $('input.favourite-checkbox:checkbox:checked').map(function () {
                         return $(this).val();
