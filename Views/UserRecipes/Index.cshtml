@@ -101,7 +101,7 @@
                                     <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@recipe.Id" class="text-decoration-none h-100">
                                         <div class="card-body pb-4 pt-3">
                                             <h4 class="card-title text-dark text-decoration-none text-center" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@recipe.Name</h4>
-                                            <div class="d-flex row mt-4 ms-4 mb-3">
+                                            <div class="d-flex row mt-4 ms-3 mb-3">
                                                 <div class="rounded-5 col-6 text-dark px-0">
                                                     @if(recipe.PrepTime < 360) {
                                                             <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@recipe.PrepTime minutes</span>
@@ -110,7 +110,7 @@
                                                         }
                                                     </div>
                                                 <div class="rounded-5 col-6 text-dark px-0">
-                                                    <i class="fa-solid fa-utensils"></i> <span class="text-dark" style="font-size: 14px;">@recipe.FkRecipeCategory?.Name</span>
+                                                    <i class="fa-solid fa-utensils"></i> <span class="text-dark" style="font-size: 12px;">@recipe.FkRecipeCategory?.Name</span>
                                                 </div>
                                             </div>
                                         </div>
