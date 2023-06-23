@@ -19,10 +19,10 @@
         <div class="mt-2">
             <div class="d-flex flex-row p-2">
                 <div class="row w-100">
-                    <div class="col-1 me-4 ms-2">
+                    <div class="col-1 me-2 ms-5">
                         <img src="@feedback.User?.ImgPath" width="50" height="50" class="rounded-circle">
                     </div>
-                    <div class="col-9 rounded-4" style="background-color: #e7f9fd;">
+                    <div class="col-8 rounded-4" style="background-color: #e7f9fd;">
                         <span class="ms-2 fw-bold label-font">@feedback.User?.UserName</span>
                         <p class="text-justify comment-text mb-0 ms-2">@feedback.Description</p>
                     </div>
@@ -33,7 +33,7 @@
                             </button>
                             <ul class="dropdown-menu p-0">
                                 <li>
-                                    <button onclick="deleteFeedback(this)" data-recipe-id="@ViewData["RecipeId"]" data-feedback-id="@feedback.Id" class="btn mt-2">Delete</button>
+                                    <button onclick="deleteFeedback(this)" data-recipe-id="@ViewData["RecipeId"]" data-feedback-id="@feedback.Id" class="btn mt-2 h-100 w-100">Delete</button>
                                 </li>
                             </ul>
                         </div>

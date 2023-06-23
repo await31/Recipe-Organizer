@@ -196,7 +196,7 @@ namespace CapstoneProject.Controllers {
                     throw;
                 }
             }
-            return Json(new { name = name, description = description, isPrivate= isPrivate });
+            return Json(new { name = name, description = description, isPrivate = isPrivate });
         }
 
         // GET: Favourites/Delete/5

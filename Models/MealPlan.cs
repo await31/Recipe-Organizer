@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CapstoneProject.Models;
 
@@ -16,7 +17,7 @@ public partial class MealPlan
 
     public string? Description { get; set; }
 
-    [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+    [BindProperty, DisplayFormat(DataFormatString = "{yyyy-MM-dd}", ApplyFormatInEditMode = true)]
     public DateTime? Date { get; set; }
 
     public string? Color { get; set; }
@@ -28,4 +29,7 @@ public partial class MealPlan
     public virtual Account? FkUser { get; set; }
 
     public virtual ICollection<Recipe> Recipes { get; set; } = new List<Recipe>();
+
+
 }
+

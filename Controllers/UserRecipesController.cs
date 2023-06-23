@@ -426,7 +426,7 @@ namespace CapstoneProject.Controllers {
                         // Save ingredient, recipe to IngredientRecipe
                         // Save ingredient IDs to recipe
                         if (IngredientNames != null) {
-                           
+
                             var allIngredients = await _context.Ingredients
                                                .Where(i => i.Status == true)
                                                .ToListAsync();
@@ -436,7 +436,7 @@ namespace CapstoneProject.Controllers {
                                               .ToList();
 
                             var IngredientIds = ingredients.Select(i => i.Id).ToArray();
-                            recipe.Ingredients.Clear(); 
+                            recipe.Ingredients.Clear();
                             recipe.Ingredients.AddRange(ingredients);
                             _context.Recipes.Add(recipe);
                             await _context.SaveChangesAsync();
@@ -501,7 +501,7 @@ namespace CapstoneProject.Controllers {
             ViewBag.PrepTime = new SelectList(GetPrepTimeList(), "Value", "Text", recipe.PrepTime);
             ViewBag.Difficulty = new SelectList(GetDifficultyList(), "Value", "Text", recipe.Difficult);
             foreach (var item in recipe.RecipeIngredients) {
-                ViewData["Unit" +item.IngredientId] = new SelectList(GetUnitsofMeasureList(), "Value", "Text", item.UnitOfMeasure);
+                ViewData["Unit" + item.IngredientId] = new SelectList(GetUnitsofMeasureList(), "Value", "Text", item.UnitOfMeasure);
             }
             ViewBag.IngredientDetails = recipe.RecipeIngredients;
             ViewBag.Ingredients = recipe.Ingredients;
@@ -588,7 +588,7 @@ namespace CapstoneProject.Controllers {
                 TempData["success"] = "The recipe has been submitted for review!";
                 return RedirectToAction("MyRecipes", "Home");
             }
-            
+
             return View(recipe);
         }
 

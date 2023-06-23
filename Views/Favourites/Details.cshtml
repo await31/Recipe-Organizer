@@ -228,6 +228,7 @@ else
     $(document).ready(function () {
         $('#editButton').click(function () {
             document.getElementById("editName").value = document.getElementById("collectionName").innerHTML;
+
             document.getElementById("editDescription").value = document.getElementById("collectionDescription").innerHTML;
             document.getElementById("editPrivate").checked = document.getElementById("collectionPrivate").checked;
         });

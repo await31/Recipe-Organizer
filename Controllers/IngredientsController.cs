@@ -41,6 +41,14 @@ namespace CapstoneProject.Controllers {
             return Json(result);
         }
 
+        [HttpPost]
+        public JsonResult AutoComplete(string term) {
+            var result = (_context.Ingredients.Where(i => i.Status == true).Where(t => t.Name.ToLower().Contains(term.ToLower()))
+                 .Select(t => new { t.Name }))
+                 .ToList();
+            return Json(result);
+        }
+
         [Authorize(Roles = "Admin")]
         [Breadcrumb("Ingredients Management")]
         public IActionResult Index() {
@@ -193,13 +201,14 @@ namespace CapstoneProject.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id, Name, ImgPath, Description, FkCategoryId")] Ingredient ingredient) {
+        public async Task<IActionResult> Edit(int id, [Bind("Id, Name, ImgPath, Description, Status, FkCategoryId")] Ingredient ingredient) {
             if (id != ingredient.Id) {
                 return NotFound();
             }
 
             if (ModelState.IsValid) {
                 try {
+                    ingredient.Status = true;
                     _context.Update(ingredient);
                     await _context.SaveChangesAsync();
                 } catch (DbUpdateConcurrencyException) {

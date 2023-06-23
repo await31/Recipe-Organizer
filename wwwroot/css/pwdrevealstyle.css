@@ -1,6 +1,6 @@
-﻿::-ms-reveal {
+﻿/*::-ms-reveal {
     display: none;
-}
+}*/
 .password-field {
     position: relative;
 }

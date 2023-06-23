@@ -8,16 +8,21 @@
 @{
     if (@Model.DisplayConfirmAccountLink)
     {
-<p>
-    Are you sure? This page is has been hacked by the infamous hacker 4chan.
-    Normally this would be emailed: <a id="confirm-link" href="@Model.EmailConfirmationUrl">Click here to confirm your account</a>
-</p>
+        <p>
+        Are you sure? This page is has been hacked by the infamous hacker 4chan.
+        Normally this would be emailed: <a id="confirm-link" href="@Model.EmailConfirmationUrl">Click here to confirm your account</a>
+        </p>
     }
     else
     {
-<p>
-        Please check your email to confirm your account.
-</p>
+        <div style="min-height: 100vh; display: flex; flex-direction: column;">
+            <div class="row ms-5">
+                <div class="col-md-12 text-center">
+                    <img src="~/images/letter-sent.png" style="max-width: 80vh; height: auto;">
+                </div>
+            </div>
+            <div style="flex-grow:1"></div>
+        </div>
     }
 }
 
