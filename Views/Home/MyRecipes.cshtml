@@ -36,11 +36,19 @@
     .card:hover .overlay {
         opacity: 1;
     }
+
+    .limit-line-1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 1; /* Maximum number of lines to show */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 </style>
 <div class="mt-5 mb-5">
     <h2 id="collectionName" class="text-center">My Recipes</h2>
 </div>
-<div class="row">
+<div class="row" style="margin-left: 10%;">
     @foreach (var recipe in Model)
     {
         <div class="card d-flex col-md-3 col-sm-6 mx-4 mb-4 px-0 overflow-hidden rounded-4 border-0" style="position:relative ;height:300px;">
@@ -68,8 +76,11 @@
                 </div>
             </div>
             <div class="overlay"></div>
-            <a asp-controller="UserRecipes" asp-action="Edit" asp-route-id="@recipe.Id" class="btn btn-info">
-                EDIT
+            <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@recipe.Id" style="left: 50%; top: 60%;" target="_blank" class="btn btn-info position-absolute">
+                DETAILS <i class="fa-solid fa-circle-info"></i>
+            </a>
+            <a asp-controller="UserRecipes" asp-action="Edit" asp-route-id="@recipe.Id" style="left: 50%; top: 40%;" class="btn btn-warning position-absolute">
+                EDIT <i class="fa-solid fa-pen-to-square"></i>
             </a>
         </div>
     } @*End of foreach*@
