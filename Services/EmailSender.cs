@@ -5,7 +5,7 @@ using System.Net;
 namespace CapstoneProject.Services
 {
     public class EmailSender : IEmailSender
-    {
+     {
         public Task SendEmailAsync(string email, string subject, string confirmLink)
         {
             MailMessage mailMessage = new MailMessage
