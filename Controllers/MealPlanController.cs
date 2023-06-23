@@ -77,9 +77,17 @@ namespace CapstoneProject.Controllers {
         [Breadcrumb("My Planning")]
         public IActionResult Index(int pg = 1) {
             var currentUser = _userManager.GetUserId(User);
+            var dateNow = DateTime.Now;
+            var startOfWeek = dateNow.Date.AddDays(-(int)dateNow.DayOfWeek);
+            var endOfWeek = startOfWeek.AddDays(6);
+
             var mealPlans = _context.MealPlans
                 .Where(a => a.FkUserId == currentUser)
+                .Where(a=> a.Date >= startOfWeek && a.Date <= endOfWeek)
             .ToList();
+
+            var count = mealPlans.Count;
+            ViewData["count"] = count;
 
             return View(mealPlans);
         }
@@ -151,38 +159,99 @@ namespace CapstoneProject.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(MealPlan mealplan, string[] RecipeNames) {
+        public async Task<IActionResult> Create(MealPlan mealplan, string[] RecipeNames,DateTime startDate, string[] selectedDays, int weeklast) {
             if (ModelState.IsValid) {
                 var currentUser = await _userManager.GetUserAsync(User);
-                if (currentUser != null) {
-                    if (RecipeNames != null) {
-                        if (mealplan.Date != null && mealplan.Day == null && mealplan.WeekLast == null) {
-                            mealplan.FkUserId = await _userManager.GetUserIdAsync(currentUser);
-                            mealplan.IsFullDay = false;
-                            var allRecipes = _context.Recipes
-                                                   .Where(i => i.Status == true)
-                                                   .ToList();
-                            foreach (var recipeName in RecipeNames) {
-                                ExtractIntegerAndString(recipeName, out int id, out string name);
-                                var recipe = allRecipes.FirstOrDefault(r => r.Id == id && r.Name == name);
-                                if (recipe != null) {
-                                    mealplan.Recipes.Add(recipe);
+                var allRecipes = _context.Recipes
+                    .Where(i => i.Status == true)
+                    .ToList();
+
+                if (currentUser != null && RecipeNames != null) {
+                    if (mealplan.Date != null) {  //Non Weekly Planning
+                        mealplan.FkUserId = await _userManager.GetUserIdAsync(currentUser);
+                        mealplan.IsFullDay = false;
+                        foreach (var recipeName in RecipeNames) {
+                            ExtractIntegerAndString(recipeName, out int id, out string name);
+                            var recipe = allRecipes.FirstOrDefault(r => r.Id == id && r.Name == name);
+                            if (recipe != null) {
+                                mealplan.Recipes.Add(recipe);
+                            }
+                        }
+                        _context.MealPlans.Add(mealplan);
+                    } else if (mealplan.Date==null) {  //Weekly planning
+
+                        // Process selected days and week last
+                        if (selectedDays != null && selectedDays.Any()) {
+                            
+                            var selectedDayIndexes = new List<int>();
+
+                            // Map selected days to their respective indexes (0 for Sunday, 1 for Monday, etc.)
+                            var dayNames = Enum.GetNames(typeof(DayOfWeek)).ToList();
+                            
+                            foreach (var selectedDay in selectedDays) {
+                                var index = dayNames.FindIndex(d => string.Equals(d, selectedDay, StringComparison.OrdinalIgnoreCase));
+                                if (index >= 0) {
+                                    selectedDayIndexes.Add(index);
                                 }
                             }
-                        } else {
 
+                            // Generate meal plans for each selected day in the specified week range
+                            for (int weekOffset = 1; weekOffset <= weeklast; weekOffset++) {
+
+                                foreach (var selectedDayIndex in selectedDayIndexes) {
+                                    var targetDate = GetNextOccurrenceOfDay(startDate, (DayOfWeek)selectedDayIndex, weekOffset);
+
+                                    var newMealPlan = new MealPlan {
+                                        FkUserId = await _userManager.GetUserIdAsync(currentUser),
+                                        IsFullDay = false,
+                                        Date = targetDate,
+                                        Title = mealplan.Title,
+                                        Description = mealplan.Description,
+                                        Color = mealplan.Color
+                                    };
+
+                                    foreach (var recipeName in RecipeNames) {
+                                        ExtractIntegerAndString(recipeName, out int id, out string name);
+                                        var recipe = allRecipes.FirstOrDefault(r => r.Id == id && r.Name == name);
+                                        if (recipe != null) {
+                                            newMealPlan.Recipes.Add(recipe);
+                                        }
+                                    }
+                                    _context.MealPlans.Add(newMealPlan);
+                                }
+                            }
                         }
-
-                        _context.MealPlans.Add(mealplan);
-                        _context.SaveChanges();
-                        TempData["success"] = "Meal planning created successfully!";
-
-
-                        return RedirectToAction(nameof(Index));
                     }
+                    _context.SaveChanges();
+                    TempData["success"] = "Meal planning created successfully!";
+                    return RedirectToAction(nameof(Index));
                 }
             }
-            return View(mealplan);
+            TempData["error"] = "Sorry, something went wrong!";
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult DeletePOST(int? id) {
+            var obj = _context.MealPlans.Find(id);
+            if (obj == null) {
+                return NotFound();
+            }
+
+            _context.MealPlans.Remove(obj);
+            _context.SaveChanges();
+            TempData["success"] = "Meal plan deleted successfully";
+            return RedirectToAction(nameof(Index));
+        }
+
+        static DateTime GetNextOccurrenceOfDay(DateTime date, DayOfWeek selectedDay, int weekOffset) {
+            int daysToAdd = (int)selectedDay - (int)date.DayOfWeek;
+            if (daysToAdd < 0) {
+                daysToAdd += 7; // Add 7 days to get the next occurrence
+            }
+
+            var nextOccurrence = date.AddDays(daysToAdd).AddDays(7 * (weekOffset - 1));
+            return nextOccurrence;
         }
     }
 }

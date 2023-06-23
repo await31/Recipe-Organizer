@@ -3,7 +3,13 @@
     ViewBag.Title = "Test";
 }
 <hr />
-<h1 class="text-center label-font">Planning Details</h1>
+<div class="row">
+    <form method="post" asp-action="DeletePOST" asp-route-id="@Model.Id">
+        <button class="btn btn-danger float-end" type="submit">Delete this Plan <i class="fa fa-trash-can"></i></button>
+    </form>
+    <h1 class="text-center label-font">Planning Details</h1>
+</div>
+
 <hr />
 <hr />
 
@@ -70,6 +76,7 @@
 
 <hr />
 <h2 class="label-font text-center text-success">Grocery list</h2>
+
 <hr />
 <div class="row">
     <div class="col-2"></div>

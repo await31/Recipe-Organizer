@@ -17,16 +17,10 @@ public partial class MealPlan
 
     public string? Description { get; set; }
 
-    [BindProperty, DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm}", ApplyFormatInEditMode = true)]
+    [BindProperty, DisplayFormat(DataFormatString = "{yyyy-MM-dd}", ApplyFormatInEditMode = true)]
     public DateTime? Date { get; set; }
 
     public string? Color { get; set; }
-
-    [NotMapped]
-    public int? Day { get; set; }
-
-    [NotMapped]
-    public int? WeekLast { get; set; }
 
     public bool IsFullDay { get; set; }
 
