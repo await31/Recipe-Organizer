@@ -161,10 +161,7 @@
         const url = new URL(urlString);
         const parameterValues = url.searchParams.get(parameterName).split(',');
         const updatedParameterValues = parameterValues.filter((item) => item != parameterValue);
-        console.log(updatedParameterValues);
-        console.log("WORKING");
         url.searchParams.set(parameterName, updatedParameterValues.join(','));
-        console.log(url.href);
         return url.href;
     }
     $(function () {
@@ -193,14 +190,6 @@
             minLength: 1
         })
     });
-    function removeParameterFromUrl(urlString, parameterName, parameterValue) {
-        const url = new URL(urlString);
-        const parameterValues = url.searchParams.get(parameterName).split(',');
-        const updatedParameterValues = parameterValues.filter((item) => item != parameterValue);
-        url.searchParams.set(parameterName, updatedParameterValues.join(','));
-        console.log(url.href);
-        return url.href;
-    }
     $(document).ready(function () {
         UpdateIcon();
         //This function will update the recipe id of modal
@@ -213,7 +202,7 @@
         //This function will add the recipe into all selected favourite lists on clicking button with class add-favourite
         //currently only add in favourite list
         $('#favourite-save').click(function () {
-            var recipeId = $(this).data('recipe-id');
+            var recipeId = document.getElementById("favourite-save").dataset.recipeId;
             //Get all checked boxes' favourite ids
             var favouriteIds = $('input.favourite-checkbox:checkbox:checked').map(function () {
                 return $(this).val();
@@ -248,7 +237,6 @@
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].isFavorite) {
                         $('#favourite-checkbox-' + data[i].id).prop('checked', true); // Checks all boxes
-                        console.log('#favourite-checkbox-' + data[i].id)
                     }
                 }
             },
@@ -267,7 +255,6 @@
             success: function (data) {
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].isFavorite) {
-                        console.log('#favourite-icon-' + data[i].recipeId)
                         $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart');
                         $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart-o');
                     }

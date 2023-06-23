@@ -479,7 +479,6 @@
                 const parameterValues = url.searchParams.get(parameterName).split(',');
                 const updatedParameterValues = parameterValues.filter((item) => item != parameterValue);
                 url.searchParams.set(parameterName, updatedParameterValues.join(','));
-                console.log(url.href);
                 return url.href;
             }
             $(document).ready(function () {
@@ -494,7 +493,7 @@
                 //This function will add the recipe into all selected favourite lists on clicking button with class add-favourite
                 //currently only add in favourite list
                 $('#favourite-save').click(function () {
-                    var recipeId = $(this).data('recipe-id');
+                    var recipeId = document.getElementById("favourite-save").dataset.recipeId;
                     //Get all checked boxes' favourite ids
                     var favouriteIds = $('input.favourite-checkbox:checkbox:checked').map(function () {
                         return $(this).val();
@@ -503,7 +502,6 @@
                     var allfavouriteIds = $('.favourite-checkbox').map(function () {
                         return $(this).val();
                     }).get();
-
                     $.ajax({
                         url: '/Favourites/AddRecipe',
                         type: 'POST',

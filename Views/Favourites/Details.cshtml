@@ -50,8 +50,9 @@
     <div class="row">
         @foreach (var recipe in Model)
         {
-            <div class="card d-flex col-3 mx-4 mb-4 px-0 overflow-hidden rounded-2" style="width: 300px;height:400px;">
-                <div class="" style="height: 50%;">
+            <div class="card d-flex col-3 mx-4 mb-4 px-0 rounded-2" style="width: 300px;height:400px;">
+                <div style="height: 50%; position:relative;">
+                    <button id="remove-button-@recipe.Id" data-favourite-id="@ViewData["Id"]" data-recipe-id="@recipe.Id" onclick="removeFavourite(this);" class="btn btn-danger text-center p-0" style="border-radius:50%;position:absolute;left:100%;top:0;transform:translate(-50%,-50%);width:36px;height:36px" value="-"><i class="fa-solid fa-minus fa-2x"></i></button>
                     <img src="@recipe.ImgPath" class="img-fluid card-img-top" alt="Food" style="height: 100%; width: 100%;object-fit: cover;">
                 </div>
                 <div class="mt-2" style="height: 40%;">
@@ -106,6 +107,11 @@
                             </div>
                         </div>
                     </a>
+                </div>
+                <div id="overlay-@recipe.Id" style="visibility:hidden;width:100%;height: 100%; position:absolute;opacity:0.5;background-color:white">
+                </div>
+                <div style="position:relative;visibility:hidden;">
+                    <button id="undo-button-@recipe.Id" data-favourite-id="@ViewData["Id"]" data-recipe-id="@recipe.Id" onclick="addFavourite(this);" class="btn btn-light text-center p-0" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);">Undo</button>
                 </div>
             </div>
         }
@@ -179,10 +185,43 @@ else
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 
 <script>
+    function addFavourite(element) {
+        var recipeId = element.dataset.recipeId;
+        var favouriteId = element.dataset.favouriteId;
+        $.ajax({
+            url: '/Favourites/AddToFavourite',
+            type: 'POST',
+            data: { recipeId: recipeId, favouriteId: favouriteId },
+            success: function () {
+                $('#undo-button-' + recipeId).css("visibility", "hidden");
+                $('#remove-button-' + recipeId).css("visibility", "visible");
+                $('#overlay-' + recipeId).css("visibility", "hidden");
+            },
+            error: function () {
+                alert('Error removing favourite.');
+            }
+        });
+    }
+    function removeFavourite(element){
+        var recipeId = element.dataset.recipeId;
+        var favouriteId = element.dataset.favouriteId;
+        $.ajax({
+            url: '/Favourites/RemoveFromFavourite',
+            type: 'POST',
+            data: { recipeId: recipeId, favouriteId: favouriteId },
+            success: function () {
+                $('#undo-button-' + recipeId).css("visibility", "visible");
+                $('#remove-button-' + recipeId).css("visibility", "hidden");
+                $('#overlay-' + recipeId).css("visibility", "visible");
+            },
+            error: function () {
+                alert('Error removing favourite.');
+            }
+        });
+    }
     $(document).ready(function () {
         $('#editButton').click(function () {
             document.getElementById("editName").value = document.getElementById("collectionName").innerHTML;
-
             document.getElementById("editDescription").value = document.getElementById("collectionDescription").innerHTML;
             document.getElementById("editPrivate").checked = document.getElementById("collectionPrivate").checked;
         });
