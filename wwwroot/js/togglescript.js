@@ -14,12 +14,12 @@ function labelLight() {
 function goLight() {
     labelLight();
     $("body").removeClass("dark");
-    //refreshFavicon();
 }
 function stayLight() {
     goLight();
     localStorage.setItem("darkmode", false);
     darkmodeactive = localStorage.getItem("darkmode");
+    console.log("Updated");
 }
 
 function labelDark() {
@@ -29,7 +29,6 @@ function labelDark() {
 function goDark() {
     labelDark();
     $("body").addClass("dark");
-    //refreshFavicon();
 }
 function stayDark() {
     goDark();
@@ -86,18 +85,4 @@ $(window).resize(function () {
         tempDisableAnim();
     }, 0);
 });
-//function refreshFavicon() {
-//    if (matchMedia('(prefers-color-scheme: dark)').matches) {
-//        var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-//        link.type = 'image/x-icon';
-//        link.rel = 'icon';
-//        link.href = 'favicon-dark.svg';
-//        document.getElementsByTagName('head')[0].appendChild(link);
-//    } else {
-//        var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-//        link.type = 'image/x-icon';
-//        link.rel = 'icon';
-//        link.href = 'favicon.svg';
-//        document.getElementsByTagName('head')[0].appendChild(link);
-//    }
-//}
+

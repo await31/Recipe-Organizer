@@ -73,10 +73,10 @@
 
 <!-- Carousel -->
 <div class="container" id="printableArea" style="margin-top: 40px;">
-    <h1 style="margin-bottom: 40px;" class="label-font"> (#@Model.Id) @Model.Name</h1>
+    <h1 style="margin-bottom: 40px;" class="label-font"> (#@Model?.Id) @Model?.Name</h1>
     <div class="container" style="margin-bottom: 40px;">
         <div class="row">
-            <div class="col-sm-8 col-md-10">
+            <div class="col-sm-8 col-md-9">
                 <div class="row">
                     <div class="col-md excludePrint"
                          style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
@@ -84,13 +84,13 @@
                             <div class="col-lg-4 col-2 px-0" style="align-self: center;">
                                 <div>
                                     <img class="img-fluid rounded-circle"
-                                         src="@Model.FkUser?.ImgPath" style="height: 60px; width: 60px;">
+                                         src="@Model?.FkUser?.ImgPath" style="height: 60px; width: 60px;">
                                 </div>
                             </div>
                             <div class="col-lg-8 col-10">
                                 <div>
-                                    <h5 style="font-size: 1rem;">@Model.FkUser.UserName</h5>
-                                    @Model.CreatedDate
+                                    <h5 style="font-size: 1rem;">@Model?.FkUser.UserName</h5>
+                                    @Model?.CreatedDate
                                 </div>
                             </div>
                         </div>
@@ -103,10 +103,10 @@
                             </div>
                             <div class="col-10">
                                 <h5 class="fs-6">PREPARATION TIME</h5>
-                                @if (Model.PrepTime <= 360) {
-                                    <p>@Model.PrepTime minutes</p>
+                                @if (Model?.PrepTime <= 360) {
+                                    <p>@Model?.PrepTime minutes</p>
                                 } else {
-                                    <p>@(Model.PrepTime / 60) hours</p>
+                                    <p>@(Model?.PrepTime / 60) hours</p>
                                 }
                             </div>
                         </div>
@@ -118,9 +118,9 @@
                                 <i class="fa-solid fa-user"></i>
                             </div>
                             <div class="col-10">
-                                @if (Model.ServingSize != null) {
+                                @if (Model?.ServingSize != null) {
                                     <h5 class="fs-6">SERVING SIZE</h5>
-                                    <p>For @Model.ServingSize people</p>
+                                    <p>For @Model?.ServingSize people</p>
                                 }
                             </div>
                         </div>
@@ -133,339 +133,340 @@
                             </div>
                             <div class="col-10">
                                 <h5 class="fs-6">CATEGORY</h5>
-                                <p>@Model.FkRecipeCategory?.Name</p>
+                                <p>@Model?.FkRecipeCategory?.Name</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4 col-md-2 excludePrint" style="align-self: center; padding-right: 0;">
+            <div class="col-sm-4 col-md-3 excludePrint" style="align-self: center; padding-right: 0;">
                 <div class="row">
                     <div class="col-12 p-0 d-flex flex-row">
                         @if (SignInManager.IsSignedIn(User)) {
-                            <button class="btn btn-sm add-favourite-button" style="background-color: #e7f9fd; border-radius: 50%;" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@Model.Id">
-                                <i id="favourite-icon-@Model.Id" class="fa fa-heart-o fa-3x" style="color:red"></i>
+                            <button class="btn btn-sm add-favourite-button mx-1" style="background-color: #e7f9fd; border-radius: 50%;" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@Model?.Id">
+                                <i id="favourite-icon-@Model?.Id" class="fa fa-heart-o fa-3x" style="color:red"></i>
                             </button>
                         }
-                        <button class="btn btn-sm" style="background: #E7FAFE; border-radius: 50%;" onclick="printDiv('printableArea')" value="Print">
+                        <button class="btn btn-sm mx-1" style="background: #E7FAFE; border-radius: 50%;" onclick="printDiv('printableArea')" value="Print">
                             <i class="fa fa-print fa-3x" aria-hidden="true"></i>
                         </button>
                         @*CURRENTLY DOESN'T WORK. WAIT UNTIL DEPLOY*@
-                        <button class="btn btn-sm" style="background: #E7FAFE; border-radius: 50%;" onclick="window.open('http://www.facebook.com/share.php?u=' + encodeURIComponent(window.location.href))">
-                            <i class="fa fa-facebook fa-3x" aria-hidden="true"></i>
+                        <button class="btn btn-sm mx-1" style="background: #E7FAFE; border-radius: 50%;" onclick="window.open('http://www.facebook.com/share.php?u=' + encodeURIComponent(window.location.href))">
+                            <i class="fa-brands fa-facebook fa-3x" aria-hidden="true"></i>
                         </button>
                         @*<button onclick="window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href));">Share on Twitter</button>*@
-                        <button type="button" class="btn btn-sm" id="share-email" style="background: #E7FAFE; border-radius: 50%;">
-                            <svg style="width: 80%;" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
-                                 fill="currentColor" class="bi bi-share" viewBox="0 0 16 16">
-                                <path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" />
-                            </svg>
+                        <button type="button" class="btn btn-sm mx-1" id="share-email" style="background: #E7FAFE; border-radius: 50%;">
+                            <i class="fa fa-envelope fa-3x" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row" style="text-align: center;">
-        <div class="col-lg-8">
-            <img class="img-fluid" style="border-radius: 4ch; width: 100%; max-height: 800px;"
-                 src="@Model.ImgPath"
-                 class="img-fluid">
-        </div>
-        <div class="col-lg-4" style="background: #E7FAFE; border-radius: 4ch; padding: 0 40px 0 40px">
-            <h5 class="text-start label-font" style="margin-top: 40px;">Nutrition Information</h5>
-            @if (Model.Nutrition.Calories != null) {
-                <div class="nutrition row justify-content-between">
-                    <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Calories</div>
-                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Calories kcal</div>
-                </div>
-            }
-            @if (Model.Nutrition.Fat != null) {
-                <div class="nutrition row justify-content-between">
-                    <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Fat</div>
-                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Fat gam</div>
-                </div>
-            }
-            @if (Model.Nutrition.Protein != null) {
-                <div class="nutrition row justify-content-between">
-                    <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Protein</div>
-                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Protein gam</div>
-                </div>
-            }
-            @if (Model.Nutrition.Carbohydrate != null) {
-                <div class="nutrition row justify-content-between">
-                    <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Carbohydrate</div>
-                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Carbohydrate gam</div>
-                </div>
-            }
-            @if (Model.Nutrition.Cholesterol != null) {
-                <div class="nutrition row justify-content-between">
-                    <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Cholesterol</div>
-                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Cholesterol gam</div>
-                </div>
-            }
-        </div>
+</div>
+<div class="row" style="text-align: center;">
+    <div class="col-lg-8">
+        <img class="img-fluid" style="border-radius: 4ch; width: 100%; max-height: 800px;"
+             src="@Model?.ImgPath" />
     </div>
-    <hr />
-    <hr />
-    <!-- Ingredients -->
-    <h1 style="margin-bottom: 40px;" class="text-center label-font">Ingredients</h1>
-    <section class="py-4">
-        <div class="row gx-4">
-            <div class="col-lg-8 mb-4">
-                <div class="border rounded-2 px-3 py-2 bg-white">
-                    <!-- Pills navs -->
-                    <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
-                        <li class="nav-item d-flex" role="presentation">
-                            <a class="nav-link d-flex align-items-center justify-content-center w-100 active"
-                               id="ex1-tab-1" data-mdb-toggle="pill" href="#ex1-pills-1" role="tab"
-                               aria-controls="ex1-pills-1" aria-selected="true">Ingredients</a>
-                        </li>
-                        <li class="nav-item d-flex" role="presentation">
-                            <a class="nav-link d-flex align-items-center justify-content-center w-100"
-                               id="ex1-tab-2" data-mdb-toggle="pill" href="#ex1-pills-2" role="tab"
-                               aria-controls="ex1-pills-2" aria-selected="false">Instruction</a>
-                        </li>
-                    </ul>
-                    <!-- Pills navs -->
-                    <!-- Pills content -->
-                    <div class="tab-content" id="ex1-content">
-                        <div class="tab-pane fade show active" id="ex1-pills-1" role="tabpanel"
-                             aria-labelledby="ex1-tab-1">
-                            <table class="table border mt-3 mb-2">
-                                @foreach (var item in Model.RecipeIngredients) {
+    <div class="col-lg-4 bg-light rounded rounded-2" style="padding: 0 40px 0 40px">
+        <h4 class="text-center label-font" style="margin-top: 40px; margin-bottom: 20px;">Nutrition Information</h4>
+        @if (Model?.Nutrition.Calories != null) {
+            <div class="nutrition row justify-content-between">
+                <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Calories</div>
+                <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Calories kcal</div>
+            </div>
+        }
+        @if (Model?.Nutrition.Fat != null) {
+            <div class="nutrition row justify-content-between">
+                <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Fat</div>
+                <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Fat gam</div>
+            </div>
+        }
+        @if (Model?.Nutrition.Protein != null) {
+            <div class="nutrition row justify-content-between">
+                <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Protein</div>
+                <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Protein gam</div>
+            </div>
+        }
+        @if (Model?.Nutrition.Carbohydrate != null) {
+            <div class="nutrition row justify-content-between">
+                <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Carbohydrate</div>
+                <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Carbohydrate gam</div>
+            </div>
+        }
+        @if (Model?.Nutrition.Cholesterol != null) {
+            <div class="nutrition row justify-content-between">
+                <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Cholesterol</div>
+                <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Cholesterol gam</div>
+            </div>
+        }
+    </div>
+</div>
+<hr />
+<hr />
+<!-- Ingredients -->
+<section class="py-4">
+    <div class="row gx-4">
+        <div class="col-lg-8 mb-4">
+            <div class="border rounded-2 px-3 py-2 bg-white">
+                <!-- Pills navs -->
+                <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
+                    <li class="nav-item d-flex" role="presentation">
+                        <a class="nav-link d-flex align-items-center justify-content-center w-100 active"
+                           id="ex1-tab-1" data-mdb-toggle="pill" href="#ex1-pills-1" role="tab"
+                           aria-controls="ex1-pills-1" aria-selected="true">Ingredients</a>
+                    </li>
+                    <li class="nav-item d-flex" role="presentation">
+                        <a class="nav-link d-flex align-items-center justify-content-center w-100"
+                           id="ex1-tab-2" data-mdb-toggle="pill" href="#ex1-pills-2" role="tab"
+                           aria-controls="ex1-pills-2" aria-selected="false">Instruction</a>
+                    </li>
+                </ul>
+                <!-- Pills navs -->
+                <!-- Pills content -->
+                <div class="tab-content" id="ex1-content">
+                    <div class="tab-pane fade show active" id="ex1-pills-1" role="tabpanel"
+                         aria-labelledby="ex1-tab-1">
+                        <table class="table border mt-3 mb-2">
+                            @if (Model?.RecipeIngredients != null) {
+                                foreach (var item in Model.RecipeIngredients) {
                                     <tr>
                                         <th class="py-2 fs-5 label-font">
-                                            <img class="img-fluid" style="border-radius: 50%; width: 80px; height: 80px;"
+                                            <a asp-controller="Home" asp-action="IngredientDetails" asp-route-id="@item?.Ingredient.FkCategoryId" asp-route-ingredientId="@item?.Ingredient.Id" target="_blank" class="text-dark">
+                                            <img style="border-radius: 50%; width: 80px; height: 80px;"
                                                  src="@item.Ingredient?.ImgPath"
-                                                 class="img-fluid">&emsp; @item.Ingredient?.Name
+                                                 class="img-fluid" />
+                                            &emsp; @item.Ingredient?.Name
+                                            </a>
                                         </th>
                                         <td class="py-2 fs-6 align-middle">@item.Quantity @item.UnitOfMeasure</td>
                                     </tr>
                                 }
-                            </table>
-                        </div>
-                        <div class="tab-pane fade mb-2" id="ex1-pills-2" role="tabpanel"
-                             aria-labelledby="ex1-tab-2">
-                            @Html.Raw(Model.Description)
-                        </div>
+                            }
+                        </table>
                     </div>
-                    <!-- Pills content -->
+                    <div class="tab-pane fade mb-2" id="ex1-pills-2" role="tabpanel"
+                         aria-labelledby="ex1-tab-2">
+                        @Html.Raw(Model?.Description)
+                    </div>
                 </div>
+                <!-- Pills content -->
             </div>
-            <div class="col-lg-4 excludePrint">
-                <div class="px-0 border rounded-2 shadow-0">
-                    <h3 class="card-title bg-light pb-3">You may like these recipes</h3>
-                    @foreach (var item in (List<Recipe>)ViewData["footerRecipes"]) {
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex mb-3">
-                                        <a asp-route-id="@item.Id">
-                                            <img src="@item.ImgPath"
-                                                 style="width: 150px; height: 150px;" class="img-md img-thumbnail" />
-                                        </a>
-                                        <div class="info">
-                                        <a asp-route-id="@item.Id" class="text-dark fw-bold">
-                                                @item.Name
-                                            </a>
-                                            <br>
-                                            <strong class="text-secondary">@item.FkRecipeCategory?.Name</strong>
-                                        </div>
-                                    </div>
+        </div>
+        <div class="col-lg-4 excludePrint">
+            <div class="px-0 border shadow-0">
+                <h3 class="card-title bg-light text-center py-4 label-font text-dark">You may like these recipes</h3>
+                @foreach (var item in (List<Recipe>)ViewData["footerRecipes"]) {
+                    <div class="card rounded-0">
+                        <div class="card-body">
+                            <div class="d-flex mb-3">
+                                <a asp-route-id="@item.Id">
+                                    <img src="@item.ImgPath"
+                                         style="width: 150px; height: 150px;" class="img-fluid img-thumbnail" />
+                                </a>
+                                <div class="info ms-3 label-font">
+                                    <a asp-route-id="@item.Id" class="text-dark fw-bold fs-5">
+                                        @item.Name
+                                    </a>
+                                    <br>
+                                    <strong class="text-secondary fw-light">@item.FkRecipeCategory?.Name</strong>
                                 </div>
                             </div>
-                    }
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Feedback -->
-    <div class="row d-flex align-items-center">
-        <div class="col-lg-8 excludePrint">
-            <div class="card">
-                <h6 class="card-header">Feedbacks</h6>
-                @{
-                    var feedbacks = ViewData["feedbacks"] as IEnumerable<RecipeFeedback>;
-                }
-                @if (SignInManager.IsSignedIn(User)) {
-                    <div class="card-body mt-3 d-flex flex-row align-items-center row ms-2">
-                        <div class="col-md-1 mb-5 ms-2 me-2">
-                            <img src="@UserManager.GetUserAsync(User).Result.ImgPath" width="50" height="50" class="rounded-circle">
-                        </div>
-                        <div class="col-md-9">
-                            <input id="sendId" type="hidden" name="recipeId" value="@Model.Id">
-                            <input id="sendText" type="text" class="form-control" placeholder="Enter your feedback..." name="feedbackText" maxlength="200">
-                            <button id="sendButton" onClick="sendFeedback()" class="btn btn-primary mt-2 float-end">Send</button>
                         </div>
                     </div>
                 }
-                <div id="feedbackDiv">
-                    <partial name="_Feedback" model="@feedbacks" />
-                </div>
             </div>
         </div>
     </div>
+</section>
 
-    <!-- Modal -->
-    <div class="modal fade" id="favouriteModal" tabindex="-1" aria-labelledby="favouriteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="favouriteModalLabel">Add to Collections</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Feedback -->
+<div class="row d-flex align-items-center">
+    <div class="col-lg-12 excludePrint">
+        <div class="card">
+            <h6 class="card-header">Feedbacks</h6>
+            @{
+                var feedbacks = ViewData["feedbacks"] as IEnumerable<RecipeFeedback>;
+            }
+            @if (SignInManager.IsSignedIn(User)) {
+                <div class="card-body mt-3 d-flex flex-row align-items-center row ms-2">
+                    <div class="col-md-1 mb-5 ms-2 me-2">
+                        <img src="@UserManager.GetUserAsync(User).Result.ImgPath" width="50" height="50" class="rounded-circle">
+                    </div>
+                    <div class="col-md-9">
+                        <input id="sendId" type="hidden" name="recipeId" value="@Model?.Id">
+                        <input id="sendText" type="text" class="form-control" placeholder="Enter your feedback..." name="feedbackText" maxlength="200">
+                        <button id="sendButton" onClick="sendFeedback()" class="btn btn-primary mt-2 float-end">Send</button>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    @{
-                        if (ViewBag.FavouriteList != null) {
-                            foreach (var item in ViewBag.FavouriteList) {
-                                <div class="form-check">
-                                    <input class="form-check-input favourite-checkbox" type="checkbox" id="favourite-checkbox-@item.Id" value="@item.Id">
-                                    <label class="form-check-label">@item.Name</label>
-                                </div>
-                            }
+            }
+            <div id="feedbackDiv">
+                <partial name="_Feedback" model="@feedbacks" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="favouriteModal" tabindex="-1" aria-labelledby="favouriteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="favouriteModalLabel">Add to Collections</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @{
+                    if (ViewBag.FavouriteList != null) {
+                        foreach (var item in ViewBag.FavouriteList) {
+                            <div class="form-check">
+                                <input class="form-check-input favourite-checkbox" type="checkbox" id="favourite-checkbox-@item.Id" value="@item.Id">
+                                <label class="form-check-label">@item.Name</label>
+                            </div>
                         }
                     }
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button id="favourite-save" type="button" class="btn btn-primary" data-bs-dismiss="modal" data-recipe-id="0">Save</button>
-                </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="favourite-save" type="button" class="btn btn-primary" data-bs-dismiss="modal" data-recipe-id="0">Save</button>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="~/lib/jquery-3.7.0.min.js"></script>
-    <script type="text/javascript">
-        function sendFeedback() {
-            var sendId = document.getElementById("sendId").value;
-            var sendText = document.getElementById("sendText").value;
-            document.getElementById("sendText").value = "";
-            $.ajax({
-                url: '/UserRecipes/GetFeedback',
-                type: 'POST',
-                data: { recipeId: sendId, feedbackText: sendText },
-                success: function (data) {
-                    $('#feedbackDiv').html(data);
-                },
-                error: function () {
-                    alert('Error feedback.');
-                }
-            });
-        };
-
-        function deleteFeedback(element) {
-            var feedbackId = element.dataset.feedbackId;
-            var recipeId = element.dataset.recipeId;
-            $.ajax({
-                url: '/UserRecipes/DeleteFeedback',
-                type: 'POST',
-                data: { recipeId: recipeId, id: feedbackId },
-                success: function (data) {
-                    $('#feedbackDiv').html(data);
-                },
-                error: function () {
-                    alert('Error removing feedback.');
-                }
-            });
-        };
-
-        function printDiv(divName) {
-            var originalContents = document.body.innerHTML;
-            var excludePrint = document.getElementsByClassName('excludePrint');
-            for (var i = 0; i < excludePrint.length; i++) {
-                excludePrint[i].style.display = 'none';
+<script src="~/lib/jquery-3.7.0.min.js"></script>
+<script type="text/javascript">
+    function sendFeedback() {
+        var sendId = document.getElementById("sendId").value;
+        var sendText = document.getElementById("sendText").value;
+        document.getElementById("sendText").value = "";
+        $.ajax({
+            url: '/UserRecipes/GetFeedback',
+            type: 'POST',
+            data: { recipeId: sendId, feedbackText: sendText },
+            success: function (data) {
+                $('#feedbackDiv').html(data);
+            },
+            error: function () {
+                alert('Error feedback.');
             }
-            var printContents = document.getElementById(divName).innerHTML;
-            document.body.innerHTML = printContents;
-            window.print();
-            document.body.innerHTML = originalContents;
-        };
-
-        $(document).ready(function () {
-            UpdateIcon();
-            $('#share-email').click(function () {
-                var currentUrl = window.location.href;
-                var emailBody = 'I think you will find this recipe delightful ' + currentUrl;
-                window.open("mailto:?" + 'subject=Cookez - Share Recipe' + '&body=' + emailBody, '_self');
-            });
-            //This function will update the recipe id of modal
-            //also unchecked all checkboxes
-            $('.add-favourite-button').click(function () {
-                var recipeId = $(this).data('recipe-id');
-                $("#favourite-save").attr("data-recipe-id", recipeId);
-                UpdateCheckbox(recipeId);
-            });
-            //This function will add the recipe into all selected favourite lists on clicking button with class add-favourite
-            //currently only add in favourite list
-            $('#favourite-save').click(function () {
-                var recipeId = $(this).data('recipe-id');
-                //Get all checked boxes' favourite ids
-                var favouriteIds = $('input.favourite-checkbox:checkbox:checked').map(function () {
-                    return $(this).val();
-                }).get();
-                //Get all boxes' favourite ids
-                var allfavouriteIds = $('.favourite-checkbox').map(function () {
-                    return $(this).val();
-                }).get();
-
-                $.ajax({
-                    url: '/Favourites/AddRecipe',
-                    type: 'POST',
-                    data: { recipeId: recipeId, favouriteIds: favouriteIds, allfavouriteIds: allfavouriteIds },
-                    success: UpdateIcon,
-                    error: function () {
-                        alert('Error adding recipes to favorites.');
-                    }
-                });
-            });
         });
-        function UpdateCheckbox(recipeId) {
-            var favouriteIds = $('.favourite-checkbox').map(function () {
+    };
+
+    function deleteFeedback(element) {
+        var feedbackId = element.dataset.feedbackId;
+        var recipeId = element.dataset.recipeId;
+        $.ajax({
+            url: '/UserRecipes/DeleteFeedback',
+            type: 'POST',
+            data: { recipeId: recipeId, id: feedbackId },
+            success: function (data) {
+                $('#feedbackDiv').html(data);
+            },
+            error: function () {
+                alert('Error removing feedback.');
+            }
+        });
+    };
+
+    function printDiv(divName) {
+        var originalContents = document.body.innerHTML;
+        var excludePrint = document.getElementsByClassName('excludePrint');
+        for (var i = 0; i < excludePrint.length; i++) {
+            excludePrint[i].style.display = 'none';
+        }
+        var printContents = document.getElementById(divName).innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    };
+
+    $(document).ready(function () {
+        UpdateIcon();
+        $('#share-email').click(function () {
+            var currentUrl = window.location.href;
+            var emailBody = 'I think you will find this recipe delightful ' + currentUrl;
+            window.open("mailto:?" + 'subject=Cookez - Share Recipe' + '&body=' + emailBody, '_self');
+        });
+        //This function will update the recipe id of modal
+        //also unchecked all checkboxes
+        $('.add-favourite-button').click(function () {
+            var recipeId = $(this).data('recipe-id');
+            $("#favourite-save").attr("data-recipe-id", recipeId);
+            UpdateCheckbox(recipeId);
+        });
+        //This function will add the recipe into all selected favourite lists on clicking button with class add-favourite
+        //currently only add in favourite list
+        $('#favourite-save').click(function () {
+            var recipeId = $(this).data('recipe-id');
+            //Get all checked boxes' favourite ids
+            var favouriteIds = $('input.favourite-checkbox:checkbox:checked').map(function () {
                 return $(this).val();
             }).get();
-            $('.favourite-checkbox').prop('checked', false); // Unchecks all boxes
+            //Get all boxes' favourite ids
+            var allfavouriteIds = $('.favourite-checkbox').map(function () {
+                return $(this).val();
+            }).get();
 
             $.ajax({
-                url: '/Favourites/GetAllFavouriteLists',
+                url: '/Favourites/AddRecipe',
                 type: 'POST',
-                data: { recipeId: recipeId, favouriteIds: favouriteIds },
-                success: function (data) {
-                    for (var i = 0; i < data.length; i++) {
-                        if (data[i].isFavorite) {
-                            $('#favourite-checkbox-' + data[i].id).prop('checked', true); // Checks all boxes
-                            console.log('#favourite-checkbox-' + data[i].id)
-                        }
-                    }
-                },
+                data: { recipeId: recipeId, favouriteIds: favouriteIds, allfavouriteIds: allfavouriteIds },
+                success: UpdateIcon,
                 error: function () {
-                    alert('Error getting favorite status.');
+                    alert('Error adding recipes to favorites.');
                 }
             });
-        };
-        function UpdateIcon() {
-            var recipeId = @Html.Raw(Json.Serialize(@Model.Id));
+        });
+    });
+    function UpdateCheckbox(recipeId) {
+        var favouriteIds = $('.favourite-checkbox').map(function () {
+            return $(this).val();
+        }).get();
+        $('.favourite-checkbox').prop('checked', false); // Unchecks all boxes
 
-            $.ajax({
-                url: '/Favourites/GetAllFavouriteRecipes',
-                type: 'POST',
-                data: { recipeIds: recipeId },
-                success: function (data) {
-                    for (var i = 0; i < data.length; i++) {
-                        if (data[i].isFavorite) {
-                            console.log('#favourite-icon-' + data[i].recipeId)
-                            $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart');
-                            $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart-o');
-                        }
-                        else {
-                            $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart');
-                            $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart-o');
-                        }
+        $.ajax({
+            url: '/Favourites/GetAllFavouriteLists',
+            type: 'POST',
+            data: { recipeId: recipeId, favouriteIds: favouriteIds },
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].isFavorite) {
+                        $('#favourite-checkbox-' + data[i].id).prop('checked', true); // Checks all boxes
+                        console.log('#favourite-checkbox-' + data[i].id)
                     }
-                },
-                error: function () {
-                    alert('Error getting favorite status.');
                 }
-            });
-        };
-    </script>
+            },
+            error: function () {
+                alert('Error getting favorite status.');
+            }
+        });
+    };
+    function UpdateIcon() {
+        var recipeId = @Html.Raw(Json.Serialize(@Model?.Id));
+
+        $.ajax({
+            url: '/Favourites/GetAllFavouriteRecipes',
+            type: 'POST',
+            data: { recipeIds: recipeId },
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].isFavorite) {
+                        console.log('#favourite-icon-' + data[i].recipeId)
+                        $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart');
+                        $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart-o');
+                    }
+                    else {
+                        $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart');
+                        $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart-o');
+                    }
+                }
+            },
+            error: function () {
+                alert('Error getting favorite status.');
+            }
+        });
+    };
+</script>

@@ -68,8 +68,8 @@
                 <label class="form-check-label" for="flexSwitchCheckDefault">Weekly planning</label>
             </div>
             <div class="form-group mt-4" id="menu1">
-                <label asp-for="Date" class="control-label mb-2 label-font">Choose day in week</label>
-                <select asp-for="Date" class="form-control" required>
+                <label asp-for="Day" class="control-label mb-2 label-font">Choose day in week</label>
+                <select asp-for="Day" class="form-control" required>
                     <option value="1">Sunday</option>
                     <option value="2">Monday</option>
                     <option value="3">Tuesday</option>
@@ -78,6 +78,11 @@
                     <option value="6">Friday</option>
                     <option value="7">Saturday</option>
                 </select>
+                <div class="form-group mt-3">
+                    <label asp-for="WeekLast" class="control-label mb-2 label-font">How many week(s) does this plan last?</label>
+                    <input asp-for="WeekLast" type="number" class="form-control" required min="1" max="100"/>
+                    <span asp-validation-for="WeekLast" class="text-danger"></span>
+                </div>
             </div>
             <div class="form-group mt-4" id="menu2">
                 <label asp-for="Date" class="control-label mb-2 label-font">Pick a time</label>

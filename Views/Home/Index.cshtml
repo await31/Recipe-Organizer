@@ -395,7 +395,6 @@
                                 <span>CONTACT</span>
                                 <span>US</span>
                             </div>
-                            <div class="app-contact">CONTACT INFO : +62 81 314 928 595</div>
                         </div>
                         <div class="screen-body-item">
                             <div class="app-form">
@@ -546,7 +545,6 @@
                     success: function (data) {
                         for (var i = 0; i < data.length; i++) {
                             if (data[i].isFavorite) {
-                                console.log('#favourite-icon-' + data[i].recipeId)
                                 $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart');
                                 $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart-o');
                             }
@@ -607,7 +605,6 @@
                 $("#userid").val("");
 
             });
-        </script>
         </script>
 
 

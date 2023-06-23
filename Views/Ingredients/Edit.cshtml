@@ -26,6 +26,10 @@
             <input asp-for="ImgPath" class="form-control" />
             <span asp-validation-for="ImgPath" class="text-danger"></span>
         </div>
+        <div class="mb-3 d-none">
+            <label asp-for="Status" class="control-label"></label>
+            <input asp-for="Status" class="form-control" />
+        </div>
         <div class="mb-3">
             <label asp-for="FkCategoryId" class="control-label">Category Name</label>
             <select asp-for="FkCategoryId" class="form-control" asp-items="ViewBag.FkCategoryId"></select>

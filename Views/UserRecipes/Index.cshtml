@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<Recipe>
-
 @inject SignInManager<Account> SignInManager
 @using Microsoft.AspNetCore.Identity;
 @inject UserManager<Account> UserManager
@@ -59,64 +58,12 @@
                     </select>
 
                     <label for="prepTime" class="form-labe mt-2 mb-1">Preparation time (&le;):</label>
-                    <select class="form-select" name="prepTime" onchange="document.getElementById('btnSubmit').click();">
+                    <select class="form-select" name="prepTime" asp-items="ViewBag.PrepTime" onchange="document.getElementById('btnSubmit').click();">
                         <option value="All">All</option>
-                        @for (var i = 5; i <= 25; i += 5) {
-                            @if (!(String.IsNullOrEmpty(@ViewData["FilterPrepTime"].ToString())) && (@ViewData["FilterPrepTime"].Equals(i.ToString()))) {
-                                <option value="@i" selected>@i minutes</option>
-                            } else {
-                                <option value="@i">@i minutes</option>
-                            }
-                        }
-                        @for (var i = 30; i <= 300; i += 30) {
-                            @if (!(String.IsNullOrEmpty(@ViewData["FilterPrepTime"].ToString())) && (@ViewData["FilterPrepTime"].Equals(i.ToString()))) {
-                                <option value="@i" selected>@i minutes</option>
-                            } else {
-                                <option value="@i">@i minutes</option>
-                            }
-                        }
-                        @for (var i = 360; i <= 720; i += 60) {
-                            @if (!(String.IsNullOrEmpty(@ViewData["FilterPrepTime"].ToString())) && (@ViewData["FilterPrepTime"].Equals(i.ToString()))) {
-                                <option value="@i" selected>@(i / 60) hours</option>
-                            } else {
-                                <option value="@i">@(i / 60) hours</option>
-                            }
-                        }
                     </select>
                     <label for="difficulty" class="form-label mt-2 mb-1">Difficulty:</label>
-                    <select class="form-select" name="difficulty" onchange="document.getElementById('btnSubmit').click();">
+                    <select class="form-select" name="difficulty" asp-items="ViewBag.Difficulty" onchange="document.getElementById('btnSubmit').click();">
                         <option value="All">All</option>
-                        @for (var i = 1; i < 4; i++) {
-                            @if (!(String.IsNullOrEmpty(@ViewData["FilterDifficulty"].ToString())) && (@ViewData["FilterDifficulty"].Equals(i.ToString()))) {
-                                <option value="@i.ToString()" selected>
-                                    @switch (i) {
-                                        case 1:
-                                            <p>Easy</p>
-                                            break;
-                                        case 2:
-                                            <p>Medium</p>
-                                            break;
-                                        case 3:
-                                            <p>Hard</p>
-                                            break;
-                                    }
-                                    </option>
-                            } else {
-                                <option value="@i.ToString()">
-                                    @switch (i) {
-                                        case 1:
-                                            <p>Easy</p>
-                                            break;
-                                        case 2:
-                                            <p>Medium</p>
-                                            break;
-                                        case 3:
-                                            <p>Hard</p>
-                                            break;
-                                    }
-                                </option>
-                            }
-                        }
                     </select>
                     <input id="SearchString" name="searchString" type="hidden" value="@ViewData["FilterSearch"]" />
                     <input type="submit" hidden id="btnSubmit" value="Filter" />
@@ -223,7 +170,7 @@
         $("#includeIngredients, #excludeIngredients").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: "/UserRecipes/IngredientsAutoComplete",
+                    url: "/Ingredients/AutoComplete",
                     type: "POST",
                     data: { term: request.term },
                     success: function (data) {

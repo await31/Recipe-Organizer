@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using CapstoneProject.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.Collections;
@@ -105,7 +104,7 @@ namespace CapstoneProject.Controllers {
                 .FirstOrDefault(a => a.Id == id);
 
             if (mealplan == null) {
-                return NotFound(); 
+                return NotFound();
             }
 
             var mealPlanWithNutrition = _context.MealPlans
@@ -126,13 +125,13 @@ namespace CapstoneProject.Controllers {
         .ToList();
 
             var totalNutrition = new Nutrition() {
-                Calories =  mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Calories),
+                Calories = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Calories),
                 Fat = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Fat),
                 Protein = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Protein),
                 Carbohydrate = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Carbohydrate),
                 Cholesterol = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Cholesterol)
             };
-            
+
 
             ViewData["TotalNutrition"] = totalNutrition;
             ViewData["GroupedIngredients"] = ingredientQuantities;
@@ -157,28 +156,33 @@ namespace CapstoneProject.Controllers {
                 var currentUser = await _userManager.GetUserAsync(User);
                 if (currentUser != null) {
                     if (RecipeNames != null) {
-                        mealplan.FkUserId = await _userManager.GetUserIdAsync(currentUser);
-                        mealplan.IsFullDay = false;
-                        var allRecipes = _context.Recipes
-                                               .Where(i => i.Status == true)
-                                               .ToList();
-                        foreach (var recipeName in RecipeNames) {
-                            ExtractIntegerAndString(recipeName, out int id, out string name);
-                            var recipe = allRecipes.FirstOrDefault(r => r.Id == id && r.Name == name);
-                            if (recipe != null) {
-                                mealplan.Recipes.Add(recipe);
+                        if (mealplan.Date != null && mealplan.Day == null && mealplan.WeekLast == null) {
+                            mealplan.FkUserId = await _userManager.GetUserIdAsync(currentUser);
+                            mealplan.IsFullDay = false;
+                            var allRecipes = _context.Recipes
+                                                   .Where(i => i.Status == true)
+                                                   .ToList();
+                            foreach (var recipeName in RecipeNames) {
+                                ExtractIntegerAndString(recipeName, out int id, out string name);
+                                var recipe = allRecipes.FirstOrDefault(r => r.Id == id && r.Name == name);
+                                if (recipe != null) {
+                                    mealplan.Recipes.Add(recipe);
+                                }
                             }
+                        } else {
+
                         }
+
                         _context.MealPlans.Add(mealplan);
                         _context.SaveChanges();
                         TempData["success"] = "Meal planning created successfully!";
+
+
                         return RedirectToAction(nameof(Index));
                     }
                 }
             }
             return View(mealplan);
         }
-
-
     }
 }
