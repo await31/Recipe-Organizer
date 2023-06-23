@@ -72,7 +72,8 @@
 </style>
 
 <!-- Carousel -->
-<div class="container" id="printableArea" style="margin-top: 40px;">
+<div id="printableArea">
+<div class="container" style="margin-top: 40px;">
     <h1 style="margin-bottom: 40px;" class="label-font"> (#@Model?.Id) @Model?.Name</h1>
     <div class="container" style="margin-bottom: 40px;">
         <div class="row">
@@ -202,6 +203,31 @@
             </div>
         }
     </div>
+    </div>
+    <div id="printInfo" style="display:none;">
+        <h3>Ingredients</h3>
+        <table class="table border mt-3 mb-2">
+        @if (Model?.RecipeIngredients != null)
+        {
+            foreach (var item in Model.RecipeIngredients)
+            {
+                <tr>
+                    <th class="py-2 fs-5 label-font">
+                        <a asp-controller="Home" asp-action="IngredientDetails" asp-route-id="@item?.Ingredient.FkCategoryId" asp-route-ingredientId="@item?.Ingredient.Id" target="_blank" class="text-dark">
+                            <img style="border-radius: 50%; width: 80px; height: 80px;"
+                                 src="@item.Ingredient?.ImgPath"
+                                 class="img-fluid" />
+                            &emsp; @item.Ingredient?.Name
+                        </a>
+                    </th>
+                    <td class="py-2 fs-6 align-middle">@item.Quantity @item.UnitOfMeasure</td>
+                </tr>
+            }
+        }
+        </table>
+        <h3>Description</h3>
+        @Html.Raw(Model?.Description)
+    </div>
 </div>
 <hr />
 <hr />
@@ -279,7 +305,7 @@
             </div>
         </div>
     </div>
-</section>
+    </section>
 
 <!-- Feedback -->
 <div class="row d-flex align-items-center">
@@ -377,9 +403,11 @@
         for (var i = 0; i < excludePrint.length; i++) {
             excludePrint[i].style.display = 'none';
         }
+        document.getElementById('printInfo').style.display = 'block';
         var printContents = document.getElementById(divName).innerHTML;
         document.body.innerHTML = printContents;
         window.print();
+        document.getElementById('printInfo').style.display = 'none';
         document.body.innerHTML = originalContents;
     };
 
@@ -393,7 +421,7 @@
         //This function will update the recipe id of modal
         //also unchecked all checkboxes
         $('.add-favourite-button').click(function () {
-            var recipeId = $(this).data('recipe-id');
+            var recipeId = document.getElementById("favourite-save").dataset.recipeId;
             $("#favourite-save").attr("data-recipe-id", recipeId);
             UpdateCheckbox(recipeId);
         });
@@ -435,7 +463,6 @@
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].isFavorite) {
                         $('#favourite-checkbox-' + data[i].id).prop('checked', true); // Checks all boxes
-                        console.log('#favourite-checkbox-' + data[i].id)
                     }
                 }
             },
