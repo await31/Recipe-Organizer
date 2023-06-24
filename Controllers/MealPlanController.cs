@@ -83,7 +83,7 @@ namespace CapstoneProject.Controllers {
 
             var mealPlans = _context.MealPlans
                 .Where(a => a.FkUserId == currentUser)
-                .Where(a=> a.Date >= startOfWeek && a.Date <= endOfWeek)
+                .Where(a => a.Date >= startOfWeek && a.Date <= endOfWeek)
             .ToList();
 
             var count = mealPlans.Count;
@@ -105,11 +105,13 @@ namespace CapstoneProject.Controllers {
         public IActionResult Details(int? id) {
 
             var mealplan = _context.MealPlans
-                .Include(r => r.FkUser)
-                .Include(r => r.Recipes)
-                .ThenInclude(r => r.RecipeIngredients)
-                .ThenInclude(r => r.Ingredient)
-                .FirstOrDefault(a => a.Id == id);
+                       .Include(mp => mp.FkUser)
+                       .Include(mp => mp.Recipes)
+                            .ThenInclude(r => r.FkUser)
+                       .Include(mp => mp.Recipes)
+                            .ThenInclude(r => r.RecipeIngredients)
+                                 .ThenInclude(ri => ri.Ingredient)
+                       .FirstOrDefault(mp => mp.Id == id);
 
             if (mealplan == null) {
                 return NotFound();
@@ -159,7 +161,7 @@ namespace CapstoneProject.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(MealPlan mealplan, string[] RecipeNames,DateTime startDate, string[] selectedDays, int weeklast) {
+        public async Task<IActionResult> Create(MealPlan mealplan, string[] RecipeNames, DateTime startDate, string[] selectedDays, int weeklast) {
             if (ModelState.IsValid) {
                 var currentUser = await _userManager.GetUserAsync(User);
                 var allRecipes = _context.Recipes
@@ -178,16 +180,16 @@ namespace CapstoneProject.Controllers {
                             }
                         }
                         _context.MealPlans.Add(mealplan);
-                    } else if (mealplan.Date==null) {  //Weekly planning
+                    } else if (mealplan.Date == null) {  //Weekly planning
 
                         // Process selected days and week last
                         if (selectedDays != null && selectedDays.Any()) {
-                            
+
                             var selectedDayIndexes = new List<int>();
 
                             // Map selected days to their respective indexes (0 for Sunday, 1 for Monday, etc.)
                             var dayNames = Enum.GetNames(typeof(DayOfWeek)).ToList();
-                            
+
                             foreach (var selectedDay in selectedDays) {
                                 var index = dayNames.FindIndex(d => string.Equals(d, selectedDay, StringComparison.OrdinalIgnoreCase));
                                 if (index >= 0) {
