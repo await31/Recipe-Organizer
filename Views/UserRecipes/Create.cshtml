@@ -14,6 +14,14 @@
     .label-font {
         font-family: 'Comic Sans MS';
     }
+
+    #gifImage {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1050; /* Set a higher z-index value */
+    }
 </style>
 <hr />
 <div class="row d-flex mb-5">
@@ -162,7 +170,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-
+                        <img src="/Cooking.gif" id="gifImage" style="display: none;">
                         <div class="mb-3">
                             <label>Name</label>
                             <input class="form-control" type="text" id="ingName" name="ingName" value="" />
@@ -201,7 +209,7 @@
 
 <script src="~/lib/jquery-3.7.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
-
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
     var ingredientIndex = 1;
     function addIngredient() {
@@ -326,7 +334,7 @@
         $(".ingredients").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: "/UserRecipes/IngredientsAutoComplete",
+                    url: "/Ingredients/AutoComplete",
                     type: "POST",
                     data: { term: request.term },
                     success: function (data) {
@@ -364,8 +372,7 @@
             formData.append("file", file);
             formData.append("Description", ingdescription);
             formData.append("FkCategoryId", categoryId);
-            console.log(formData);
-            console.log(formData);
+            $('#gifImage').show();
             $.ajax({
                 url: '/Ingredients/CreateAjax',
                 type: 'POST',
@@ -375,14 +382,19 @@
                 success: function (response) {
                     // Handle success response here
                     if (response.success) {
-                        alert('Ingredient created successfully!');
+                        $('#gifImage').hide();
+                        toastr.success('Ingredient created success');
+
+                        $('.btn-close').trigger('click');
                     } else {
-                        alert('Failed to create the ingredient.');
+                        $('#gifImage').hide();
+                        toastr.warning('Failed to create the ingredient. Make sure you fill in all field');
                     }
                 },
                 error: function (xhr, status, error) {
                     // Handle error here
-                    alert('An error occurred while creating the ingredient.');
+                    $("#loader").hide();
+                    toastr.warning('An error occurred while creating the ingredient.');
                 }
             });
         });

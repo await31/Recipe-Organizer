@@ -59,64 +59,12 @@
                     </select>
 
                     <label for="prepTime" class="form-labe mt-2 mb-1">Preparation time (&le;):</label>
-                    <select class="form-select" name="prepTime" onchange="document.getElementById('btnSubmit').click();">
+                    <select class="form-select" name="prepTime" asp-items="ViewBag.PrepTime" onchange="document.getElementById('btnSubmit').click();">
                         <option value="All">All</option>
-                        @for (var i = 5; i <= 25; i += 5) {
-                            @if (!(String.IsNullOrEmpty(@ViewData["FilterPrepTime"].ToString())) && (@ViewData["FilterPrepTime"].Equals(i.ToString()))) {
-                                <option value="@i" selected>@i minutes</option>
-                            } else {
-                                <option value="@i">@i minutes</option>
-                            }
-                        }
-                        @for (var i = 30; i <= 300; i += 30) {
-                            @if (!(String.IsNullOrEmpty(@ViewData["FilterPrepTime"].ToString())) && (@ViewData["FilterPrepTime"].Equals(i.ToString()))) {
-                                <option value="@i" selected>@i minutes</option>
-                            } else {
-                                <option value="@i">@i minutes</option>
-                            }
-                        }
-                        @for (var i = 360; i <= 720; i += 60) {
-                            @if (!(String.IsNullOrEmpty(@ViewData["FilterPrepTime"].ToString())) && (@ViewData["FilterPrepTime"].Equals(i.ToString()))) {
-                                <option value="@i" selected>@(i / 60) hours</option>
-                            } else {
-                                <option value="@i">@(i / 60) hours</option>
-                            }
-                        }
                     </select>
                     <label for="difficulty" class="form-label mt-2 mb-1">Difficulty:</label>
-                    <select class="form-select" name="difficulty" onchange="document.getElementById('btnSubmit').click();">
+                    <select class="form-select" name="difficulty" asp-items="ViewBag.Difficulty" onchange="document.getElementById('btnSubmit').click();">
                         <option value="All">All</option>
-                        @for (var i = 1; i < 4; i++) {
-                            @if (!(String.IsNullOrEmpty(@ViewData["FilterDifficulty"].ToString())) && (@ViewData["FilterDifficulty"].Equals(i.ToString()))) {
-                                <option value="@i.ToString()" selected>
-                                    @switch (i) {
-                                        case 1:
-                                            <p>Easy</p>
-                                            break;
-                                        case 2:
-                                            <p>Medium</p>
-                                            break;
-                                        case 3:
-                                            <p>Hard</p>
-                                            break;
-                                    }
-                                    </option>
-                            } else {
-                                <option value="@i.ToString()">
-                                    @switch (i) {
-                                        case 1:
-                                            <p>Easy</p>
-                                            break;
-                                        case 2:
-                                            <p>Medium</p>
-                                            break;
-                                        case 3:
-                                            <p>Hard</p>
-                                            break;
-                                    }
-                                </option>
-                            }
-                        }
                     </select>
                     <input id="SearchString" name="searchString" type="hidden" value="@ViewData["FilterSearch"]" />
                     <input type="submit" hidden id="btnSubmit" value="Filter" />
@@ -153,7 +101,7 @@
                                     <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@recipe.Id" class="text-decoration-none h-100">
                                         <div class="card-body pb-4 pt-3">
                                             <h4 class="card-title text-dark text-decoration-none text-center" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@recipe.Name</h4>
-                                            <div class="d-flex row mt-4 ms-4 mb-3">
+                                            <div class="d-flex row mt-4 ms-3 mb-3">
                                                 <div class="rounded-5 col-6 text-dark px-0">
                                                     @if(recipe.PrepTime < 360) {
                                                             <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@recipe.PrepTime minutes</span>
@@ -162,7 +110,7 @@
                                                         }
                                                     </div>
                                                 <div class="rounded-5 col-6 text-dark px-0">
-                                                    <i class="fa-solid fa-utensils"></i> <span class="text-dark" style="font-size: 14px;">@recipe.FkRecipeCategory?.Name</span>
+                                                    <i class="fa-solid fa-utensils"></i> <span class="text-dark" style="font-size: 12px;">@recipe.FkRecipeCategory?.Name</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -213,17 +161,14 @@
         const url = new URL(urlString);
         const parameterValues = url.searchParams.get(parameterName).split(',');
         const updatedParameterValues = parameterValues.filter((item) => item != parameterValue);
-        console.log(updatedParameterValues);
-        console.log("WORKING");
         url.searchParams.set(parameterName, updatedParameterValues.join(','));
-        console.log(url.href);
         return url.href;
     }
     $(function () {
         $("#includeIngredients, #excludeIngredients").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: "/UserRecipes/IngredientsAutoComplete",
+                    url: "/Ingredients/AutoComplete",
                     type: "POST",
                     data: { term: request.term },
                     success: function (data) {
@@ -245,14 +190,6 @@
             minLength: 1
         })
     });
-    function removeParameterFromUrl(urlString, parameterName, parameterValue) {
-        const url = new URL(urlString);
-        const parameterValues = url.searchParams.get(parameterName).split(',');
-        const updatedParameterValues = parameterValues.filter((item) => item != parameterValue);
-        url.searchParams.set(parameterName, updatedParameterValues.join(','));
-        console.log(url.href);
-        return url.href;
-    }
     $(document).ready(function () {
         UpdateIcon();
         //This function will update the recipe id of modal
@@ -265,7 +202,7 @@
         //This function will add the recipe into all selected favourite lists on clicking button with class add-favourite
         //currently only add in favourite list
         $('#favourite-save').click(function () {
-            var recipeId = $(this).data('recipe-id');
+            var recipeId = document.getElementById("favourite-save").dataset.recipeId;
             //Get all checked boxes' favourite ids
             var favouriteIds = $('input.favourite-checkbox:checkbox:checked').map(function () {
                 return $(this).val();
@@ -300,7 +237,6 @@
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].isFavorite) {
                         $('#favourite-checkbox-' + data[i].id).prop('checked', true); // Checks all boxes
-                        console.log('#favourite-checkbox-' + data[i].id)
                     }
                 }
             },
@@ -319,7 +255,6 @@
             success: function (data) {
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].isFavorite) {
-                        console.log('#favourite-icon-' + data[i].recipeId)
                         $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart');
                         $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart-o');
                     }

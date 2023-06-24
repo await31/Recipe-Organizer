@@ -20,7 +20,6 @@ using SmartBreadcrumbs.Attributes;
 
 namespace CapstoneProject.Controllers {
 
-    [Authorize(Roles ="Admin")]
     public class IngredientsController : Controller {
 
         private readonly RecipeOrganizerContext _context;
@@ -34,6 +33,15 @@ namespace CapstoneProject.Controllers {
             _context = context;
         }
 
+        [HttpPost]
+        public JsonResult AutoComplete(string term) {
+            var result = (_context.Ingredients.Where(i => i.Status == true).Where(t => t.Name.ToLower().Contains(term.ToLower()))
+                 .Select(t => new { t.Name }))
+                 .ToList();
+            return Json(result);
+        }
+
+        [Authorize(Roles = "Admin")]
         [Breadcrumb("Ingredients Management")]
         public IActionResult Index() {
             IEnumerable<Ingredient> objIngredient = _context.Ingredients.Include(r=>r.FkCategory).ToList();
@@ -42,7 +50,7 @@ namespace CapstoneProject.Controllers {
 
         // GET
         [Breadcrumb("Create", FromAction = "Index", FromController = typeof(IngredientsController))]
-
+        [Authorize(Roles = "Admin")]
         public IActionResult Create() {
             ViewData["FkCategoryId"] = new SelectList(_context.IngredientCategories, "Id", "Name");
             return View();
@@ -73,6 +81,7 @@ namespace CapstoneProject.Controllers {
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateAjax(Ingredient model) {
             if (ModelState.IsValid) {
                 if (model.file != null && model.file.Length > 0) {
@@ -96,6 +105,7 @@ namespace CapstoneProject.Controllers {
         }
 
         // GET: Ingredient/Detail/id
+        [Authorize(Roles = "Admin")]
         public IActionResult Detail(int? id) {
 
             if (id == null || _context.Ingredients == null) {
@@ -166,6 +176,7 @@ namespace CapstoneProject.Controllers {
 
         //GET
         [Breadcrumb("Edit", FromAction = "Index", FromController = typeof(IngredientsController))]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id) {
             if (id == null || _context.Ingredients == null) {
                 return NotFound();
@@ -181,13 +192,15 @@ namespace CapstoneProject.Controllers {
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id, Name, ImgPath, Description, FkCategoryId")] Ingredient ingredient) {
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id, [Bind("Id, Name, ImgPath, Description, Status, FkCategoryId")] Ingredient ingredient) {
             if (id != ingredient.Id) {
                 return NotFound();
             }
 
             if (ModelState.IsValid) {
                 try {
+                    ingredient.Status = true;
                     _context.Update(ingredient);
                     await _context.SaveChangesAsync();
                 } catch (DbUpdateConcurrencyException) {
@@ -209,6 +222,7 @@ namespace CapstoneProject.Controllers {
 
         //GET
         [Breadcrumb("Delete", FromAction = "Index", FromController = typeof(IngredientsController))]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int? id) {
             if (id == null || id == 0) {
                 return NotFound();
@@ -222,6 +236,7 @@ namespace CapstoneProject.Controllers {
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeletePOST(int? id) {
             var obj = _context.Ingredients.Find(id);
             if (obj == null) {
@@ -240,6 +255,7 @@ namespace CapstoneProject.Controllers {
         // POST: Recipes/Approve
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Approve(int id) {
             var ingredient = await _context.Ingredients.FindAsync(id);
             if (ingredient == null) {
@@ -255,6 +271,7 @@ namespace CapstoneProject.Controllers {
         // POST: Recipes/Deny
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Deny(int id) {
             var ingredient = await _context.Ingredients.FindAsync(id);
             if (ingredient == null) {

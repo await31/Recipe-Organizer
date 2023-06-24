@@ -21,6 +21,9 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats;
 using System.Xml.Linq;
 using SixLabors.ImageSharp.Formats.Webp;
+using Microsoft.AspNetCore;
+using System.Globalization;
+
 
 namespace CapstoneProject.Controllers {
 
@@ -39,20 +42,41 @@ namespace CapstoneProject.Controllers {
         }
 
         [HttpPost]
-        public JsonResult SearchAutoComplete(string term) {
+        public JsonResult AutoComplete(string term) {
             var result = (_context.Recipes.Where(t => t.Name.ToLower().Contains(term.ToLower()))
                  .Select(t => new { t.Name }))
                  .ToList();
             return Json(result);
         }
-        [HttpPost]
-        public JsonResult IngredientsAutoComplete(string term) {
-            var result = (_context.Ingredients.Where(i=>i.Status==true).Where(t => t.Name.ToLower().Contains(term.ToLower()))
-                 .Select(t => new { t.Name }))
-                 .ToList(); 
-            return Json(result);
-        }
 
+        private List<SelectListItem> GetDifficultyList() {
+            return new List<SelectListItem>
+                    {
+                    new SelectListItem { Text = "Easy", Value = "1"},
+                    new SelectListItem { Text = "Medium", Value = "2"},
+                    new SelectListItem { Text = "Hard", Value = "3"},
+                    };
+        }
+        private List<SelectListItem> GetPrepTimeList() {
+            var list = new List<SelectListItem>();
+            for (int i = 5; i < 30; i += 5) {
+                list.Add(new SelectListItem { Text = i + " minutes", Value = i.ToString() });
+            }
+            for (int i = 30; i <= 360; i += 30) {
+                list.Add(new SelectListItem { Text = i + " minutes", Value = i.ToString() });
+            }
+            for (int i = 420; i <= 720; i += 60) {
+                list.Add(new SelectListItem { Text = i / 60 + " hours", Value = i.ToString() });
+            }
+            return list;
+        }
+        private List<SelectListItem> GetUnitsofMeasureList() {
+            return new List<SelectListItem>
+                    {
+                    new SelectListItem { Text = "milliliters", Value = "milliliters"},
+                    new SelectListItem { Text = "grams", Value = "grams"},
+                    };
+        }
         // GET: Recipes
         [Breadcrumb("Recipes")]
         public async Task<IActionResult> Index(int pg = 1) {
@@ -82,12 +106,15 @@ namespace CapstoneProject.Controllers {
                 if (String.IsNullOrEmpty(sortBy))
                     sortBy = "SortPopular";
                 ViewBag.FkRecipeCategoryId = new SelectList(_context.RecipeCategories, "Id", "Name", recipeCategory);
+                ViewBag.PrepTime = new SelectList(GetPrepTimeList(), "Value", "Text", prepTime);
+                ViewBag.Difficulty = new SelectList(GetDifficultyList(), "Value", "Text", difficulty);
                 ViewBag.SortBy = new SelectList(
                 new List<SelectListItem>
                 {
                 new SelectListItem { Text = "Popularity", Value = "SortPopular"},
                 new SelectListItem { Text = "Name", Value = "SortName"},
-                new SelectListItem { Text = "Date", Value = "SortDate"},
+                new SelectListItem { Text = "Newest", Value = "SortNewest"},
+                new SelectListItem { Text = "Oldest", Value = "SortOldest"},
                 new SelectListItem { Text = "Preparation time", Value = "SortPrepTime"},
                 }
                 , "Value", "Text", sortBy);
@@ -113,8 +140,11 @@ namespace CapstoneProject.Controllers {
                 }
                 //Sort
                 switch (sortBy) {
-                    case "SortDate":
+                    case "SortOldest":
                         recipes = recipes.OrderBy(b => b.CreatedDate);
+                        break;
+                    case "SortNewest":
+                        recipes = recipes.OrderByDescending(b => b.CreatedDate);
                         break;
                     case "SortPrepTime":
                         recipes = recipes.OrderBy(b => b.PrepTime);
@@ -348,6 +378,7 @@ namespace CapstoneProject.Controllers {
 
         // GET: Recipes/Create
         [Breadcrumb("Create recipe")]
+        [Authorize]
         public IActionResult Create() {
             ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id");
             ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name");
@@ -365,8 +396,6 @@ namespace CapstoneProject.Controllers {
         }
 
         // POST: Recipes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Recipe recipe, string[] IngredientNames, double[] Quantities, string[] UnitOfMeasures) {
@@ -389,12 +418,6 @@ namespace CapstoneProject.Controllers {
                         // Save ingredient, recipe to IngredientRecipe
                         // Save ingredient IDs to recipe
                         if (IngredientNames != null) {
-                            /*
-                             var ingredients = _context.Ingredients
-                               .Where(i => i.Status == true)
-                               .Where(i => IngredientNames.Any(input => i.Name.Contains(input)))
-                               .ToList();
-                             */
 
                             var allIngredients = await _context.Ingredients
                                                .Where(i => i.Status == true)
@@ -405,67 +428,142 @@ namespace CapstoneProject.Controllers {
                                               .ToList();
 
                             var IngredientIds = ingredients.Select(i => i.Id).ToArray();
+                            recipe.Ingredients.Clear();
                             recipe.Ingredients.AddRange(ingredients);
                             _context.Recipes.Add(recipe);
                             await _context.SaveChangesAsync();
 
-                            // Create recipe ingredients with quantities and unit of measure
-                            var recipeIngredients = new List<RecipeIngredient>();
-
-                            for (int i = 0; i < IngredientIds.Length; i++) {
-                                recipeIngredients.Add(new RecipeIngredient {
-                                    IngredientId = IngredientIds[i],
-                                    RecipeId = recipe.Id,
-                                    Quantity = Quantities[i],
-                                    UnitOfMeasure = UnitOfMeasures[i]
-                                });
+                            List<RecipeIngredient> recipeIngredients = new();
+                            for (int i = 0; i < IngredientNames.Length; i++) {
+                                bool exists = _context.Ingredients
+                                                      .Any(ingredient => ingredient.Status == true && ingredient.Name
+                                                      .Contains(IngredientNames[i]));
+                                if (exists) {
+                                    getIngredientIdFromName(IngredientNames[i], out int id);
+                                    recipeIngredients.Add(new RecipeIngredient {
+                                        IngredientId = id,
+                                        RecipeId = recipe.Id,
+                                        Quantity = Quantities[i],
+                                        UnitOfMeasure = UnitOfMeasures[i]
+                                    });
+                                } else {
+                                    return NotFound();
+                                }
                             }
-                            _context.RecipeIngredient.AddRange(recipeIngredients);
+                            RemoveDuplicateRecipeIngredients(recipeIngredients);
+                            recipe.RecipeIngredients.AddRange(recipeIngredients);
+                            await _context.SaveChangesAsync();
+                            TempData["success"] = "The recipe has been submitted for review. We sincerely appreciate your contribution in sharing this valuable recipe with the community!";
+                            return RedirectToAction(nameof(Index));
                         }
                     } else {
                         recipe.ImgPath = "untitle.jpg";
                     }
-
-                    await _context.SaveChangesAsync();
-                    TempData["success"] = "The recipe has been submitted for review. We sincerely appreciate your contribution in sharing this valuable recipe with the community!";
-                    return RedirectToAction(nameof(Index));
                 }
-
                 ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id", recipe.FkRecipeId);
                 ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.FkRecipeCategoryId);
             }
-
             return View(recipe);
         }
 
+        public void getIngredientIdFromName(string name, out int id) {
+            var ingredient = _context.Ingredients.FirstOrDefault(x => x.Name.Equals(name));
+            id = ingredient.Id;
+        }
+
+        public void RemoveDuplicateRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
+            var distinctIngredients = new HashSet<int>();
+            recipeIngredients.RemoveAll(ri => !distinctIngredients.Add((int)ri.IngredientId));
+        }
+
         // GET: Recipes/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id) {
             if (id == null || _context.Recipes == null) {
                 return NotFound();
             }
 
-            var recipe = await _context.Recipes.FindAsync(id);
+            var recipe = await _context.Recipes.Include(r => r.RecipeIngredients).Include(r => r.Ingredients).Include(r => r.Nutrition).FirstOrDefaultAsync(r => r.Id == id);
             if (recipe == null) {
                 return NotFound();
             }
+
             ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id", recipe.FkRecipeId);
             ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.FkRecipeCategoryId);
+            ViewBag.PrepTime = new SelectList(GetPrepTimeList(), "Value", "Text", recipe.PrepTime);
+            ViewBag.Difficulty = new SelectList(GetDifficultyList(), "Value", "Text", recipe.Difficult);
+            foreach (var item in recipe.RecipeIngredients) {
+                ViewData["Unit" + item.IngredientId] = new SelectList(GetUnitsofMeasureList(), "Value", "Text", item.UnitOfMeasure);
+            }
+            ViewBag.IngredientDetails = recipe.RecipeIngredients;
+            ViewBag.Ingredients = recipe.Ingredients;
             return View(recipe);
         }
 
-        // POST: Recipes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ImgPath,Description,FkRecipeCategoryId,FkRecipeId,Nutrition,PrepTime,Difficult,FkUserId,CreatedDate")] Recipe recipe) {
+        public async Task<IActionResult> Edit(int id, Recipe recipe, string[] IngredientNames, double[] Quantities, string[] UnitOfMeasures) {
             if (id != recipe.Id) {
                 return NotFound();
             }
+            var existingRecipe = _context.Recipes
+                .Include(r => r.Nutrition)
+                .Include(r => r.Ingredients)
+                .Include(r => r.RecipeIngredients)
+                .Single(r => r.Id == id);
+            _context.Entry(existingRecipe).CurrentValues.SetValues(recipe);
+            if (recipe.file != null && recipe.file.Length > 0) {
+                IFormFile file = recipe.file;
+                // Generate a unique file name
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser != null) {
+                    // Upload the file to Firebase Storage
+                    string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
+                    Uri imageUrlUri = new(imageUrl);
+                    string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
+                    existingRecipe.ImgPath = baseUrl;
+                }
+            }
+            if (IngredientNames != null) {
 
+                existingRecipe.Ingredients.Clear();
+                var allIngredients = await _context.Ingredients
+                                   .Where(i => i.Status == true)
+                                   .ToListAsync();
+
+                var ingredients = allIngredients
+                                  .Where(i => IngredientNames.Any(input => i.Name.Contains(input)))
+                                  .ToList();
+
+                var IngredientIds = ingredients.Select(i => i.Id).ToArray();
+                existingRecipe.Ingredients.AddRange(ingredients);
+                existingRecipe.RecipeIngredients.Clear();
+                // Create recipe ingredients with quantities and unit of measure
+                var recipeIngredients = new List<RecipeIngredient>();
+                for (int i = 0; i < IngredientNames.Length; i++) {
+                    bool exists = _context.Ingredients
+                                          .Any(ingredient => ingredient.Status == true && ingredient.Name
+                                          .Contains(IngredientNames[i]));
+                    if (exists) {
+                        getIngredientIdFromName(IngredientNames[i], out int ingredientId);
+                        recipeIngredients.Add(new RecipeIngredient {
+                            IngredientId = ingredientId,
+                            RecipeId = recipe.Id,
+                            Quantity = Quantities[i],
+                            UnitOfMeasure = UnitOfMeasures[i]
+                        });
+                    } else {
+                        return NotFound();
+                    }
+                }
+                RemoveDuplicateRecipeIngredients(recipeIngredients);
+                existingRecipe.RecipeIngredients = recipeIngredients;
+                _context.RecipeIngredient.AddRange(recipeIngredients);
+            }
             if (ModelState.IsValid) {
                 try {
-                    _context.Update(recipe);
+                    existingRecipe.Status = false;
                     await _context.SaveChangesAsync();
                 } catch (DbUpdateConcurrencyException) {
                     if (!RecipeExists(recipe.Id)) {
@@ -474,14 +572,15 @@ namespace CapstoneProject.Controllers {
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                TempData["success"] = "The recipe has been submitted for review!";
+                return RedirectToAction("MyRecipes", "Home");
             }
-            ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id", recipe.FkRecipeId);
-            ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.FkRecipeCategoryId);
+
             return View(recipe);
         }
 
         // GET: Recipes/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id) {
             ViewBag.Title = "Create recipe";
             if (id == null || _context.Recipes == null) {
@@ -560,7 +659,6 @@ namespace CapstoneProject.Controllers {
                         .Child("recipes")
                         .Child(fileName)
                         .PutAsync(webpStream, cancellationToken.Token);
-
                     try {
                         imageFromFirebaseStorage = await storageManager;
                         firebaseConfiguration.Dispose();

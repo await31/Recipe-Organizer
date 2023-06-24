@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap-5.3.0/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <link rel="stylesheet" href="~/css/recipedetail.css"/>
+    <link rel="stylesheet" href="~/css/togglestyle.css"/>
     <link rel="icon" type="image/x-icon" href="\images\logo.png">
     <script src="https://kit.fontawesome.com/08194921a9.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css"/>
@@ -59,8 +60,7 @@
         text-overflow: ellipsis;
     }
 </style>
-
-<body style="background-color: rgb(248,246,242);">
+<body class="dark">
     <header class="pb-2 bg-light shadow-sm">
         <div class="container-fluid">
             <div class="d-flex flex-wrap align-items-center justify-content-between">
@@ -75,6 +75,14 @@
                         <button class="btn btn-dark my-2 my-sm-0 ms-2" type="submit" value="Find"><i class="fa-solid fa-magnifying-glass"></i></button>
                     </form>
                 </div>
+
+                <div class="load-flash"></div>
+                <div class="mode-toggle noselect">
+                    <h6 class="label-dark">Dark</h6>
+                    <div class="toggle-switch"></div>
+                    <h6 class="label-light">Light</h6>
+                </div>
+
                 <div class="text-end d-flex">
                     <partial name="_LoginPartial" />
                 </div>
@@ -89,36 +97,33 @@
         </main>
     </div>
     <!-- Footer -->
-    <footer class="mb-1">
-        <div class="container">
-            <div class="position-relative overflow-hidden row py-5" style="background-color: #e7f9fd; border-radius: 2rem;">
-                <div class="col-md-6 text-center offset-md-3 mb-3">
-                    <h1>Connect with us</h1>
-                    <p>
-                        Subscribe and stay up to date with the latest recipes that will tantalize your taste buds.
-                    </p>
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control form-control-lg" placeholder="Your email address..." aria-label="Your email address..." aria-describedby="button-addon2">
-                        <button class="btn btn-dark" type="button" id="button-addon2">Subscribe</button>
-                    </div>
-                </div>
-                <img src="~/images/footer-dish1.png" class="d-none d-lg-block position-absolute img-fluid" alt="Food" style="width: 200px; height: 200px; bottom:-25%; left:-3%;">
-                <img src="~/images/footer-dish2.png" class="d-none d-lg-block position-absolute img-fluid" alt="Food" style="width: 200px; height: 200px; bottom:-25%; right:-3%;">
-            </div>
-        </div>
-    </footer>
+    <div class="container-fluid shadow-sm">
+        <footer class="d-flex flex-wrap justify-content-between align-items-center pt-3 pb-2 my-1 border-top">
+            <p class="col-md-4 mb-0 text-body-secondary ps-2">&copy; 2023 Cookez, Inc</p>
+
+            <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+                <img class="img-fluid" style="width: 60px; height: 60px;" src="~/images/logo.png"/>
+            </a>
+
+            <ul class="nav col-md-4 justify-content-end">
+                <li class="nav-item"><a asp-action="Privacy" class="nav-link px-2 text-body-secondary" target="_blank">Privacy</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary" target="_blank">Contact us</a></li>
+            </ul>
+        </footer>
+    </div>
 
     <!-- Footer -->
     <script src="~/lib/bootstrap-5.3.0/js/bootstrap.min.js"></script>
     <script src="~/lib/bootstrap-5.3.0/js/bootstrap.bundle.min.js"></script>
-    @**@<script src="~/lib/jquery-3.7.0.min.js"></script>
+    <script src="~/lib/jquery-3.7.0.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+    <script src="~/js/togglescript.js"></script>
     <script>
         $(function () {
             $("#SearchString").autocomplete({
                 source: function (request, response) {
                     $.ajax({
-                        url: "/UserRecipes/SearchAutoComplete",
+                        url: "/UserRecipes/AutoComplete",
                         type: "POST",
                         data: { term: request.term },
                         success: function (data) {

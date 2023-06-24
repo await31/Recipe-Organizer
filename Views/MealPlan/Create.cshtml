@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "New Planning";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    DateTime today = DateTime.Now;
 }
 
 
@@ -25,7 +26,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label mb-2 label-font">Title</label>
-                <input asp-for="Title" class="form-control" placeholder="e.g. Recipes to make for mother's day" required/>
+                <input asp-for="Title" class="form-control" placeholder="e.g. Recipes to make for mother's day" required />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group mt-4">
@@ -34,10 +35,8 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group mt-4">
-                <label asp-for="Color" class="control-label mb-2 label-font">Choose a custom color for your planning</label>
+                <label asp-for="Color" class="control-label mb-2 label-font">Choose a custom color for this planning</label>
                 <select asp-for="Color" class="form-control" required>
-                    <option value="red">Red</option>
-                    <option value="white">White</option>
                     <option value="green">Green</option>
                     <option value="blue">Blue</option>
                     <option value="violet">Violet</option>
@@ -59,9 +58,53 @@
                     <option value="gray">Gray</option>
                 </select>
             </div>
-            <div class="form-group mt-4">
+            <div class="form-group form-check form-switch mt-4">
+                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Weekly planning</label>
+            </div>
+            <div class="form-group mt-4" id="menu1">
+                <label class="control-label mb-2 label-font">Select the days for the weekly planning</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="selectedDays[]" id="checkMonday" value="Monday">
+                    <label class="form-check-label" for="checkMonday">Monday</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="selectedDays[]" id="checkTuesday" value="Tuesday">
+                    <label class="form-check-label" for="checkTuesday">Tuesday</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="selectedDays[]" id="checkWednesday" value="Wednesday">
+                    <label class="form-check-label" for="checkWednesday">Wednesday</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="selectedDays[]" id="checkThursday" value="Thursday">
+                    <label class="form-check-label" for="checkThursday">Thursday</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="selectedDays[]" id="checkFriday" value="Friday">
+                    <label class="form-check-label" for="checkFriday">Friday</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="selectedDays[]" id="checkSaturday" value="Saturday">
+                    <label class="form-check-label" for="checkSaturday">Saturday</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="selectedDays[]" id="checkSunday" value="Sunday">
+                    <label class="form-check-label" for="checkSunday">Sunday</label>
+                </div>
+                <div class="form-group mt-3">
+                    <label class="control-label mb-2 label-font">Start date</label>
+                    <input class="form-control" name="startDate" type="date" min="@today.ToString("yyyy-MM-dd")"/>
+                </div>
+                <div class="form-group mt-3">
+                    <label class="control-label mb-2 label-font">How many week(s) does this plan last?</label>
+                    <input type="number" class="form-control" required min="1" max="100" name="weekLast"/>
+                    <span class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group mt-4" id="menu2">
                 <label asp-for="Date" class="control-label mb-2 label-font">Pick a time</label>
-                <input class="form-control" asp-for="Date" asp-format="{0:yyyy-MM-ddTHH:mm}" required/>
+                <input type="date" class="form-control" asp-for="Date" min="@today.ToString("yyyy-MM-dd")"/>
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
             <!-- Ingredient -->
@@ -89,12 +132,54 @@
             </div>
         </form>
     </div>
+
 </div>
+
 
 <script src="~/lib/jquery-3.7.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 
 <script>
+
+    var checkbox1 = document.getElementById('flexSwitchCheckDefault');
+    var switchInput = $("#flexSwitchCheckDefault");
+    var menu1 = document.getElementById('menu1');
+    var menu2 = document.getElementById('menu2');
+
+    menu1.style.display= 'none';
+
+    checkbox1.onchange = function () {
+        if (checkbox1.checked) {
+            menu1.style.display = 'block';
+            menu2.style.display = 'none';
+        } else {
+            menu1.style.display = 'none';
+            menu2.style.display = 'block';
+        }
+    };
+
+    $(document).ready(function () {
+        var switchInput = $("#flexSwitchCheckDefault");
+        var menu3 = $("#menu1"); //menu1 nhung dat menu3 cho k bi trung ten voi global variable
+        var menu4 = $("#menu2"); //menu2 nhung dat menu4 cho k bi trung ten voi global variable
+
+        function toggleFormElements() {
+            if (switchInput.prop("checked")) {
+                menu3.find("input").prop("disabled", false);
+                menu4.find("input").prop("disabled", true);
+
+            } else {
+                menu3.find("input").prop("disabled", true);
+                menu4.find("input").prop("disabled", false);
+            }
+        }
+
+        toggleFormElements();
+
+        switchInput.on("change", function () {
+            toggleFormElements();
+        });
+    });
 
     var recipeIndex = 1;
     function addRecipe() {
@@ -183,7 +268,7 @@
         });
         return exists;
     };
-     
+
     function updateSpan(recipe, element) {
         var data = checkRecipeExists(recipe, element);
         var recipeId = element.id.match(/\d+/);
@@ -225,4 +310,5 @@
         });
     };
     autocomplete();
+
 </script>

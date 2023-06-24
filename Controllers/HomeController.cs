@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SmartBreadcrumbs.Nodes;
 using System;
 using Firebase.Auth;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CapstoneProject.Controllers {
 
@@ -32,7 +33,7 @@ namespace CapstoneProject.Controllers {
             var recipes = _context.Recipes
                             .Where(a=> a.Status==true)
                             .OrderByDescending(b => b.CreatedDate)
-                            .Take(6)
+                            .Take(8)
                             .Include(r => r.FkRecipeCategory)
                             .ToList();
 
@@ -87,19 +88,57 @@ namespace CapstoneProject.Controllers {
 
             return View(data);
         }
-        public async Task<IActionResult> FavouriteList() {
+
+        [Breadcrumb("Profile", FromAction = "Index", FromController = typeof(HomeController))]
+        [Authorize]
+        public async Task<IActionResult> UserProfile(string? userId) {
+            var user = _context.Accounts.FirstOrDefault(a => a.Id.Equals(userId));
             var currentUser = await _userManager.GetUserAsync(User);
-            var userFavouriteList = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToList();
-            List<int> recipeIds = _context.Favourites.Where(a => userFavouriteList.Contains(a)).Include(a => a.Recipes).SelectMany(c => c.Recipes).Select(r => r.Id).ToList();
 
             var recipes = await _context.Recipes
-                .Where(a=>a.Status == true)
-                .Where(r => recipeIds.Contains(r.Id))
+                .Where(a => a.Status == true && a.FkUser == user)
+                .Include(r => r.FkRecipe)
+                .Include(r => r.FkRecipeCategory)
+                .Include(r => r.FkUser).ToListAsync();
+
+            var popularRecipes = recipes
+               .Take(6)
+               .ToList();
+
+            if(user == currentUser) {
+                var collections = _context.Favourites
+                .Where(a => a.Account == user)
+                .Include(a => a.Recipes)
+                .ToList();
+                ViewData["collections"] = collections;
+            } else {
+                var collections = _context.Favourites
+                .Where(a => a.Account == user)
+                .Where(a => a.isPrivate == false)
+                .Include(a=>a.Recipes)
+                .ToList();
+                ViewData["collections"] = collections;
+            }
+
+            ViewData["popularRecipes"] = popularRecipes;
+
+            return View(user);
+        }
+
+        [Breadcrumb("My Recipes", FromAction = "Index", FromController = typeof(HomeController))]
+        [Authorize]
+        public async Task<IActionResult> MyRecipes() {
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            var recipes = await _context.Recipes
+                .Where(a => a.Status == true && a.FkUser == currentUser)
                 .Include(r => r.FkRecipe)
                 .Include(r => r.FkRecipeCategory)
                 .Include(r => r.FkUser).ToListAsync();
             return View(recipes);
         }
+
+        [Authorize]
         public async Task<IActionResult> Favorite(int? id, int? favouriteId, string returnUrl, string parameters) {
             var entity = _context.Recipes.FirstOrDefault(item => item.Id == id);
             if (entity != null) {

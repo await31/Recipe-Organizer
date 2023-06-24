@@ -8,8 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using CapstoneProject.Models;
 using Microsoft.AspNetCore.Identity;
 using SmartBreadcrumbs.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CapstoneProject.Controllers {
+
     public class FavouritesController : Controller {
         private readonly RecipeOrganizerContext _context;
         private readonly UserManager<Account> _userManager;
@@ -17,6 +19,22 @@ namespace CapstoneProject.Controllers {
         public FavouritesController(RecipeOrganizerContext context, UserManager<Account> userManager) {
             _context = context;
             _userManager = userManager;
+        }
+        [HttpPost]
+        public async Task<JsonResult> AddToFavourite(int favouriteId, int recipeId) {
+            var favouriteList = _context.Favourites.Include(f => f.Recipes).FirstOrDefault(f => f.Id == favouriteId);
+            var recipe = _context.Recipes.FirstOrDefault(f => f.Id == recipeId);
+            favouriteList.Recipes.Add(recipe);
+            await _context.SaveChangesAsync();
+            return Json(true);
+        }
+        [HttpPost]
+        public async Task<JsonResult> RemoveFromFavourite(int favouriteId, int recipeId) {
+            var favouriteList = _context.Favourites.Include(f => f.Recipes).FirstOrDefault(f => f.Id == favouriteId);
+            var recipe = _context.Recipes.FirstOrDefault(f => f.Id == recipeId);
+            favouriteList.Recipes.Remove(recipe);
+            await _context.SaveChangesAsync();
+            return Json(true);
         }
         [HttpPost]
         public async Task<JsonResult> GetAllFavouriteRecipes(int[] recipeIds) {
@@ -58,6 +76,7 @@ namespace CapstoneProject.Controllers {
             return Json(favourites);
         }
         [HttpPost]
+        [Authorize]
         public async Task<JsonResult> AddRecipe(int recipeId, int[] favouriteIds, int[] allfavouriteIds) {
             var entity = _context.Recipes.FirstOrDefault(item => item.Id == recipeId);
             if (entity != null) {
@@ -80,9 +99,14 @@ namespace CapstoneProject.Controllers {
         }
         // GET: Favourites
         [Breadcrumb("My Collections")]
+        [Authorize]
         public async Task<IActionResult> Index() {
             var currentUser = await _userManager.GetUserAsync(User);
-            var userFavourite = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToList();
+            var userFavourite = _context.Accounts
+                .Include(u => u.Favourites)
+                .ThenInclude(f => f.Recipes)
+                .FirstOrDefault(u => u.Id == currentUser.Id)
+                .Favourites.ToList();
             return View(userFavourite);
         }
 
@@ -90,26 +114,27 @@ namespace CapstoneProject.Controllers {
         [Breadcrumb("Collection Details")]
         public async Task<IActionResult> Details(int? id) {
 
-            var currentUser = await _userManager.GetUserAsync(User);
-
             var favouriteList = _context.Favourites
+                .Include(a => a.Account)
                 .Include(a => a.Recipes)
                 .ThenInclude(recipe => recipe.FkRecipeCategory)
                 .FirstOrDefault(a => a.Id == id);
 
             ViewData["Name"] = favouriteList?.Name;
-            ViewData["Description"] = favouriteList.Description;
+            ViewData["Description"] = favouriteList?.Description;
+            ViewData["IsPrivate"] = favouriteList?.isPrivate;
             ViewData["Id"] = id;
-            if (favouriteList.Account != null)
+            if (favouriteList?.Account != null)
                 ViewData["UserId"] = favouriteList.Account.Id;
 
-            var recipes = favouriteList.Recipes
+            var recipes = favouriteList?.Recipes
                 .ToList();
 
             return View(recipes);
         }
 
         // GET: Favourites/Create
+        [Authorize]
         public IActionResult Create() {
             return View();
         }
@@ -119,7 +144,7 @@ namespace CapstoneProject.Controllers {
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Favourite favourite) {
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,isPrivate")] Favourite favourite) {
             favourite.Account = await _userManager.GetUserAsync(User);
             if (ModelState.IsValid) {
                 _context.Add(favourite);
@@ -130,6 +155,7 @@ namespace CapstoneProject.Controllers {
         }
 
         // GET: Favourites/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id) {
             if (id == null || _context.Favourites == null) {
                 return NotFound();
@@ -146,11 +172,12 @@ namespace CapstoneProject.Controllers {
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<JsonResult> Edit(int id, string name, string description) {
+        public async Task<JsonResult> Edit(int id, string name, string description, bool isPrivate) {
             var favourite = _context.Favourites.FirstOrDefault(f => f.Id == id);
             try {
                 favourite.Name = name;
                 favourite.Description = description;
+                favourite.isPrivate = isPrivate;
                 _context.Update(favourite);
                 await _context.SaveChangesAsync();
             } catch (DbUpdateConcurrencyException) {
@@ -160,10 +187,11 @@ namespace CapstoneProject.Controllers {
                     throw;
                 }
             }
-            return Json(new { name = name, description = description });
+            return Json(new { name = name, description = description, isPrivate = isPrivate });
         }
 
         // GET: Favourites/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id) {
             if (id == null || _context.Favourites == null) {
                 return NotFound();

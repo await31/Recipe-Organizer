@@ -114,7 +114,7 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
                     _logger.LogWarning("User account locked out.");
                     return RedirectToPage("./Lockout");
                 } else {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Your username or password is incorrect");
                     return Page();
                 }
             }
