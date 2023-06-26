@@ -1,0 +1,35 @@
+﻿.recipe-card {
+    width: 320px;
+    height: 400px;
+}
+
+.recipe-card .card-head {
+    height: 50%;
+    position: relative;
+}
+
+    .recipe-card .card-body {
+        height: 40%;
+    }
+
+@media (max-width: 768px) {
+    .recipe-card {
+        width: 100%;
+        height: 280px;
+    }
+
+    .card {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .recipe-card .card-head {
+        height: 100%;
+        width: 100%;
+    }
+
+    .recipe-card .card-body {
+        height: 100%;
+        width: 100%;
+    }
+}
