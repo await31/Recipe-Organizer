@@ -1,4 +1,4 @@
-﻿﻿﻿@{
+﻿﻿﻿﻿@{
     ViewBag.Title = "Dashboard";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
@@ -21,7 +21,7 @@
                             <div class="text-xs fw-bold text-primary text-uppercase mb-1">
                                 Number of users
                             </div>
-                            <div class="h5 mb-0 fw-bold text-dark">@ViewData["accCount"]</div>
+                            <p class="h5 mb-0 fw-bold text-color-change">@ViewData["accCount"]</p>
                         </div>
                         <div class="col-auto">
                             <i class="fa-solid fa-user fa-2x text-secondary"></i>
@@ -40,7 +40,7 @@
                             <div class="text-xs fw-bold text-success text-uppercase mb-1">
                                 Number of recipes
                             </div>
-                            <div class="h5 mb-0 fw-bold text-dark">@ViewData["RecipesCount"]</div>
+                            <div class="h5 mb-0 fw-bold text-color-change">@ViewData["RecipesCount"]</div>
                         </div>
                         <div class="col-auto">
                             <i class="fa-solid fa-bowl-food fa-2x text-secondary"></i>
@@ -59,7 +59,7 @@
                             <div class="text-xs fw-bold text-info text-uppercase mb-1">
                                 Number of ingredients
                             </div>
-                            <div class="h5 mb-0 fw-bold text-dark">@ViewData["IngredientsCount"]</div>
+                            <div class="h5 mb-0 fw-bold text-color-change">@ViewData["IngredientsCount"]</div>
                         </div>
                         <div class="col-auto">
                             <i class="fa-solid fa-wheat-awn fa-2x text-secondary"></i>
@@ -78,7 +78,7 @@
                             <div class="text-xs fw-bold text-warning text-uppercase mb-1">
                                 Recipe Pending Requests
                             </div>
-                            <div class="h5 mb-0 fw-bold text-dark">@ViewData["PendingRequestsCount"]</div>
+                            <div class="h5 mb-0 fw-bold text-color-change">@ViewData["PendingRequestsCount"]</div>
                         </div>
                         <div class="col-auto">
                             <i class="fa-solid fa-comments fa-2x text-secondary"></i>
@@ -216,7 +216,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Owner</th>
-                                <th></th>
+                                <th colspan="2">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -237,6 +237,36 @@
                                             <button type="submit" class="btn btn-success">Detail</button>
                                         </form>
                                     </td>
+
+                                    <td>
+                                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
+                                            Delete
+                                        </button>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="deleteConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">Delete</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form id="deleteConfirmForm" asp-action="DeleteConfirmed" asp-controller="Contacts">
+                                                            <input type="hidden" name="id" value="@item.Id" />
+                                                        </form>
+
+                                                        Please confirm your intention to delete the contact form by clicking the "Confirm" button in the delete confirmation modal.
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <button id="submitDeleteFormBtn" type="button" class="btn btn-primary">Confirm</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -246,7 +276,16 @@
 
         </div>
     </div>
+
 </div>
 <!-- /.container-fluid -->
             </div>
 <!-- End of Main Content -->
+<script src="~/lib/jquery-3.7.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<script>
+    $("#submitDeleteFormBtn").click(function () {
+        $("#deleteConfirmForm").submit(); // Submit the form
+    });
+
+</script>

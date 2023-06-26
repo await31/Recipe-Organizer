@@ -19,7 +19,6 @@ function stayLight() {
     goLight();
     localStorage.setItem("darkmode", false);
     darkmodeactive = localStorage.getItem("darkmode");
-    console.log("Updated");
 }
 
 function labelDark() {
@@ -29,6 +28,7 @@ function labelDark() {
 function goDark() {
     labelDark();
     $("body").addClass("dark");
+    $("table").removeClass("table-striped");
 }
 function stayDark() {
     goDark();
@@ -68,17 +68,20 @@ window.onload = function () {
         }
     }
 };
+// disAnime sau 15s
 function tempDisableAnim() {
     $("*").addClass("disableEasingTemporarily");
     setTimeout(function () {
         $("*").removeClass("disableEasingTemporarily");
-    }, 200);
+    }, 1500);
 }
+// disLoadFlash sau 15s
 setTimeout(function () {
     $(".load-flash").css("display", "none");
     $(".load-flash").css("visibility", "hidden");
     tempDisableAnim();
-}, 200);
+}, 1500);
+// resize window thi disAnime sau 15s lien tuc
 $(window).resize(function () {
     tempDisableAnim();
     setTimeout(function () {

@@ -165,31 +165,37 @@
     <div class="col-lg-4 bg-light rounded rounded-2" style="padding: 0 40px 0 40px">
         <h4 class="text-center label-font" style="margin-top: 40px; margin-bottom: 20px;">Nutrition Information</h4>
         @if (Model?.Nutrition.Calories != null) {
-            <div class="nutrition row justify-content-between">
+            <div class="nutrition row justify-content-between text-color-change-black">
                 <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Calories</div>
                 <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Calories kcal</div>
             </div>
         }
         @if (Model?.Nutrition.Fat != null) {
-            <div class="nutrition row justify-content-between">
+            <div class="nutrition row justify-content-between text-color-change-black">
                 <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Fat</div>
                 <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Fat gam</div>
             </div>
         }
         @if (Model?.Nutrition.Protein != null) {
-            <div class="nutrition row justify-content-between">
+            <div class="nutrition row justify-content-between text-color-change-black">
                 <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Protein</div>
                 <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Protein gam</div>
             </div>
         }
+            @if (Model?.Nutrition.Fibre != null) {
+                <div class="nutrition row justify-content-between">
+                    <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Fibre</div>
+                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Fibre gam</div>
+                </div>
+            }
         @if (Model?.Nutrition.Carbohydrate != null) {
-            <div class="nutrition row justify-content-between">
+            <div class="nutrition row justify-content-between text-color-change-black">
                 <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Carbohydrate</div>
                 <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Carbohydrate gam</div>
             </div>
         }
         @if (Model?.Nutrition.Cholesterol != null) {
-            <div class="nutrition row justify-content-between">
+                <div class="nutrition row justify-content-between text-color-change-black">
                 <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Cholesterol</div>
                 <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Cholesterol gam</div>
             </div>

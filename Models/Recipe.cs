@@ -66,6 +66,8 @@ public partial class Nutrition {
 
     public int? Protein { get; set; }
 
+    public int? Fibre { get; set; }
+
     public int? Carbohydrate { get; set; }
 
     public int? Cholesterol { get; set; }

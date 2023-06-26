@@ -88,11 +88,11 @@
                         <a class="card-title card-limit-1 link-info link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
                        asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id">
 
-                            <h5 style="font-weight: bold;">@collection.Name</h5>
+                            <h5 class=" text-color-change" style="font-weight: bold;">@collection.Name</h5>
                         </a>
                         @if (collection.Description == null)
                         {
-                            <p class="card-text card-limit-2" style="height:52px">This collection doesn't have a description yet.</p>
+                            <p class="card-text card-limit-2 text-color-change" style="height:52px">This collection doesn't have a description yet.</p>
                         }
                         else
                         {

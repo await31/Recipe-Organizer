@@ -50,8 +50,8 @@
                 <div class="card col-md-2 px-0 mx-3 my-4 round-5 overflow-hidden" style="height: 400px;">
                     <img src="@obj.ImgPath" class="card-img-top img-fluid h-50" alt="Ingredient image">
                     <div class="card-body h-50 mb-1">
-                        <h5 class="card-title">@obj.Name</h5>
-                        <p class="card-text">@obj.Description</p>
+                        <h5 class="card-title text-color-change">@obj.Name</h5>
+                        <p class="card-text text-color-change">@obj.Description</p>
                         <a asp-controller="Home" asp-action="IngredientDetails" asp-route-ingredientId="@obj.Id" asp-route-id="@obj.FkCategoryId" asp-route-pg="pg" class="btn btn-dark text-light float-end"><i class="fa-solid fa-file-lines"></i></a>
                     </div>
                 </div>
