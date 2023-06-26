@@ -138,6 +138,7 @@ namespace CapstoneProject.Controllers {
                 Calories = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Calories),
                 Fat = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Fat),
                 Protein = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Protein),
+                Fibre = mealPlanWithNutrition.Recipes.Sum(r=> r.Nutrition.Fibre),
                 Carbohydrate = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Carbohydrate),
                 Cholesterol = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Cholesterol)
             };
