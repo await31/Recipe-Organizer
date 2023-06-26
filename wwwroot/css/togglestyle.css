@@ -19,9 +19,12 @@
     --gray-90: #F7FAFD;
     --gray-95: #FCFEFE; /*...to light*/
 
+    /*Form color*/
     --main-color: #E7F9FD; /*light blue*/
-    --contrast-color: #EBC893; /*light orange*/
+    --contrast-color: #1b2a47; /*dark blue*/
+    --darkform-color: #1b2a47; /*dark blue*/
 
+    /*Sidebar admin color*/
     --admin-sidebar: white;
     --admin-sidebar-contrast: #1b2a47; /*dark blue*/
 
@@ -54,9 +57,16 @@ body.dark h6 {
 }
 
 body.dark div.color-change{
-    background-color: var(--contrast-color); /*dark mode*/
+    background-color: var(--darkform-color); /*dark mode*/
 }
 
+body.dark div.header-color-change{
+    background-color: var(--gray-80);
+}
+
+body.dark input#SearchString{
+    background-color: #d1d1d1;
+}
 /*breadcrumb*/
 li.breadcrumb-item.active {
     color: #212529; /*light mode*/
@@ -77,6 +87,9 @@ body.dark *.text-color-change {
 body.dark *.text-color-change-black {
     color: black; /*dark mode*/
 }
+body.dark td {
+    color: white;
+}
 
 /*Admin page*/
 body.dark nav.bar-admin-change {
@@ -93,13 +106,15 @@ body.dark div.list-group-flush, body.dark a.list-group-item {
     transition: color var(--animate) ease-in-out, background var(--animate) ease-in-out;
 }
 
-body.dark td{
-    color: white;
-}
-
+/*Card*/
 body.dark div.card{
     background-color: var(--admin-sidebar-contrast);
 }
+
+div.card{
+    background-color: var(--main-color);
+}
+
 .load-flash {
     z-index: 1000;
     top: 0;

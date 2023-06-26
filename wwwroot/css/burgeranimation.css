@@ -1,19 +1,7 @@
 ﻿#burger {
-    position: absolute;
-    top: 0;
-    right: 10%;
-    transform: translateX(50%);
+    position: fixed;
+    top: 60%;
+    right: 5%;
     z-index: 9999;
 }
-@keyframes drop {
-    0% { top: 0vh; }
-    80% { top: calc(60vh); }
-    90% { top: calc(100vh - 500px); }
-    100% { top: calc(60vh); }
-}
-
-.drop {
-    animation: drop 2s forwards;
-}
-
 

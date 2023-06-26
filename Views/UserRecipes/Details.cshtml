@@ -17,6 +17,9 @@
         border: none;
     }
 
+    .facebook {
+        color: #3b5998;
+    }
     .form-color {
         background-color: #fafafa;
     }
@@ -143,11 +146,16 @@
                         <button class="btn btn-sm mx-1" style="background: #E7FAFE; border-radius: 50%;" onclick="printDiv('printableArea')" value="Print">
                             <i class="fa fa-print fa-3x" aria-hidden="true"></i>
                         </button>
-                        @*CURRENTLY DOESN'T WORK. WAIT UNTIL DEPLOY*@
-                        <button class="btn btn-sm mx-1" style="background: #E7FAFE; border-radius: 50%;" onclick="window.open('http://www.facebook.com/share.php?u=' + encodeURIComponent(window.location.href))">
+
+                        @*Share via Fb*@
+                        <button class="btn btn-sm mx-1 facebook" style="background: #E7FAFE; border-radius: 50%;" onclick="window.open('http://www.facebook.com/share.php?u=' + encodeURIComponent(window.location.href))">
                             <i class="fa-brands fa-facebook fa-3x" aria-hidden="true"></i>
                         </button>
+
+                        @*Share via Twitter*@
                         @*<button onclick="window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href));">Share on Twitter</button>*@
+                       
+                        @*Share via Mail*@
                         <button type="button" class="btn btn-sm mx-1" id="share-email" style="background: #E7FAFE; border-radius: 50%;">
                             <i class="fa fa-envelope fa-3x" aria-hidden="true"></i>
                         </button>
@@ -494,4 +502,6 @@
             }
         });
     };
+
+
 </script>
