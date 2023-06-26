@@ -121,7 +121,18 @@
         @*End of foreach*@
 
     </div>
-
+    @if (Model.Count() == 0)
+    {
+        if (isOwner)
+        {
+            <h2 class="text-center my-3">You haven't added anything to this collection yet. Start browsing!</h2>
+            <h5 class="text-center my-1">You can save a recipe to this collection by clicking on the heart icon on the recipe page.</h5>
+        }
+        else
+        {
+            <h2 class="text-center my-3">This collection is empty.</h2>
+        }
+    }
 
     <!-- Edit Modal -->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">

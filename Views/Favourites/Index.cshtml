@@ -4,6 +4,7 @@
     ViewData["Title"] = "My Collections";
 }
 
+<link rel="stylesheet" href="~/css/collection.css" />
 <style>
     .card-limit-1 {
         display: -webkit-box;
@@ -22,8 +23,6 @@
     }
 
     .box {
-        width: 100px;
-        height: 100px;
         box-shadow: 0 0 0px rgba(0, 0, 0, 0.5);
         transition: box-shadow 0.3s ease-in-out;
     }
@@ -34,15 +33,15 @@
 </style>
 
 
-<div class="container ms-5">
+<div class="container mx-2">
     <div class="row">
-        <a asp-action="Create" class="btn btn-success fw-bold mt-4 mb-4 ms-2 col-2">New collection</a>
+        <a asp-action="Create" class="btn btn-success fw-bold mt-4 mb-4 ms-2 col-md-2 col-8">New collection</a>
     </div>
     <div class="row">
         @foreach (var collection in Model)
         {
-            <div class="card box mb-3 mx-2" style="height:450px; width: 18rem; padding: 0;display: flex;border-style: solid;border-width: 2px">
-                <div class="card-img-top" style="background-color: #ccc;height: 45%; width: 100%;">
+            <div class="card box mb-3 mx-2 collection-card">
+                <div class="card-head card-img-top">
                     <a asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id">
                         <div style="height: 100%; width: 100%;">
                         @if (collection.Recipes.FirstOrDefault() != null)
@@ -56,7 +55,7 @@
                     </a>
                 </div>
                 <div class="card-body" style="padding: 0">
-                    <div class="d-flex justify-content-around" style="height: 30%;width: 100%; padding: 0; margin: 0;">
+                    <div class="d-none d-md-flex justify-content-around" style="height: 30%;width: 100%; padding: 0; margin: 0;">
                         @for (var i = 0; i < 3; i++)
                         {
                             <div class="col-4" style="height: 100%; width:30%;background-color: darkgray; padding: 0; margin-top: 4px; margin-bottom: 4px">
@@ -78,6 +77,14 @@
                         }
                     </div>
                     <div style="margin: 8px">
+                        @if ((bool)collection.isPrivate)
+                            {
+                                <div style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">PRIVATE</div>
+                            }
+                            else
+                            {
+                            <div style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">PUBLIC</div>
+                            }
                         <a class="card-title card-limit-1 link-info link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
                        asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id">
 
@@ -85,14 +92,14 @@
                         </a>
                         @if (collection.Description == null)
                         {
-                            <p class="card-text card-limit-2">This collection doesn't have a description yet.</p>
+                            <p class="card-text card-limit-2" style="height:52px">This collection doesn't have a description yet.</p>
                         }
                         else
                         {
-                            <p class="card-text card-limit-2">@collection.Description</p>
+                            <p class="card-text card-limit-2" style="height:52px">@collection.Description</p>
                         }
 
-                        <h6 class="card-text card-limit-1">@collection.Recipes.Count() items in this collection</h6>
+                        <h6 class="card-text card-limit-1">@collection.Recipes.Count() item(s) in this collection</h6>
                     </div>
                 </div>
             </div>
