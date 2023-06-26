@@ -14,19 +14,21 @@
     --gray-65: #CDD1D5;
     --gray-70: #F8F6F2;
     --gray-75: #E7EAED;
-    --gray-80: #EFF2F5; 
+    --gray-80: #EFF2F5;
     --gray-85: #F4F7FA;
     --gray-90: #F7FAFD;
     --gray-95: #FCFEFE; /*...to light*/
 
     --main-color: #E7F9FD; /*light blue*/
     --contrast-color: #EBC893; /*light orange*/
+
+    --admin-sidebar: white;
+    --admin-sidebar-contrast: #1b2a47; /*dark blue*/
+
     --animate: 200ms;
 }
 
 body {
-    color: var(--gray-40);
-    font-family: "Arial";
     background: var(--gray-70);
     -webkit-font-smoothing: antialiased;
     transition: color var(--animate) ease-in-out, background var(--animate) ease-in-out;
@@ -69,8 +71,35 @@ body.dark label, body.dark h3, body.dark h4, body.dark h5, body.dark p, body.dar
     color: black; /*dark mode*/
 }
 
+body.dark *.text-color-change {
+    color: white; /*dark mode*/
+}
+body.dark *.text-color-change-black {
+    color: black; /*dark mode*/
+}
 
+/*Admin page*/
+body.dark nav.bar-admin-change {
+    background-color: var(--admin-sidebar-contrast);
+    transition: background var(--animate) ease-in-out;
+}
+.bar-admin-change {
+    background-color: var(--admin-sidebar);
+}
 
+body.dark div.list-group-flush, body.dark a.list-group-item {
+    background-color: var(--admin-sidebar-contrast);
+    color: white;
+    transition: color var(--animate) ease-in-out, background var(--animate) ease-in-out;
+}
+
+body.dark td{
+    color: white;
+}
+
+body.dark div.card{
+    background-color: var(--admin-sidebar-contrast);
+}
 .load-flash {
     z-index: 1000;
     top: 0;
@@ -78,7 +107,7 @@ body.dark label, body.dark h3, body.dark h4, body.dark h5, body.dark p, body.dar
     right: 0;
     bottom: 0;
     position: absolute;
-    background: var(--gray-35);
+    background: var(--gray-85);
 }
 
 .mode-toggle {

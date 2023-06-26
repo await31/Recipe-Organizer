@@ -42,7 +42,7 @@
 @if ((isOwner) || (!(bool)ViewData["IsPrivate"]))
 {
     <div class="mt-5 mb-5">
-        <h1 id="collectionName" class="text-center">@ViewData["Name"]</h1>
+        <h1 id="collectionName" class="text-center text-color-change">@ViewData["Name"]</h1>
         <h5 id="collectionDescription" class="text-center text-secondary">@ViewData["Description"]</h5>
         <input hidden type="checkbox" checked="@ViewData["IsPrivate"]" id="collectionPrivate" />
     </div>
@@ -61,7 +61,7 @@
                 <div class="mt-2" style="height: 40%;">
                     <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@recipe.Id" class="text-decoration-none h-100">
                         <div class="card-body pb-4 pt-3">
-                            <h4 class="card-title text-dark text-decoration-none" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@recipe.Name</h4>
+                            <h4 class="card-title text-decoration-none text-color-change" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@recipe.Name</h4>
                             <div class="container mt-3 mb-3">
                                 <div class="row mb-2">
                                     <div class="col-6 text-dark">
