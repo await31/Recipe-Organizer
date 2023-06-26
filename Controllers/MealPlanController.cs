@@ -156,6 +156,12 @@ namespace CapstoneProject.Controllers {
             var recipes = _context.Recipes
                        .Where(i => i.Status == true)
                        .ToList();
+
+            var categories = _context.RecipeCategories
+                .ToList();
+
+            ViewData["categories"] = categories;
+
             return View();
         }
 

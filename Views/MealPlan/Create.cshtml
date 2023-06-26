@@ -107,6 +107,14 @@
                 <input type="date" class="form-control" asp-for="Date" min="@today.ToString("yyyy-MM-dd")"/>
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
+            <div class="form-group mt-4">
+                <label class="control-label mb-2 label-font">Choose dietary needs (Optional)</label>
+                <select class="form-control" required>
+                    @foreach(var item in (List<RecipeCategory>)ViewData["categories"]) {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                    </select>
+            </div>
             <!-- Ingredient -->
             <div id="recipe-container" class="mt-5">
                 <!-- Initial ingredient select element -->
