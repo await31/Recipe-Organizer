@@ -21,8 +21,7 @@ namespace CapstoneProject.Controllers {
             _userManager = userManager;
         }
         [HttpPost]
-        public async Task<JsonResult> AddToFavourite(int favouriteId, int recipeId)
-        {
+        public async Task<JsonResult> AddToFavourite(int favouriteId, int recipeId) {
             var favouriteList = _context.Favourites.Include(f => f.Recipes).FirstOrDefault(f => f.Id == favouriteId);
             var recipe = _context.Recipes.FirstOrDefault(f => f.Id == recipeId);
             favouriteList.Recipes.Add(recipe);
@@ -30,9 +29,8 @@ namespace CapstoneProject.Controllers {
             return Json(true);
         }
         [HttpPost]
-        public async Task<JsonResult> RemoveFromFavourite(int favouriteId,int recipeId)
-        {
-            var favouriteList= _context.Favourites.Include(f=>f.Recipes).FirstOrDefault(f=>f.Id==favouriteId);
+        public async Task<JsonResult> RemoveFromFavourite(int favouriteId, int recipeId) {
+            var favouriteList = _context.Favourites.Include(f => f.Recipes).FirstOrDefault(f => f.Id == favouriteId);
             var recipe = _context.Recipes.FirstOrDefault(f => f.Id == recipeId);
             favouriteList.Recipes.Remove(recipe);
             await _context.SaveChangesAsync();

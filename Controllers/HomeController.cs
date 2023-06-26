@@ -33,7 +33,7 @@ namespace CapstoneProject.Controllers {
             var recipes = _context.Recipes
                             .Where(a=> a.Status==true)
                             .OrderByDescending(b => b.CreatedDate)
-                            .Take(6)
+                            .Take(8)
                             .Include(r => r.FkRecipeCategory)
                             .ToList();
 

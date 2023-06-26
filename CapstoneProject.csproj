@@ -28,8 +28,6 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.14" />
 		<PackageReference Include="NuGet.Packaging" Version="6.6.0" />
-		<PackageReference Include="Quartz" Version="3.6.2" />
-		<PackageReference Include="Quartz.Extensions.Hosting" Version="3.6.2" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
 		<PackageReference Include="SmartBreadcrumbs" Version="3.6.1" />
 	</ItemGroup>
@@ -37,7 +35,6 @@
   <ItemGroup>
     <Folder Include="Data\" />
     <Folder Include="wwwroot\css\theme\" />
-    <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\lib\jquery-validation-unobtrusive\" />
     <Folder Include="wwwroot\lib\jquery-validation\" />
     <Folder Include="wwwroot\lib\jquery-validation\dist\" />
