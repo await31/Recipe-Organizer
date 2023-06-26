@@ -94,18 +94,34 @@
                 </div>
                 <div class="form-group mt-3">
                     <label class="control-label mb-2 label-font">Start date</label>
-                    <input class="form-control" name="startDate" type="date" min="@today.ToString("yyyy-MM-dd")"/>
+                    <input class="form-control" name="startDate" type="date" min="@today.ToString("yyyy-MM-dd")" />
                 </div>
                 <div class="form-group mt-3">
                     <label class="control-label mb-2 label-font">How many week(s) does this plan last?</label>
-                    <input type="number" class="form-control" required min="1" max="100" name="weekLast"/>
+                    <input type="number" class="form-control" required min="1" max="100" name="weekLast" />
                     <span class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group mt-4" id="menu2">
                 <label asp-for="Date" class="control-label mb-2 label-font">Pick a time</label>
-                <input type="date" class="form-control" asp-for="Date" min="@today.ToString("yyyy-MM-dd")"/>
+                <input type="date" class="form-control" asp-for="Date" min="@today.ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-4">
+                <label class="control-label mb-2 label-font">Choose dietary needs (Optional)</label>
+                <select class="form-control">
+                    <option value="None">None</option>
+                    <option value="highcalorie">High-calorie</option>
+                    <option value="lowcalorie">Low-calorie</option>
+                    <option value="highprotein">High-protein</option>
+                    <option value="lowprotein">Low-protein</option>
+                    <option value="highfibre">High-fibre</option>
+                    <option value="lowfibre">Low-fibre</option>
+                    <option value="highcarb">High-carbohydrate</option>
+                    <option value="lowcarb">Low-carbohydrate</option>
+                    <option value="highfat">High-fat</option>
+                    <option value="lowfat">Low-fat</option>
+                </select>
             </div>
             <!-- Ingredient -->
             <div id="recipe-container" class="mt-5">
@@ -146,7 +162,7 @@
     var menu1 = document.getElementById('menu1');
     var menu2 = document.getElementById('menu2');
 
-    menu1.style.display= 'none';
+    menu1.style.display = 'none';
 
     checkbox1.onchange = function () {
         if (checkbox1.checked) {

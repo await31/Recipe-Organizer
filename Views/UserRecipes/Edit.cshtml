@@ -85,12 +85,17 @@
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <label asp-for="Nutrition.Fibre" class="control-label label-font">Fibre (g)</label>
+                                <input asp-for="Nutrition.Fibre" class="form-control" min="1" max="10000" placeholder="Optional" />
+                                <span asp-validation-for="Nutrition" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
                                 <label asp-for="Nutrition.Cholesterol" class="control-label label-font">Cholesterol (g)</label>
                                 <input asp-for="Nutrition.Cholesterol" class="form-control" min="1" max="10000" placeholder="Optional" />
                                 <span asp-validation-for="Nutrition" class="text-danger"></span>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label asp-for="Nutrition.Carbohydrate" class="control-label label-font">Carbohydrate (g)</label>
                                 <input asp-for="Nutrition.Carbohydrate" class="form-control" min="1" max="10000" placeholder="Optional" />
                                 <span asp-validation-for="Nutrition" class="text-danger"></span>
