@@ -110,10 +110,10 @@
         </div>
         <div class="col-lg-4 excludePrint">
             <div class="px-0 border shadow-0">
-                <h3 class="card-title bg-light text-center py-4 label-font text-dark">Grocery list <i class="fa-solid fa-cart-shopping"></i></h3>
+                <h3 class="card-title text-center py-4 label-font text-color-change">Grocery list <i class="fa-solid fa-cart-shopping"></i></h3>
                 <div class="accordion accordion-flush" id="accordionFlushExample">
                     <div class="accordion-item">
-                        <h2 class="accordion-header">
+                        <h2 class="accordion-header bg-light">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#all" aria-expanded="false" aria-controls="all">
                                 Ingredients for this Planning
                             </button>
@@ -132,7 +132,7 @@
                     </div>
                     @foreach (var item in Model.Recipes) {
                         <div class="accordion-item">
-                            <h2 class="accordion-header">
+                            <h2 class="accordion-header bg-light">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#@item.Id" aria-expanded="false" aria-controls="@item.Id">
                                     Ingredients for @item.Name
                                 </button>
@@ -170,33 +170,34 @@
                 <div class="card">
                     <img src="@item.ImgPath" class="card-img-top" style="height: 200px;">
                     <div class="card-body">
-                        <h5 class="card-title text-center card-limit-1 mb-3 label-font">@item.Name</h5>
-                        <p class="card-text">Preparation time: @item.PrepTime mins</p>
-                        <p class="card-text">Serving size: @item.ServingSize people</p>
+                        <h5 class="card-title text-center card-limit-1 mb-3 label-font text-color-change">@item.Name</h5>
+                        <p class="card-text text-color-change">Preparation time: @item.PrepTime mins</p>
+                        <p class="card-text text-color-change">Serving size: @item.ServingSize people</p>
                         @switch (item.Difficult) {
                             case 1:
-                                <p class="card-text">Difficult: Easy</p>
+                                <p class="card-text text-color-change">Difficult: Easy</p>
                                 break;
                             case 2:
-                                <p class="card-text">Difficult: Medium</p>
+                                <p class="card-text text-color-change">Difficult: Medium</p>
                                 break;
                             case 3:
-                                <p class="card-text">Difficult: Hard</p>
+                                <p class="card-text text-color-change">Difficult: Hard</p>
                                 break;
                             default:
-                                <p class="card-text">Difficult: No Information</p>
+                                <p class="card-text text-color-change">Difficult: No Information</p>
                                 break;
                         }
                     </div>
                     <div class="card-footer">
-                        <small class="text-body-secondary">Author: @item?.FkUser.UserName</small>
-                        <small class="text-body-secondary float-end">@item?.CreatedDate?.ToShortDateString()</small>
+                        <small class="text-color-change">Author: @item?.FkUser.UserName</small>
+                        <small class="text-color-change float-end">@item?.CreatedDate?.ToShortDateString()</small>
                     </div>
                 </div>
             </div>
         </a>
     }
 </div>
+<script src="~/lib/jquery-3.7.0.min.js"></script>
 
 <script>
     $(document).ready(function () {

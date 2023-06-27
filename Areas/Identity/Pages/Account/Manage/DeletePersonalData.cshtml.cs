@@ -70,20 +70,24 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
                     return Page();
                 }
             }
-            var userId = await _userManager.GetUserIdAsync(user);
-            _context.Favourites.RemoveRange(_context.Favourites.Include(f => f.Account).Where(f=>f.Account.Id==userId));
+            var currUserId = await _userManager.GetUserIdAsync(user);
+            _context.Favourites.RemoveRange(_context.Favourites.Include(f => f.Account).Where(f=>f.Account.Id.Equals(currUserId)));
+            //_context.MealPlans.RemoveRange(_context.MealPlans.Include(f => f.FkUser).Where(f=>f.FkUser.Id.Equals(currUserId)));
+            //_context.RecipeFeedbacks.RemoveRange(_context.RecipeFeedbacks.Include(f=> f.User).Include(r=> r.Recipe).Where(f=>f.User.Id.Equals(currUserId)));
+            //_context.Recipes.RemoveRange(_context.Recipes.Include(f => f.FkUser).Where(f => f.FkUser.Id.Equals(currUserId)));
+            
             await _context.SaveChangesAsync();
 
             var result = await _userManager.DeleteAsync(user);
 
             if (!result.Succeeded)
             {
-                throw new InvalidOperationException($"Unexpected error occurred deleting user with ID '{userId}'.");
+                throw new InvalidOperationException($"Unexpected error occurred deleting user with ID '{currUserId}'.");
             }
 
             await _signInManager.SignOutAsync();
 
-            _logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
+            _logger.LogInformation("User with ID '{UserId}' deleted themselves.", currUserId);
 
             return Redirect("~/");
         }

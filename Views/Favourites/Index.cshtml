@@ -34,11 +34,20 @@
 </style>
 
 
-<div class="container ms-5">
+<div class="container ms-5" style="min-height: 100vh; display: flex; flex-direction: column;">
     <div class="row">
         <a asp-action="Create" class="btn btn-success fw-bold mt-4 mb-4 ms-2 col-2">New collection</a>
     </div>
     <div class="row">
+        @if (Model.Count() == 0)
+        {
+            <div class="row ms-12">
+                <div class="col-md-12 text-center">
+                    <img src="~/images/noresult.png" style="width: 18%; height: auto;">
+                    <p class="fw-bold mt-5">Apologies, you don't have any Collection.</p>
+                </div>
+            </div>
+        }
         @foreach (var collection in Model)
         {
             <div class="card box mb-3 mx-2" style="height:450px; width: 18rem; padding: 0;display: flex;">
@@ -94,4 +103,5 @@
             </div>
         }@*END OF FOREACH*@
     </div>
+    <div style="flex-grow:1"></div>
 </div>
