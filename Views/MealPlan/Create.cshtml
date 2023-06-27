@@ -14,6 +14,14 @@
     .label-font {
         font-family: 'Comic Sans MS';
     }
+
+    .card-title {
+        display: -webkit-box;
+        -webkit-line-clamp: 1; /* Maximum number of lines to show */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 </style>
 <hr />
 <div class="row d-flex mb-5">
@@ -108,9 +116,9 @@
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
             <div class="form-group mt-4">
-                <label class="control-label mb-2 label-font">Choose dietary needs (Optional)</label>
-                <select class="form-control">
-                    <option value="None">None</option>
+                <label for="dietaries" class="control-label mb-2 label-font">Choose dietary needs (Optional)</label>
+                <select id="dietaries" class="form-control">
+                    <option value="none">None</option>
                     <option value="highcalorie">High-calorie</option>
                     <option value="lowcalorie">Low-calorie</option>
                     <option value="highprotein">High-protein</option>
@@ -122,6 +130,9 @@
                     <option value="highfat">High-fat</option>
                     <option value="lowfat">Low-fat</option>
                 </select>
+                <p class="text-center mt-4 label-font fs-5">Our suggestions</p>
+                <div id="recipeList" class="d-flex">
+                </div>
             </div>
             <!-- Ingredient -->
             <div id="recipe-container" class="mt-5">
@@ -156,6 +167,80 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 
 <script>
+    document.getElementById('dietaries').addEventListener('change', function () {
+        var dietary = this.value; // Get the selected dietary value
+
+        // Make an AJAX request to the server
+        $.ajax({
+            url: '/mealplan/GetDietaryRecipes',
+            type: 'POST',
+            data: { dietary: dietary },
+            success: function (data) {
+                $('#recipeList').empty();
+                if (data && data.length > 0) {
+
+                    $('#recipeList').append('<div class="row">');
+                    data.forEach(function (recipe) {
+                        var recipeUrl = '@Url.Action("Details", "UserRecipes")' + '?id=' + recipe.id;
+                        var recipeHtml =
+                            '<a href="' + recipeUrl + '" target="_blank" class="text-dark"><div style="height: 200px;" class="border border-1 rounded rounded-1 border-dark mt-1 mx-1">'
+                            + '<img class="img-fluid" style="height: 70%; width: 150px;" src="' + recipe.imgPath + '">'
+                            + '<p class="card-title text-center" style="max-width: 150px;">' + recipe.name + '</p>'
+                            + '<a onclick="addSuggestRecipe(\'' + recipe.id + '\', \'' + recipe.name + '\')" class="btn btn-success w-100" style="font-size: 10px;"> Add</a>'
+                            + '</div></a>';
+
+                        $('#recipeList').append(recipeHtml);
+                    });
+                    $('#recipeList').append('</div>');
+                } else {
+                    $('#recipeList').append('<p>No recipes found.</p>');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error); // Handle the error, if any
+            }
+        });
+    });
+
+    var recipeIndex = 1;
+    function addRecipe() {
+        var container = document.getElementById('recipe-container');
+        var originalFormGroup = container.querySelector('.form-group');
+
+        var newFormGroup = originalFormGroup.cloneNode(true);
+        var newInput = newFormGroup.querySelector('input[type="text"]');
+        var newSpan = newFormGroup.querySelector('span');
+
+        // Clear the selected option in the new select element
+        newInput.value = '';
+        //changeId
+        recipeIndex++;
+        newInput.id = 'recipe-id-' + (recipeIndex);
+        newSpan.id = 'recipe-span-' + (recipeIndex);
+        // Add the new form group to the container
+        container.appendChild(newFormGroup);
+        autocomplete();
+    }
+
+    function addSuggestRecipe(recipeId, recipeName) {
+        var container = document.getElementById('recipe-container');
+        var originalFormGroup = container.querySelector('.form-group');
+
+        var newFormGroup = originalFormGroup.cloneNode(true);
+        var newInput = newFormGroup.querySelector('input[type="text"]');
+        var newSpan = newFormGroup.querySelector('span');
+
+        // Set the recipe id and name in the new input value
+        newInput.value = '(#' +recipeId + ')' + recipeName;
+        //changeId
+        recipeIndex++;
+        newInput.id = 'recipe-id-' + (recipeIndex);
+        newSpan.id = 'recipe-span-' + (recipeIndex);
+        // Add the new form group to the container
+        container.appendChild(newFormGroup);
+        autocomplete();
+    }
+
 
     var checkbox1 = document.getElementById('flexSwitchCheckDefault');
     var switchInput = $("#flexSwitchCheckDefault");
@@ -197,25 +282,7 @@
         });
     });
 
-    var recipeIndex = 1;
-    function addRecipe() {
-        var container = document.getElementById('recipe-container');
-        var originalFormGroup = container.querySelector('.form-group');
-
-        var newFormGroup = originalFormGroup.cloneNode(true);
-        var newInput = newFormGroup.querySelector('input[type="text"]');
-        var newSpan = newFormGroup.querySelector('span');
-
-        // Clear the selected option in the new select element
-        newInput.value = '';
-        //changeId
-        recipeIndex++;
-        newInput.id = 'recipe-id-' + (recipeIndex);
-        newSpan.id = 'recipe-span-' + (recipeIndex);
-        // Add the new form group to the container
-        container.appendChild(newFormGroup);
-        autocomplete();
-    }
+    
 
     function removeRecipe(button) {
         var formGroup = button.closest('.form-group');
