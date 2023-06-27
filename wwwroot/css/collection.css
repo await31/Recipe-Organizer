@@ -1,4 +1,4 @@
-﻿﻿.collection-card {
+﻿.collection-card {
     height: 450px;
     width: 18rem;
     padding: 0;
@@ -7,11 +7,11 @@
     border-width: 2px;
 }
 
-.collection-card .card-head {
-    background-color: #ccc;
-    height: 45%;
-    width: 100%;
-}
+    .collection-card .card-head {
+        background-color: #ccc;
+        height: 45%;
+        width: 100%;
+    }
 
 .recipe-card {
     width: 320px;
@@ -35,12 +35,12 @@
         flex-direction: row;
     }
 
-        .recipe-card, .collection-card .card-head {
+        .recipe-card .card-head {
             height: 100%;
             width: 100%;
         }
 
-        .recipe-card, .collection-card .card-body {
+        .recipe-card .card-body {
             height: 100%;
             width: 100%;
         }
