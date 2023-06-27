@@ -22,7 +22,12 @@
         background-color: rgb(220,255,255);
         display: inline-block;
         padding: 0 3px 0 3px;
-        margin: 2px;
+        margin: 4px;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 </style>
 @if ((isOwner) || (!(bool)ViewData["IsPrivate"]))

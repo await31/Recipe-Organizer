@@ -1,6 +1,6 @@
 ﻿.collection-card {
-    height: 450px;
     width: 18rem;
+    height:450px;
     padding: 0;
     display: flex;
     border-style: solid;
@@ -12,8 +12,8 @@
         width: 100%;
     }
 .recipe-card {
-    width: 320px;
-    height: 400px;
+    width: 340px;
+    height: 420px;
 }
 
 .recipe-card .card-head {
