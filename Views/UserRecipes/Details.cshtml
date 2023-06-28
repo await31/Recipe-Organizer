@@ -7,6 +7,7 @@
 @{
     ViewData["Title"] = "Recipe Details";
 }
+
 <link rel="stylesheet" href="~/css/favouritemodal.css" />
 <style>
     body {
@@ -397,6 +398,13 @@
 
 <script src="~/lib/jquery-3.7.0.min.js"></script>
 <script type="text/javascript">
+    //This function when simulate a button press when press the enter key
+    document.getElementById("sendText").addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) { //Enter's keycode is 13
+            event.preventDefault();
+            document.getElementById("sendButton").click();
+        }
+    });
     function sendFeedback() {
         var sendId = document.getElementById("sendId").value;
         var sendText = document.getElementById("sendText").value;

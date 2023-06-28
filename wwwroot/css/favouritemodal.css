@@ -9,6 +9,15 @@
     width: 500px;
     margin: auto;
 }
+.delete-modal .modal-dialog .modal-content {
+    height: 250px;
+    width: 500px;
+    margin: auto;
+}
+.delete-modal .modal-dialog .modal-content .modal-body {
+    font-size:1.25em;
+    text-align:center;
+}
 .favourite-modal .modal-title, .edit-modal .modal-title, .delete-modal .modal-title {
     color: red;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
