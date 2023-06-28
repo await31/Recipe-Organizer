@@ -36,12 +36,12 @@
         flex-direction: row;
     }
 
-        .recipe-card, .collection-card .card-head {
+        .recipe-card .card-head, .collection-card .card-head {
             height: 100%;
             width: 100%;
         }
 
-        .recipe-card, .collection-card .card-body {
+        .recipe-card .card-body, .collection-card .card-body {
             height: 100%;
             width: 100%;
         }
