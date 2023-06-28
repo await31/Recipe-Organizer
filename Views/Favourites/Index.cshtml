@@ -30,6 +30,7 @@
         .box:hover {
             box-shadow: 0 0 20px rgba(0, 0, 0, 1);
         }
+
 </style>
 
 
@@ -38,6 +39,15 @@
         <a asp-action="Create" class="btn btn-success fw-bold mt-4 mb-4 ms-2 col-md-2 col-8">New collection</a>
     </div>
     <div class="row">
+        @if (Model.Count() == 0)
+        {
+            <div class="row ms-12">
+                <div class="col-md-12 text-center">
+                    <img src="~/images/noresult.png" style="width: 18%; height: auto;">
+                    <p class="fw-bold mt-5">Apologies, you don't have any Collection.</p>
+                </div>
+            </div>
+        }
         @foreach (var collection in Model)
         {
             <div class="card box mb-3 mx-2 collection-card">
@@ -88,7 +98,7 @@
                         <a class="card-title card-limit-1 link-info link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
                        asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id">
 
-                            <h5 class=" text-color-change" style="font-weight: bold;">@collection.Name</h5>
+                            <h5 style="font-weight: bold;">@collection.Name</h5>
                         </a>
                         @if (collection.Description == null)
                         {
@@ -105,4 +115,5 @@
             </div>
         }@*END OF FOREACH*@
     </div>
+    <div style="flex-grow:1"></div>
 </div>

@@ -5,7 +5,6 @@
 }
 
 <hr />
-<h5>Your login is protected with an authenticator app. Enter your authenticator code below.</h5>
 
 <section style="height: 75vh !important;">
     <div class="container h-100">
@@ -15,9 +14,9 @@
                     <div class="card-body p-md-5">
                         <div class="row justify-content-center">
                             <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1 mb-4">
-                                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">@ViewData["Title"]</p>
+                                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4 text-color-change">@ViewData["Title"]</p>
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
+                                <form method="post" asp-route-returnUrl="@Model.ReturnUrl" class="text-color-change">
                                     <input asp-for="RememberMe" type="hidden" />
 
                                     <div class="d-flex flex-row align-items-center mb-4">
@@ -29,7 +28,7 @@
                                     </div>
                                     <div>
                                         <div class="checkbox">
-                                            <label asp-for="Input.RememberMachine" class="form-label">
+                                            <label asp-for="Input.RememberMachine" class="form-label text-color-change">
                                                 <input asp-for="Input.RememberMachine" />
                                                 @Html.DisplayNameFor(m => m.Input.RememberMachine)
                                             </label>
@@ -38,7 +37,7 @@
                                     <div>
                                         <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-info text-light">Login</button>
                                     </div>
-                                    <p>
+                                    <p class="text-color-change">
                                         Don't have access to your authenticator device?
                                         <a id="recovery-code-login" asp-page="./LoginWithRecoveryCode" asp-route-returnUrl="@Model.ReturnUrl">Log in with a recovery code</a>.
                                     </p>

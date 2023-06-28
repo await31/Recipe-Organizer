@@ -53,6 +53,49 @@ namespace CapstoneProject.Controllers {
             return Json(new { exists });
         }
 
+        [HttpPost]
+        public JsonResult GetDietaryRecipes(string dietary) {
+            // Generate data based on the selected dietary
+            var allRecipes = _context.Recipes
+                .Where(a => a.Status == true);
+
+            IEnumerable<Recipe> recipes = new List<Recipe>();
+
+            switch(dietary) {
+                case "highcalorie":
+                    recipes = allRecipes.Where(a=>a.Nutrition.Calories!= null).OrderByDescending(a=>a.Nutrition.Calories).Take(6).ToList();
+                    break;
+                case "lowcalorie":
+                    recipes = allRecipes.Where(a => a.Nutrition.Calories != null).OrderBy(a => a.Nutrition.Calories).Take(6).ToList();
+                    break;
+                case "highprotein":
+                    recipes = allRecipes.Where(a => a.Nutrition.Protein != null).OrderByDescending(a => a.Nutrition.Protein).Take(6).ToList();
+                    break;
+                case "lowprotein":
+                    recipes = allRecipes.Where(a => a.Nutrition.Protein != null).OrderBy(a => a.Nutrition.Protein).Take(6).ToList();
+                    break;
+                case "highfibre":
+                    recipes = allRecipes.Where(a => a.Nutrition.Fibre != null).OrderByDescending(a => a.Nutrition.Fibre).Take(6).ToList();
+                    break;
+                case "lowfibre":
+                    recipes = allRecipes.Where(a => a.Nutrition.Fibre != null).OrderBy(a => a.Nutrition.Fibre).Take(6).ToList();
+                    break;
+                case "highcarb":
+                    recipes = allRecipes.Where(a => a.Nutrition.Carbohydrate != null).OrderByDescending(a => a.Nutrition.Carbohydrate).Take(6).ToList();
+                    break;
+                case "lowcarb":
+                    recipes = allRecipes.Where(a => a.Nutrition.Carbohydrate != null).OrderBy(a => a.Nutrition.Carbohydrate).Take(6).ToList();
+                    break;
+                case "lowfat":
+                    recipes = allRecipes.Where(a => a.Nutrition.Fat != null).OrderBy(a => a.Nutrition.Fat).Take(6).ToList();
+                    break;
+                case "highfat":
+                    recipes = allRecipes.Where(a => a.Nutrition.Fat != null).OrderByDescending(a => a.Nutrition.Fat).Take(6).ToList();
+                    break;
+            }
+            return Json(recipes);
+        }
+
         public static void ExtractIntegerAndString(string inputString, out int integer, out string stringValue) {
             Match integerMatch = Regex.Match(inputString, @"\#(\d+)");
             if (integerMatch.Success) {

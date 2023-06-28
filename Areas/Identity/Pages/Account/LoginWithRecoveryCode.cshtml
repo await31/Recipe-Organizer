@@ -12,11 +12,10 @@
                     <div class="card-body p-md-5">
                         <div class="row justify-content-center">
                             <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1 mb-4">
-                                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">@ViewData["Title"]</p>
+                                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4 text-color-change">@ViewData["Title"]</p>
 
-                                
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                <form method="post">
+                                <form method="post" class="text-color-change">
                                     <div class="d-flex flex-row align-items-center mb-4">
                                         <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
@@ -28,7 +27,7 @@
                                         <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-info text-light">Log in</button>
                                     </div>
                                     <hr />
-                                    <p>
+                                    <p class="text-color-change">
                                         <i class="fa fa-exclamation-triangle fa-2x" style="" aria-hidden="true"></i>
 
                                         This login will not be remembered until you provide
