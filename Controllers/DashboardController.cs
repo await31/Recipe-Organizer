@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SmartBreadcrumbs.Attributes;
 using System.Data;
 
+
 namespace CapstoneProject.Controllers {
 
     [Authorize(Roles = "Admin")]
@@ -45,7 +46,59 @@ namespace CapstoneProject.Controllers {
             ViewData["PendingRequestsCount"] = objRecipe
                 .Count();
             ViewData["IngredientsPending"] = pendingIngredients;
+
+       
+            var ingredientCounts = _context.Ingredients
+                .Join(
+                    _context.IngredientCategories,
+                    ingredient => ingredient.FkCategoryId,
+                    category => category.Id,
+                    (ingredient, category) => new { Ingredient = ingredient, Category = category }
+                )
+                .GroupBy(
+                    pair => new { CategoryName = pair.Category.Name },
+                    (key, group) => new
+                    {
+                        CategoryName = key.CategoryName,
+                        IngredientCount = group.Count()
+                    }
+                )
+                .ToList();
+
+            var ingredientChartData = new List<Object>();
+            foreach (var item in ingredientCounts)
+            {
+                ingredientChartData.Add(new { Label = $"{item.CategoryName}", Value = item.IngredientCount });
+            }
+            ViewBag.IngredientChartData = Newtonsoft.Json.JsonConvert.SerializeObject(ingredientChartData);
+
+
+            var recipeCounts = _context.Recipes
+                .Join(
+                    _context.RecipeCategories,
+                    recipe => recipe.FkRecipeCategoryId,
+                    category => category.Id,
+                    (recipe, category) => new { Recipe = recipe, Category = category }
+                )
+                .GroupBy(
+                    pair => new { CategoryName = pair.Category.Name },
+                    (key, group) => new
+                    {
+                        CategoryName = key.CategoryName,
+                        RecipesCount = group.Count()
+                    }
+                )
+                .ToList();
+            var recipeChartData = new List<Object>();
+            foreach (var item in recipeCounts)
+            {
+                recipeChartData.Add(new { Label = $"{item.CategoryName}", Value = item.RecipesCount });
+            }
+            ViewBag.RecipeChartData = Newtonsoft.Json.JsonConvert.SerializeObject(recipeChartData);
+
             return View(objRecipe);
         }
+
+       
     }
 }
