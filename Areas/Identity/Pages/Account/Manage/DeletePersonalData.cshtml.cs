@@ -73,12 +73,12 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
             var currUserId = await _userManager.GetUserIdAsync(user);
             
             _context.Favourites.RemoveRange(_context.Favourites.Include(f => f.Account).Where(f=>f.Account.Id.Equals(currUserId)));
-            _context.MealPlans.RemoveRange(_context.MealPlans.Include(f => f.FkUser).Where(f=>f.FkUser.Id.Equals(currUserId)));
-            var a = _context.RecipeFeedbacks.Include(f => f.User).Where(f => f.User.Id.Equals(currUserId)).ToList();
-            foreach(var r in a)
-            {
-                _context.RecipeFeedbacks.Remove(r);
-            }
+            //_context.MealPlans.RemoveRange(_context.MealPlans.Include(f => f.FkUser).Where(f=>f.FkUser.Id.Equals(currUserId)));
+            //var a = _context.RecipeFeedbacks.Include(f => f.User).Where(f => f.User.Id.Equals(currUserId)).ToList();
+            //foreach(var r in a)
+            //{
+            //    _context.RecipeFeedbacks.Remove(r);
+            //}
 
             await _context.SaveChangesAsync();
 
