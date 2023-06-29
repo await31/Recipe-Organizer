@@ -53,7 +53,7 @@ builder.Services.AddAuthentication()
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<RecipeOrganizerContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")
+    builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 
 builder.Services.AddIdentity<Account, IdentityRole>(options => {
