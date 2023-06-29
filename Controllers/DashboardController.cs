@@ -45,7 +45,7 @@ namespace CapstoneProject.Controllers {
             ViewData["PendingRequestsCount"] = objRecipe
                 .Count();
             ViewData["IngredientsPending"] = pendingIngredients;
-
+            //Ingredient pie chart data
             var ingredientCounts = _context.Ingredients
               .Join(
                   _context.IngredientCategories,
@@ -70,7 +70,7 @@ namespace CapstoneProject.Controllers {
             }
             ViewBag.IngredientChartData = Newtonsoft.Json.JsonConvert.SerializeObject(ingredientChartData);
 
-
+            //Recipe doughnut chart data
             var recipeCounts = _context.Recipes
                 .Join(
                     _context.RecipeCategories,
@@ -93,6 +93,29 @@ namespace CapstoneProject.Controllers {
                 recipeChartData.Add(new { Label = $"{item.CategoryName}", Value = item.RecipesCount });
             }
             ViewBag.RecipeChartData = Newtonsoft.Json.JsonConvert.SerializeObject(recipeChartData);
+
+            //Recipe line chart daata
+
+            var recipeMonth = _context.Recipes
+                .GroupBy(r => r.CreatedDate.Value.Month)
+                 .Select(g => new
+                 {
+                     MonthNumber = g.Key,
+                     RecipeCount = g.Count()
+                 })
+                .OrderBy(g => g.MonthNumber)
+                .ToList();
+
+            var recipeMonthChartData = new int[12] { 0,0,0,0,0,0,0,0,0,0,0,0 };
+            foreach (var  item in recipeMonth) 
+            {
+                recipeMonthChartData[item.MonthNumber - 1] = item.RecipeCount;
+
+            }
+            var labels = new[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+
+            ViewBag.RecipeLineChartLabels = Newtonsoft.Json.JsonConvert.SerializeObject(labels);
+            ViewBag.RecipeLineChartData = Newtonsoft.Json.JsonConvert.SerializeObject(recipeMonthChartData);
 
             return View(objRecipe);
         }

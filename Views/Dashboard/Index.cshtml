@@ -292,7 +292,7 @@
         <div class="col-sm-12 col-lg-6 mb-4">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Ingredient Chart</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Recipe Chart</h6>
                 </div>
                 <div class="card-body">
                     <canvas id="recipeChart" style=" width: 100%;"></canvas>
@@ -301,10 +301,23 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-sm-12  mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Monthly Chart</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="recipeLineChart" style=" width: 100%;"></canvas>
 
+                </div>
+            </div>
+        </div>
+        
+    </div>
 </div>
 <!-- /.container-fluid -->
-            </div>
+
 <!-- End of Main Content -->
 <script src="~/lib/jquery-3.7.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
@@ -373,6 +386,33 @@
             height: 300 // Specify the desired height of the chart
         }
 
+    });
+
+    var lineChartLable = @Html.Raw(ViewBag.RecipeLineChartLabels);
+    var lineChartData = @Html.Raw(ViewBag.RecipeLineChartData);
+
+    var ctx3 = document.getElementById('recipeLineChart').getContext('2d');
+    var myChart3 = new Chart(ctx3, {
+        type: 'line',
+        data: {
+            labels: lineChartLable,
+            datasets: [{
+                label: 'Recipes',
+                data: lineChartData,
+                fill: false,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
     });
 </script>
 
