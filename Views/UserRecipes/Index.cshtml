@@ -132,7 +132,7 @@
 <!-- Modal -->
 <div class="favourite-modal modal fade" id="favouriteModal" tabindex="-1" aria-labelledby="favouriteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content modal-color-change">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="favouriteModalLabel"><i class="fa fa-heart mx-1" style="color:red"></i>Add to Collections</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -142,7 +142,7 @@
                     <div class="col-3" style="height:100%">
                         <img id="favourite-recipe-image" src="" class="img-fluid" alt="Food" style="height: 100%; width: 100%;object-fit: cover;">
                     </div>
-                    <div class="col-9 text-center" id="favourite-recipe-name" style="font-size:24px">
+                    <div class="col-9 text-center text-color-change" id="favourite-recipe-name" style="font-size:24px">
                     </div>
                 </div>
                 <div class="mb-3">
@@ -156,7 +156,7 @@
                                 foreach (var item in ViewBag.FavouriteList)
                                 {
                                     <div class="form-check my-5">
-                                        <label class="control control-checkbox">
+                                        <label class="control control-checkbox text-color-change">
                                             @item.Name
                                             <input class="form-check-input favourite-checkbox" type="checkbox" checked="checked" id="favourite-checkbox-@item.Id" value="@item.Id" />
                                             <div class="control_indicator"></div>

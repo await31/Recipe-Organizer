@@ -10,6 +10,8 @@
 }
 
 <link rel="stylesheet" href="~/css/favouritemodal.css" />
+<link rel="stylesheet" href="~/css/togglestyle.css"/>
+
 <style>
     .wrapper textarea {
         width: 100%;
@@ -385,7 +387,7 @@
 <!-- Modal -->
 <div class="favourite-modal modal fade" id="favouriteModal" tabindex="-1" aria-labelledby="favouriteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content modal-color-change">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="favouriteModalLabel"><i class="fa fa-heart mx-1" style="color:red"></i>Add to Collections</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -409,7 +411,7 @@
                                 foreach (var item in ViewBag.FavouriteList)
                                 {
                                     <div class="form-check my-5">
-                                        <label class="control control-checkbox">
+                                        <label class="control control-checkbox text-color-change">
                                             @item.Name
                                             <input class="form-check-input favourite-checkbox" type="checkbox" checked="checked" id="favourite-checkbox-@item.Id" value="@item.Id" />
                                             <div class="control_indicator"></div>
@@ -430,6 +432,7 @@
 </div>
 <script src="~/lib/jquery-3.7.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<script src="~/js/togglescript.js"></script>
 <script type="text/javascript">
     function removeParameterFromUrl(urlString, parameterName, parameterValue) {
         const url = new URL(urlString);

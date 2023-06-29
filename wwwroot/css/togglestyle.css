@@ -18,12 +18,11 @@
     --gray-85: #F4F7FA;
     --gray-90: #F7FAFD;
     --gray-95: #FCFEFE; /*...to light*/
-
     /*Form color*/
     --main-color: #E7F9FD; /*light blue*/
     --contrast-color: #1b2a47; /*dark blue*/
     --darkform-color: #1b2a47; /*dark blue*/
-
+    --modal-color: #231d34; /*dark blue*/
     /*Sidebar admin color*/
     --admin-sidebar: white;
     --admin-sidebar-contrast: #1b2a47; /*dark blue*/
@@ -58,6 +57,10 @@ body.dark h6 {
 
 body.dark div.color-change{
     background-color: var(--darkform-color); /*dark mode*/
+}
+
+body.dark div.modal-color-change {
+    background-color: var(--modal-color);
 }
 
 body.dark div.header-color-change{
