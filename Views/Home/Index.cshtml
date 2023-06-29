@@ -339,51 +339,50 @@
     </div>
 </div>
 
-        <!--start div-->
-        <div class="container text-center">
-            <div class="row row-cols-1 row-cols-lg-4 g-2 g-lg-3">
-                @foreach (var recipe in Model) {
-                    <div class="col overflow-hidden border-0">
-                        <div class="card border-0 rounded rounded-5 mx-1" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%); height: 400px;">
-                            <div class="position-relative" style="height: 60%;">
-                                @if (SignInManager.IsSignedIn(User)) {
-                                    <div class="position-absolute rounded-circle bg-light p-2 pb-1" style="top: 3%; right: 3%;">
-                                        <button class="unstyled-button add-favourite-button" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@recipe.Id"
-                                                data-recipe-imgpath="@recipe.ImgPath" data-recipe-name="@recipe.Name">
-                                            <i id="favourite-icon-@recipe.Id" class="fa fa-heart-o" style="font-size:32px;color:red"></i>
-                                        </button>
-                                    </div>
-                                }
-                                <img src="@recipe.ImgPath" class="img-fluid card-img-top" alt="Food" style="height: 100%;">
+<!--start div-->
+<div class="container text-center">
+    <div class="row row-cols-1 row-cols-lg-4 g-2 g-lg-3">
+        @foreach (var recipe in Model) {
+            <div class="col overflow-hidden border-0">
+                <div class="card border-0 rounded rounded-5 mx-1" style="background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,246,255,0.4086426807050946) 100%); height: 400px;">
+                    <div class="position-relative" style="height: 60%;">
+                        @if (SignInManager.IsSignedIn(User)) {
+                            <div class="position-absolute rounded-circle bg-light p-2 pb-1" style="top: 3%; right: 3%;">
+                                <button class="unstyled-button add-favourite-button" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@recipe.Id"
+                                        data-recipe-imgpath="@recipe.ImgPath" data-recipe-name="@recipe.Name">
+                                    <i id="favourite-icon-@recipe.Id" class="fa fa-heart-o" style="font-size:32px;color:red"></i>
+                                </button>
                             </div>
-                            <div class="mt-2" style="height: 40%;">
-                                <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@recipe.Id" class="text-decoration-none h-100" target="_blank">
-                                    <div class="card-body pb-4 pt-3">
-                                        <h4 class="card-title text-dark text-decoration-none text-center" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@recipe.Name</h4>
-                                        <div class="d-flex row mt-5 mb-3">
-                                            <div class="rounded-5 col-6 text-dark px-0">
-                                                @if (recipe.PrepTime < 360) {
-                                                    <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@recipe.PrepTime minutes</span>
-                                                } else {
-                                                    <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@(recipe.PrepTime / 60) hours</span>
-                                                }
-                                            </div>
-                                            <div class="rounded-5 col-6 text-dark px-0">
-                                                <i class="fa-solid fa-utensils"></i> <span class="text-dark" style="font-size: 14px;">@recipe.FkRecipeCategory?.Name</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
+                        }
+                        <img src="@recipe.ImgPath" class="img-fluid card-img-top" alt="Food" style="height: 100%;">
                     </div>
-                }
+                    <div class="mt-2" style="height: 40%;">
+                        <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@recipe.Id" class="text-decoration-none h-100" target="_blank">
+                            <div class="card-body pb-4 pt-3">
+                                <h4 class="card-title text-dark text-decoration-none text-center" style="font-family: Bahnschrift; white-space:nowrap; overflow: hidden; text-overflow:ellipsis;">@recipe.Name</h4>
+                                <div class="d-flex row mt-5 mb-3">
+                                    <div class="rounded-5 col-6 text-dark px-0">
+                                        @if (recipe.PrepTime < 360) {
+                                            <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@recipe.PrepTime minutes</span>
+                                        } else {
+                                            <i class="fa-solid fa-clock"></i> <span class="text-dark" style="font-size: 14px;">@(recipe.PrepTime / 60) hours</span>
+                                        }
+                                    </div>
+                                    <div class="rounded-5 col-6 text-dark px-0">
+                                        <i class="fa-solid fa-utensils"></i> <span class="text-dark" style="font-size: 14px;">@recipe.FkRecipeCategory?.Name</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
             </div>
-        </div>
+        }
     </div>
 </div>
+<!--end div-->
 
-        <!-- Modal -->
+<!-- Modal -->
 <div class="favourite-modal modal fade" id="favouriteModal" tabindex="-1" aria-labelledby="favouriteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -429,76 +428,76 @@
         </div>
     </div>
 </div>
-        <script src="~/lib/jquery-3.7.0.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
-        <script type="text/javascript">
-            function removeParameterFromUrl(urlString, parameterName, parameterValue) {
-                const url = new URL(urlString);
-                const parameterValues = url.searchParams.get(parameterName).split(',');
-                const updatedParameterValues = parameterValues.filter((item) => item != parameterValue);
-                url.searchParams.set(parameterName, updatedParameterValues.join(','));
-                return url.href;
-            }
-            $(document).ready(function () {
-                UpdateIcon();
-                //This function will update the recipe id of modal
-                //also unchecked all checkboxes
-        $('.add-favourite-button').click(function () {
-            var recipeId = $(this).data('recipe-id');
-            var recipeName = $(this).data('recipe-name');
-            var recipeImg = $(this).data('recipe-imgpath');
-            document.getElementById("favourite-recipe-name").innerHTML = recipeName;
-            document.getElementById("favourite-recipe-image").src = recipeImg;
-            $("#favourite-save").attr("data-recipe-id", recipeId);
-            UpdateCheckbox(recipeId);
-                });
-                //This function will add the recipe into all selected favourite lists on clicking button with class add-favourite
-                //currently only add in favourite list
-                $('#favourite-save').click(function () {
-                    var recipeId = document.getElementById("favourite-save").dataset.recipeId;
-                    //Get all checked boxes' favourite ids
-                    var favouriteIds = $('input.favourite-checkbox:checkbox:checked').map(function () {
-                        return $(this).val();
-                    }).get();
-                    //Get all boxes' favourite ids
-                    var allfavouriteIds = $('.favourite-checkbox').map(function () {
-                        return $(this).val();
-                    }).get();
-                    $.ajax({
-                        url: '/Favourites/AddRecipe',
-                        type: 'POST',
-                        data: { recipeId: recipeId, favouriteIds: favouriteIds, allfavouriteIds: allfavouriteIds },
-                        success: UpdateIcon,
-                        error: function () {
-                            alert('Error adding recipes to favorites.');
-                        }
-                    });
-                });
+<script src="~/lib/jquery-3.7.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<script type="text/javascript">
+    function removeParameterFromUrl(urlString, parameterName, parameterValue) {
+        const url = new URL(urlString);
+        const parameterValues = url.searchParams.get(parameterName).split(',');
+        const updatedParameterValues = parameterValues.filter((item) => item != parameterValue);
+        url.searchParams.set(parameterName, updatedParameterValues.join(','));
+        return url.href;
+    }
+    $(document).ready(function () {
+        UpdateIcon();
+        //This function will update the recipe id of modal
+        //also unchecked all checkboxes
+$('.add-favourite-button').click(function () {
+    var recipeId = $(this).data('recipe-id');
+    var recipeName = $(this).data('recipe-name');
+    var recipeImg = $(this).data('recipe-imgpath');
+    document.getElementById("favourite-recipe-name").innerHTML = recipeName;
+    document.getElementById("favourite-recipe-image").src = recipeImg;
+    $("#favourite-save").attr("data-recipe-id", recipeId);
+    UpdateCheckbox(recipeId);
+        });
+        //This function will add the recipe into all selected favourite lists on clicking button with class add-favourite
+        //currently only add in favourite list
+        $('#favourite-save').click(function () {
+            var recipeId = document.getElementById("favourite-save").dataset.recipeId;
+            //Get all checked boxes' favourite ids
+            var favouriteIds = $('input.favourite-checkbox:checkbox:checked').map(function () {
+                return $(this).val();
+            }).get();
+            //Get all boxes' favourite ids
+            var allfavouriteIds = $('.favourite-checkbox').map(function () {
+                return $(this).val();
+            }).get();
+            $.ajax({
+                url: '/Favourites/AddRecipe',
+                type: 'POST',
+                data: { recipeId: recipeId, favouriteIds: favouriteIds, allfavouriteIds: allfavouriteIds },
+                success: UpdateIcon,
+                error: function () {
+                    alert('Error adding recipes to favorites.');
+                }
             });
-            function UpdateCheckbox(recipeId) {
-                var favouriteIds = $('.favourite-checkbox').map(function () {
-                    return $(this).val();
-                }).get();
-                $('.favourite-checkbox').prop('checked', false); // Unchecks all boxes
+        });
+    });
+    function UpdateCheckbox(recipeId) {
+        var favouriteIds = $('.favourite-checkbox').map(function () {
+            return $(this).val();
+        }).get();
+        $('.favourite-checkbox').prop('checked', false); // Unchecks all boxes
 
-                $.ajax({
-                    url: '/Favourites/GetAllFavouriteLists',
-                    type: 'POST',
-                    data: { recipeId: recipeId, favouriteIds: favouriteIds },
-                    success: function (data) {
-                        for (var i = 0; i < data.length; i++) {
-                            if (data[i].isFavorite) {
-                                $('#favourite-checkbox-' + data[i].id).prop('checked', true); // Checks all boxes
-                            }
-                        }
-                    },
-                    error: function () {
-                        alert('Error getting favorite status.');
+        $.ajax({
+            url: '/Favourites/GetAllFavouriteLists',
+            type: 'POST',
+            data: { recipeId: recipeId, favouriteIds: favouriteIds },
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].isFavorite) {
+                        $('#favourite-checkbox-' + data[i].id).prop('checked', true); // Checks all boxes
                     }
-                });
-            };
-            function UpdateIcon() {
-                var recipeId = @Html.Raw(Json.Serialize(@Model.Select(r=> r.Id).ToArray()));
+                }
+            },
+            error: function () {
+                alert('Error getting favorite status.');
+            }
+        });
+    };
+    function UpdateIcon() {
+        var recipeId = @Html.Raw(Json.Serialize(@Model.Select(r=> r.Id).ToArray()));
 
         $.ajax({
             url: '/Favourites/GetAllFavouriteRecipes',
