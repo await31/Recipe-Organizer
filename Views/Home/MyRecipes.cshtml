@@ -21,7 +21,6 @@
         position:absolute;
         top:50%;
         left: 50%;
-        transform: translate(-50%, -50%);
         opacity: 0;
         visibility: hidden;
         transition: opacity .2s ease-in-out, visibility 0s linear .2s;
@@ -76,11 +75,11 @@
                 </div>
             </div>
             <div class="overlay"></div>
-            <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@recipe.Id" style="left: 50%; top: 60%;" target="_blank" class="btn btn-info position-absolute">
-                DETAILS <i class="fa-solid fa-circle-info"></i>
-            </a>
-            <a asp-controller="UserRecipes" asp-action="Edit" asp-route-id="@recipe.Id" style="left: 50%; top: 40%;" class="btn btn-warning position-absolute">
+            <a asp-controller="UserRecipes" asp-action="Edit" asp-route-id="@recipe.Id" style="width:88px;height:34px;margin-top:-17px;margin-left:-44px;left: 50%; top: 40%;" class="btn btn-warning position-absolute">
                 EDIT <i class="fa-solid fa-pen-to-square"></i>
+            </a>
+            <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@recipe.Id" style="width:110px;height:34px;margin-top:-17px;margin-left:-55px;left: 50%; top: 60%;" target="_blank" class="btn btn-info position-absolute">
+                DETAILS <i class="fa-solid fa-circle-info"></i>
             </a>
         </div>
     } @*End of foreach*@
