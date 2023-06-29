@@ -432,7 +432,6 @@
 </div>
 <script src="~/lib/jquery-3.7.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
-<script src="~/js/togglescript.js"></script>
 <script type="text/javascript">
     function removeParameterFromUrl(urlString, parameterName, parameterValue) {
         const url = new URL(urlString);
@@ -445,14 +444,14 @@
         UpdateIcon();
         //This function will update the recipe id of modal
         //also unchecked all checkboxes
-$('.add-favourite-button').click(function () {
-    var recipeId = $(this).data('recipe-id');
-    var recipeName = $(this).data('recipe-name');
-    var recipeImg = $(this).data('recipe-imgpath');
-    document.getElementById("favourite-recipe-name").innerHTML = recipeName;
-    document.getElementById("favourite-recipe-image").src = recipeImg;
-    $("#favourite-save").attr("data-recipe-id", recipeId);
-    UpdateCheckbox(recipeId);
+        $('.add-favourite-button').click(function () {
+            var recipeId = $(this).data('recipe-id');
+            var recipeName = $(this).data('recipe-name');
+            var recipeImg = $(this).data('recipe-imgpath');
+            document.getElementById("favourite-recipe-name").innerHTML = recipeName;
+            document.getElementById("favourite-recipe-image").src = recipeImg;
+            $("#favourite-save").attr("data-recipe-id", recipeId);
+            UpdateCheckbox(recipeId);
         });
         //This function will add the recipe into all selected favourite lists on clicking button with class add-favourite
         //currently only add in favourite list

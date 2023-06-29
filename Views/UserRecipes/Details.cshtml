@@ -19,6 +19,10 @@
         border: none;
     }
 
+    .printer{
+        color: black;
+    }
+
     .facebook {
         color: #3b5998;
     }
@@ -90,7 +94,7 @@
                                     </div>
                                     <div class="col-lg-8 col-10">
                                         <div>
-                                            <h5 style="font-size: 1rem;">@Model?.FkUser.UserName</h5>
+                                            <h5 class="text-color-change" style="font-size: 1rem;">@Model?.FkUser.UserName</h5>
                                             @Model?.CreatedDate
                                         </div>
                                     </div>
@@ -104,14 +108,14 @@
                                     <i class="fa-solid fa-clock"></i>
                                 </div>
                                 <div class="col-10">
-                                    <h5 class="fs-6">PREPARATION TIME</h5>
+                                    <h5 class="fs-6 text-color-change">PREPARATION TIME</h5>
                                     @if (Model?.PrepTime <= 360)
                                     {
-                                        <p>@Model?.PrepTime minutes</p>
+                                        <p class="text-color-change">@Model?.PrepTime minutes</p>
                                     }
                                     else
                                     {
-                                        <p>@(Model?.PrepTime / 60) hours</p>
+                                        <p class="text-color-change">@(Model?.PrepTime / 60) hours</p>
                                     }
                                 </div>
                             </div>
@@ -125,8 +129,8 @@
                                 <div class="col-10">
                                     @if (Model?.ServingSize != null)
                                     {
-                                        <h5 class="fs-6">SERVING SIZE</h5>
-                                        <p>For @Model?.ServingSize people</p>
+                                        <h5 class="fs-6 text-color-change">SERVING SIZE</h5>
+                                        <p class="text-color-change">For @Model?.ServingSize people</p>
                                     }
                                 </div>
                             </div>
@@ -138,8 +142,8 @@
                                     <i class="fa-solid fa-list"></i>
                                 </div>
                                 <div class="col-10">
-                                    <h5 class="fs-6">CATEGORY</h5>
-                                    <p>@Model?.FkRecipeCategory?.Name</p>
+                                    <h5 class="fs-6 text-color-change">CATEGORY</h5>
+                                    <p class="text-color-change">@Model?.FkRecipeCategory?.Name</p>
                                 </div>
                             </div>
                         </div>
@@ -155,7 +159,7 @@
                                     <i id="favourite-icon-@Model?.Id" class="fa fa-heart-o fa-3x" style="color:red"></i>
                                 </button>
                             }
-                            <button class="btn btn-sm mx-1" style="background: #E7FAFE; border-radius: 50%;" onclick="printDiv('printableArea')" value="Print">
+                            <button class="btn btn-sm mx-1 printer" style="background: #E7FAFE; border-radius: 50%;" onclick="printDiv('printableArea')" value="Print">
                                 <i class="fa fa-print fa-3x" aria-hidden="true"></i>
                             </button>
 
