@@ -276,107 +276,13 @@
 
         </div>
     </div>
-    <!--Chart-->
-    <div class="row">
-        <div class="col-sm-12 col-lg-6 mb-4">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Ingredient Chart</h6>
-                </div>
-                <div class="card-body">
-                    <canvas id="ingredientChart" style=" width: 100%;"></canvas>
-
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-12 col-lg-6 mb-4">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Ingredient Chart</h6>
-                </div>
-                <div class="card-body">
-                    <canvas id="recipeChart" style=" width: 100%;"></canvas>
-
-                </div>
-            </div>
-        </div>
-    </div>
 
 </div>
 <!-- /.container-fluid -->
-
+            </div>
 <!-- End of Main Content -->
-
 <script src="~/lib/jquery-3.7.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-    var chartData = @Html.Raw(ViewBag.IngredientChartData);
-
-    var ctx = document.getElementById('ingredientChart').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: chartData.map(data => data.Label),
-            datasets: [{
-                data: chartData.map(data => data.Value),
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)',
-                    'rgba(255, 159, 64, 0.6)',
-                    'rgba(255, 0, 0, 0.6)',
-                    'rgba(0, 255, 0, 0.6)',
-                    'rgba(0, 0, 255, 0.6)',
-                    'rgba(128, 128, 128, 0.6)'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false, // Set this to false to control the width and height manually
-            aspectRatio: 1.5, // Specify the desired aspect ratio (width:height) of the chart
-            width: 400, // Specify the desired width of the chart
-            height: 300 // Specify the desired height of the chart
-        }
-    });
-
-    var chartData2 = @Html.Raw(ViewBag.RecipeChartData);
-    var ctx2 = document.getElementById('recipeChart').getContext('2d');
-    var myChart2 = new Chart(ctx2, {
-        type: 'doughnut',
-        data: {
-            labels: chartData2.map(data => data.Label),
-            datasets: [{
-                data: chartData2.map(data => data.Value),
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)',
-                    'rgba(255, 159, 64, 0.6)',
-                    'rgba(255, 0, 0, 0.6)',
-                    'rgba(0, 255, 0, 0.6)',
-                    'rgba(0, 0, 255, 0.6)',
-                    'rgba(128, 128, 128, 0.6)'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false, // Set this to false to control the width and height manually
-            aspectRatio: 1.5, // Specify the desired aspect ratio (width:height) of the chart
-            width: 400, // Specify the desired width of the chart
-            height: 300 // Specify the desired height of the chart
-        }
-  
-    });
-</script>
-
 <script>
     $("#submitDeleteFormBtn").click(function () {
         $("#deleteConfirmForm").submit(); // Submit the form
