@@ -246,6 +246,8 @@ namespace CapstoneProject.Controllers {
             await DeleteFromFirebaseStorage(obj.ImgPath);
 
             _context.Ingredients.Remove(obj);
+            var ingredientListInRecipe = _context.RecipeIngredient.Where(ri => ri.IngredientId == obj.Id);
+            _context.RemoveRange(ingredientListInRecipe);
             _context.SaveChanges();
             TempData["success"] = "Ingredient deleted successfully";
             return RedirectToAction("Index");
