@@ -6,6 +6,7 @@
 }
 
 
+<link rel="stylesheet" href="~/css/asyncbutton.css" />
 <style>
     a:hover {
         cursor: pointer;
@@ -112,7 +113,7 @@
             </div>
             <div class="form-group mt-4" id="menu2">
                 <label asp-for="Date" class="control-label mb-2 label-font">Pick a time</label>
-                <input type="date" class="form-control" asp-for="Date" min="@today.ToString("yyyy-MM-dd")" />
+                <input type="date" class="form-control" asp-for="Date" value="@today.ToString("yyyy-MM-dd")" min="@today.ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
             <div class="form-group mt-4">
@@ -155,7 +156,9 @@
             </div>
             <div id="hidden-inputs-container"></div>
             <div class="form-group mt-5 text-center">
-                <input type="submit" value="Create" class="btn btn-success btn-lg" />
+                <div id="create-button-container" class="position-relative d-inline-block">
+                    <input type="submit" value="Create" class="btn btn-success btn-lg" id="create-button" />
+                    </div>
             </div>
         </form>
     </div>
@@ -165,6 +168,7 @@
 
 <script src="~/lib/jquery-3.7.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<script src="~/js/asyncbutton.js"></script>
 
 <script>
     document.getElementById('dietaries').addEventListener('change', function () {
@@ -301,6 +305,7 @@
 
     // Submit event handler
     $("#recipe-form").submit(function (event) {
+        showLoading('create-button', 'create-button-container');
         // Prevent the form from submitting
         event.preventDefault();
 
