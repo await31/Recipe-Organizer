@@ -152,7 +152,7 @@ namespace CapstoneProject.Controllers {
             recipe.Status = true; // Set the status to approved
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Dashboard");
         }
         [Authorize]
         // POST: Recipes/Deny
@@ -173,7 +173,7 @@ namespace CapstoneProject.Controllers {
             _context.Recipes.Remove(recipe);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Dashboard");
         }
 
 

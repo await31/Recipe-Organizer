@@ -38,6 +38,7 @@ namespace CapstoneProject.Controllers {
             ViewData["Contact"] = contact;
             ViewData["accCount"] = accounts.Count();
             ViewData["IngredientsCount"] = _context.Ingredients
+                .Where(a => a.Status == true)
                 .Count();
             ViewData["RecipesCount"] = _context.Recipes
                 .Where(a => a.Status == true)
@@ -47,6 +48,7 @@ namespace CapstoneProject.Controllers {
             ViewData["IngredientsPending"] = pendingIngredients;
             //Ingredient pie chart data
             var ingredientCounts = _context.Ingredients
+                .Where(b => b.Status == true)
               .Join(
                   _context.IngredientCategories,
                   ingredient => ingredient.FkCategoryId,
@@ -72,6 +74,7 @@ namespace CapstoneProject.Controllers {
 
             //Recipe doughnut chart data
             var recipeCounts = _context.Recipes
+                .Where(b => b.Status == true)
                 .Join(
                     _context.RecipeCategories,
                     recipe => recipe.FkRecipeCategoryId,
@@ -97,6 +100,7 @@ namespace CapstoneProject.Controllers {
             //Recipe line chart daata
 
             var recipeMonth = _context.Recipes
+                .Where(b => b.Status == true)
                 .GroupBy(r => r.CreatedDate.Value.Month)
                  .Select(g => new
                  {
