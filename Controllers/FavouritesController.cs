@@ -172,18 +172,25 @@ namespace CapstoneProject.Controllers {
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<JsonResult> Edit(int id, string name, string description, bool isPrivate) {
+        public async Task<JsonResult> Edit(int id, string name, string description, bool isPrivate)
+        {
             var favourite = _context.Favourites.FirstOrDefault(f => f.Id == id);
-            try {
+            try
+            {
                 favourite.Name = name;
                 favourite.Description = description;
                 favourite.isPrivate = isPrivate;
                 _context.Update(favourite);
                 await _context.SaveChangesAsync();
-            } catch (DbUpdateConcurrencyException) {
-                if (!FavouriteExists(favourite.Id)) {
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!FavouriteExists(favourite.Id))
+                {
                     return null;
-                } else {
+                }
+                else
+                {
                     throw;
                 }
             }

@@ -7,6 +7,8 @@
 @{
     ViewData["Title"] = "Recipe Details";
 }
+
+<link rel="stylesheet" href="~/css/favouritemodal.css" />
 <style>
     body {
         background-color: #eee;
@@ -139,8 +141,9 @@
                 <div class="row">
                     <div class="col-12 p-0 d-flex flex-row">
                         @if (SignInManager.IsSignedIn(User)) {
-                            <button class="btn btn-sm add-favourite-button mx-1" style="background-color: #e7f9fd; border-radius: 50%;" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@Model?.Id">
-                                <i id="favourite-icon-@Model?.Id" class="fa fa-heart-o fa-3x" style="color:red"></i>
+                            <button class="btn btn-sm add-favourite-button mx-1" style="background-color: #e7f9fd; border-radius: 50%;" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@Model?.Id"
+                                        data-recipe-imgpath="@Model?.ImgPath" data-recipe-name="@Model?.Name">
+                                    <i id="favourite-icon-@Model?.Id" class="fa fa-heart-o fa-3x" style="color:red"></i>
                             </button>
                         }
                         <button class="btn btn-sm mx-1" style="background: #E7FAFE; border-radius: 50%;" onclick="printDiv('printableArea')" value="Print">
@@ -196,40 +199,42 @@
                     <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Fibre gam</div>
                 </div>
             }
-        @if (Model?.Nutrition.Carbohydrate != null) {
-            <div class="nutrition row justify-content-between text-color-change-black">
-                <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Carbohydrate</div>
-                <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Carbohydrate gam</div>
-            </div>
-        }
-        @if (Model?.Nutrition.Cholesterol != null) {
+            @if (Model?.Nutrition.Carbohydrate != null)
+            {
                 <div class="nutrition row justify-content-between text-color-change-black">
-                <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Cholesterol</div>
-                <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Cholesterol gam</div>
-            </div>
-        }
-    </div>
+                    <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Carbohydrate</div>
+                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Carbohydrate gam</div>
+                </div>
+            }
+            @if (Model?.Nutrition.Cholesterol != null)
+            {
+                <div class="nutrition row justify-content-between text-color-change-black">
+                    <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Cholesterol</div>
+                    <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Cholesterol gam</div>
+                </div>
+            }
+        </div>
     </div>
     <div id="printInfo" style="display:none;">
         <h3>Ingredients</h3>
         <table class="table border mt-3 mb-2">
-        @if (Model?.RecipeIngredients != null)
-        {
-            foreach (var item in Model.RecipeIngredients)
+            @if (Model?.RecipeIngredients != null)
             {
-                <tr>
-                    <th class="py-2 fs-5 label-font">
-                        <a asp-controller="Home" asp-action="IngredientDetails" asp-route-id="@item?.Ingredient.FkCategoryId" asp-route-ingredientId="@item?.Ingredient.Id" target="_blank" class="text-dark">
-                            <img style="border-radius: 50%; width: 80px; height: 80px;"
-                                 src="@item.Ingredient?.ImgPath"
-                                 class="img-fluid" />
-                            &emsp; @item.Ingredient?.Name
-                        </a>
-                    </th>
-                    <td class="py-2 fs-6 align-middle">@item.Quantity @item.UnitOfMeasure</td>
-                </tr>
+                foreach (var item in Model.RecipeIngredients)
+                {
+                    <tr>
+                        <th class="py-2 fs-5 label-font">
+                            <a asp-controller="Home" asp-action="IngredientDetails" asp-route-id="@item?.Ingredient.FkCategoryId" asp-route-ingredientId="@item?.Ingredient.Id" target="_blank" class="text-dark">
+                                <img style="border-radius: 50%; width: 80px; height: 80px;"
+                                     src="@item.Ingredient?.ImgPath"
+                                     class="img-fluid" />
+                                &emsp; @item.Ingredient?.Name
+                            </a>
+                        </th>
+                        <td class="py-2 fs-6 align-middle">@item.Quantity @item.UnitOfMeasure</td>
+                    </tr>
+                }
             }
-        }
         </table>
         <h3>Description</h3>
         @Html.Raw(Model?.Description)
@@ -261,15 +266,17 @@
                     <div class="tab-pane fade show active" id="ex1-pills-1" role="tabpanel"
                          aria-labelledby="ex1-tab-1">
                         <table class="table border mt-3 mb-2">
-                            @if (Model?.RecipeIngredients != null) {
-                                foreach (var item in Model.RecipeIngredients) {
+                            @if (Model?.RecipeIngredients != null)
+                            {
+                                foreach (var item in Model.RecipeIngredients)
+                                {
                                     <tr>
                                         <th class="py-2 fs-5 label-font">
                                             <a asp-controller="Home" asp-action="IngredientDetails" asp-route-id="@item?.Ingredient.FkCategoryId" asp-route-ingredientId="@item?.Ingredient.Id" target="_blank" class="text-dark">
-                                            <img style="border-radius: 50%; width: 80px; height: 80px;"
-                                                 src="@item.Ingredient?.ImgPath"
-                                                 class="img-fluid" />
-                                            &emsp; @item.Ingredient?.Name
+                                                <img style="border-radius: 50%; width: 80px; height: 80px;"
+                                                     src="@item.Ingredient?.ImgPath"
+                                                     class="img-fluid" />
+                                                &emsp; @item.Ingredient?.Name
                                             </a>
                                         </th>
                                         <td class="py-2 fs-6 align-middle">@item.Quantity @item.UnitOfMeasure</td>
@@ -289,7 +296,8 @@
         <div class="col-lg-4 excludePrint">
             <div class="px-0 border shadow-0">
                 <h3 class="card-title bg-light text-center py-4 label-font text-dark">You may like these recipes</h3>
-                @foreach (var item in (List<Recipe>)ViewData["footerRecipes"]) {
+                @foreach (var item in (List<Recipe>)ViewData["footerRecipes"])
+                {
                     <div class="card rounded-0">
                         <div class="card-body">
                             <div class="d-flex mb-3">
@@ -311,7 +319,7 @@
             </div>
         </div>
     </div>
-    </section>
+</section>
 
 <!-- Feedback -->
 <div class="row d-flex align-items-center">
@@ -321,7 +329,8 @@
             @{
                 var feedbacks = ViewData["feedbacks"] as IEnumerable<RecipeFeedback>;
             }
-            @if (SignInManager.IsSignedIn(User)) {
+            @if (SignInManager.IsSignedIn(User))
+            {
                 <div class="card-body mt-3 d-flex flex-row align-items-center row ms-2">
                     <div class="col-md-1 mb-5 ms-2 me-2">
                         <img src="@UserManager.GetUserAsync(User).Result.ImgPath" width="50" height="50" class="rounded-circle">
@@ -341,28 +350,47 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="favouriteModal" tabindex="-1" aria-labelledby="favouriteModalLabel" aria-hidden="true">
+<div class="favourite-modal modal fade" id="favouriteModal" tabindex="-1" aria-labelledby="favouriteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="favouriteModalLabel">Add to Collections</h1>
+                <h1 class="modal-title fs-5" id="favouriteModalLabel"><i class="fa fa-heart mx-1" style="color:red"></i>Add to Collections</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                @{
-                    if (ViewBag.FavouriteList != null) {
-                        foreach (var item in ViewBag.FavouriteList) {
-                            <div class="form-check">
-                                <input class="form-check-input favourite-checkbox" type="checkbox" id="favourite-checkbox-@item.Id" value="@item.Id">
-                                <label class="form-check-label">@item.Name</label>
-                            </div>
+                <div class="row mb-3" style="height: 64px;">
+                    <div class="col-3" style="height:100%">
+                        <img id="favourite-recipe-image" src="" class="img-fluid" alt="Food" style="height: 100%; width: 100%;object-fit: cover;">
+                    </div>
+                    <div class="col-9 text-center" id="favourite-recipe-name" style="font-size:24px">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    Please check all the collections you want this recipe to be added
+                </div>
+                <div class="container list-container" style="">
+                    <div class="overflow-auto" style="max-height:100%">
+                        @{
+                            if (ViewBag.FavouriteList != null)
+                            {
+                                foreach (var item in ViewBag.FavouriteList)
+                                {
+                                    <div class="form-check my-5">
+                                        <label class="control control-checkbox">
+                                            @item.Name
+                                            <input class="form-check-input favourite-checkbox" type="checkbox" checked="checked" id="favourite-checkbox-@item.Id" value="@item.Id" />
+                                            <div class="control_indicator"></div>
+                                        </label>
+                                    </div>
+                                }
+                            }
                         }
-                    }
-                }
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button id="favourite-save" type="button" class="btn btn-primary" data-bs-dismiss="modal" data-recipe-id="0">Save</button>
+                <button id="favourite-save" type="button" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
             </div>
         </div>
     </div>
@@ -370,6 +398,13 @@
 
 <script src="~/lib/jquery-3.7.0.min.js"></script>
 <script type="text/javascript">
+    //This function when simulate a button press when press the enter key
+    document.getElementById("sendText").addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) { //Enter's keycode is 13
+            event.preventDefault();
+            document.getElementById("sendButton").click();
+        }
+    });
     function sendFeedback() {
         var sendId = document.getElementById("sendId").value;
         var sendText = document.getElementById("sendText").value;
@@ -427,7 +462,11 @@
         //This function will update the recipe id of modal
         //also unchecked all checkboxes
         $('.add-favourite-button').click(function () {
-            var recipeId = document.getElementById("favourite-save").dataset.recipeId;
+            var recipeId = $(this).data('recipe-id');
+            var recipeName = $(this).data('recipe-name');
+            var recipeImg = $(this).data('recipe-imgpath');
+            document.getElementById("favourite-recipe-name").innerHTML = recipeName;
+            document.getElementById("favourite-recipe-image").src = recipeImg;
             $("#favourite-save").attr("data-recipe-id", recipeId);
             UpdateCheckbox(recipeId);
         });
@@ -487,7 +526,6 @@
             success: function (data) {
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].isFavorite) {
-                        console.log('#favourite-icon-' + data[i].recipeId)
                         $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart');
                         $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart-o');
                     }

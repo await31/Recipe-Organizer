@@ -9,6 +9,7 @@
     ViewData["Title"] = "Cookez";
 }
 
+<link rel="stylesheet" href="~/css/favouritemodal.css" />
 <style>
     .wrapper textarea {
         width: 100%;
@@ -341,7 +342,8 @@
                             <div class="position-relative" style="height: 60%;">
                                 @if (SignInManager.IsSignedIn(User)) {
                                     <div class="position-absolute rounded-circle bg-light p-2 pb-1" style="top: 3%; right: 3%;">
-                                        <button class="unstyled-button add-favourite-button" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@recipe.Id">
+                                        <button class="unstyled-button add-favourite-button" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@recipe.Id"
+                                                data-recipe-imgpath="@recipe.ImgPath" data-recipe-name="@recipe.Name">
                                             <i id="favourite-icon-@recipe.Id" class="fa fa-heart-o" style="font-size:32px;color:red"></i>
                                         </button>
                                     </div>
@@ -372,34 +374,55 @@
                 }
             </div>
         </div>
+    </div>
+</div>
 
         <!-- Modal -->
-        <div class="modal fade" id="favouriteModal" tabindex="-1" aria-labelledby="favouriteModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="favouriteModalLabel">Add to Collections</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="favourite-modal modal fade" id="favouriteModal" tabindex="-1" aria-labelledby="favouriteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="favouriteModalLabel"><i class="fa fa-heart mx-1" style="color:red"></i>Add to Collections</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3" style="height: 64px;">
+                    <div class="col-3" style="height:100%">
+                        <img id="favourite-recipe-image" src="" class="img-fluid" alt="Food" style="height: 100%; width: 100%;object-fit: cover;">
                     </div>
-                    <div class="modal-body">
+                    <div class="col-9 text-center" id="favourite-recipe-name" style="font-size:24px">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    Please check all the collections you want this recipe to be added
+                </div>
+                <div class="container list-container" style="">
+                    <div class="overflow-auto" style="max-height:100%">
                         @{
-                            if (ViewBag.FavouriteList != null) {
-                                foreach (var item in ViewBag.FavouriteList) {
-                                    <div class="form-check">
-                                        <input class="form-check-input favourite-checkbox" type="checkbox" id="favourite-checkbox-@item.Id" value="@item.Id">
-                                        <label class="form-check-label">@item.Name</label>
+                            if (ViewBag.FavouriteList != null)
+                            {
+                                foreach (var item in ViewBag.FavouriteList)
+                                {
+                                    <div class="form-check my-5">
+                                        <label class="control control-checkbox">
+                                            @item.Name
+                                            <input class="form-check-input favourite-checkbox" type="checkbox" checked="checked" id="favourite-checkbox-@item.Id" value="@item.Id" />
+                                            <div class="control_indicator"></div>
+                                        </label>
                                     </div>
                                 }
                             }
                         }
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button id="favourite-save" type="button" class="btn btn-primary" data-bs-dismiss="modal" data-recipe-id="0">Save</button>
-                    </div>
                 </div>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="favourite-save" type="button" class="btn btn-primary" data-bs-dismiss="modal" data-recipe-id="0">Save</button>
+            </div>
         </div>
+    </div>
+</div>
         <script src="~/lib/jquery-3.7.0.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
         <script type="text/javascript">
@@ -408,17 +431,20 @@
                 const parameterValues = url.searchParams.get(parameterName).split(',');
                 const updatedParameterValues = parameterValues.filter((item) => item != parameterValue);
                 url.searchParams.set(parameterName, updatedParameterValues.join(','));
-                console.log(url.href);
                 return url.href;
             }
             $(document).ready(function () {
                 UpdateIcon();
                 //This function will update the recipe id of modal
                 //also unchecked all checkboxes
-                $('.add-favourite-button').click(function () {
-                    var recipeId = $(this).data('recipe-id');
-                    $("#favourite-save").attr("data-recipe-id", recipeId);
-                    UpdateCheckbox(recipeId);
+        $('.add-favourite-button').click(function () {
+            var recipeId = $(this).data('recipe-id');
+            var recipeName = $(this).data('recipe-name');
+            var recipeImg = $(this).data('recipe-imgpath');
+            document.getElementById("favourite-recipe-name").innerHTML = recipeName;
+            document.getElementById("favourite-recipe-image").src = recipeImg;
+            $("#favourite-save").attr("data-recipe-id", recipeId);
+            UpdateCheckbox(recipeId);
                 });
                 //This function will add the recipe into all selected favourite lists on clicking button with class add-favourite
                 //currently only add in favourite list
@@ -432,7 +458,6 @@
                     var allfavouriteIds = $('.favourite-checkbox').map(function () {
                         return $(this).val();
                     }).get();
-
                     $.ajax({
                         url: '/Favourites/AddRecipe',
                         type: 'POST',
@@ -458,7 +483,6 @@
                         for (var i = 0; i < data.length; i++) {
                             if (data[i].isFavorite) {
                                 $('#favourite-checkbox-' + data[i].id).prop('checked', true); // Checks all boxes
-                                console.log('#favourite-checkbox-' + data[i].id)
                             }
                         }
                     },
@@ -538,5 +562,4 @@
 
             });
         </script>
-
 
