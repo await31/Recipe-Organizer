@@ -5,7 +5,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<<<<<<< HEAD
+=======
+
+<link rel="stylesheet" href="~/css/asyncbutton.css" />
+>>>>>>> 4ee4bc7522dbf8686dc6b7dca6b0414f849efd7a
 <style>
+
     a:hover {
         cursor: pointer;
     }
@@ -30,7 +36,7 @@
     <div class="col-8 rounded-3 bg-white border border-dark border-2" style="background-color: #e7f9fd;">
         <form id="recipe-form" asp-action="Create" enctype="multipart/form-data" class="p-5">
             <h1 class="text-center mb-5 text-dark label-font">Information</h1>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger text-color-change-red"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label mb-2 label-font">Recipe Name</label>
                 <input asp-for="Name" class="form-control" placeholder="e.g. Egg fried rice" />
@@ -162,7 +168,9 @@
             </div>
             <div id="hidden-inputs-container"></div>
             <div class="form-group mt-5 text-center">
-                <input type="submit" value="Create request" class="btn btn-success btn-lg" />
+                <div id="create-button-container"class="position-relative d-inline-block">
+                    <input type="submit" value="Create Request" class="btn btn-success btn-lg" id="create-button" />
+                </div>
             </div>
         </form>
         <!-- Modal -->
@@ -192,7 +200,8 @@
                         <div class="mb-3 form-group">
                             <label class="control-label">Select category</label>
                             <select id="fkcategoryid" name="fkcategoryid" class="form-control">
-                                @foreach (var item in categoryList) {
+                                @foreach (var item in categoryList)
+                                {
                                     <option value="@item.Id">@item.Name</option>
                                 }
                             </select>
@@ -211,9 +220,21 @@
     </div>
 </div>
 
+@*@section Scripts {
+    @{
+        <script src="~/ckeditor/ckeditor.js"></script>
+        <script>
+            CKEDITOR.replace('Description');
+            CKEDITOR.config.filebrowserUploadUrl = '/your-upload-endpoint';
+        </script>
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}*@
+
 <script src="~/lib/jquery-3.7.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="~/js/asyncbutton.js"></script>
 <script>
     var ingredientIndex = 1;
     function addIngredient() {
@@ -229,7 +250,7 @@
         // Clear the selected option in the new select element
         newInput.value = '';
         newQuantityInput.value = '';
-        newUnitOfMeasureSelect.value = '';
+        newUnitOfMeasureSelect.value = 'milliliters';
         //changeId
         ingredientIndex++;
         newInput.id = 'ingredient-id-' + (ingredientIndex);
@@ -261,6 +282,7 @@
 
     // Submit event handler
     $("#recipe-form").submit(function (event) {
+        showLoading('create-button','create-button-container');
         // Prevent the form from submitting
         event.preventDefault();
 

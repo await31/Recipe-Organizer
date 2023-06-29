@@ -2,7 +2,9 @@
 
 @inject SignInManager<Account> SignInManager
 @inject UserManager<Account> UserManager
-
+@{
+    var user = UserManager.GetUserAsync(User).Result;
+}
 <style>
     hr {
         color: black;
@@ -14,14 +16,16 @@
         <a class="text-decoration-none btn btn-success text-light btn-sm me-1" asp-controller="UserRecipes" asp-action="Create"><i class="fa-solid fa-plus"></i> New recipe</a>
     </div>
     <div class="btn-group">
-
     </div>
     <div class="dropdown">
         <button class="btn btn-white border-0 dropdown-toggle p-0 mt-2" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
-            <img src="@UserManager.GetUserAsync(User).Result.ImgPath" class="img-fluid rounded-circle ms-2" style="width: 40px; height: 40px;" alt="avatar">
+             <img src="@user.ImgPath" class="img-fluid rounded-circle ms-2" style="width: 40px; height: 40px;" alt="avatar">
         </button>
         <ul class="dropdown-menu pb-0">
-            @if (UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "Admin").Result) {
+            <li class="mt-1 ps-3 py-1">
+                @user.UserName
+            </li>
+            @if (UserManager.IsInRoleAsync(user, "Admin").Result) {
                 <li class="ms-3 mt-1">
                     <a class="text-dark text-decoration-none py-1 pe-5" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
                 </li>
@@ -50,7 +54,3 @@
     <a class="btn btn-outline-dark me-2" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
     <a class="btn btn-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
 }
-
-<script src="~/lib/bootstrap-5.3.0/js/bootstrap.min.js"></script>
-<script src="~/lib/bootstrap-5.3.0/js/bootstrap.bundle.min.js"></script>
-

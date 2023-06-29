@@ -71,11 +71,21 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
                 }
             }
             var currUserId = await _userManager.GetUserIdAsync(user);
+            var recipeList = _context.Recipes.Include(f => f.FkUser).Where(f => f.FkUser.Id.Equals(currUserId)).ToList();
+            foreach(var recipe in recipeList)
+            {
+                recipe.FkUser = null;
+                _context.Update(recipe);
+                await _context.SaveChangesAsync();
+            }
             _context.Favourites.RemoveRange(_context.Favourites.Include(f => f.Account).Where(f=>f.Account.Id.Equals(currUserId)));
-            //_context.MealPlans.RemoveRange(_context.MealPlans.Include(f => f.FkUser).Where(f=>f.FkUser.Id.Equals(currUserId)));
-            //_context.RecipeFeedbacks.RemoveRange(_context.RecipeFeedbacks.Include(f=> f.User).Include(r=> r.Recipe).Where(f=>f.User.Id.Equals(currUserId)));
-            //_context.Recipes.RemoveRange(_context.Recipes.Include(f => f.FkUser).Where(f => f.FkUser.Id.Equals(currUserId)));
-            
+            _context.MealPlans.RemoveRange(_context.MealPlans.Include(f => f.FkUser).Where(f=>f.FkUser.Id.Equals(currUserId)));
+            var a = _context.RecipeFeedbacks.Include(f => f.User).Where(f => f.User.Id.Equals(currUserId)).ToList();
+            foreach (var r in a)
+            {
+                _context.RecipeFeedbacks.Remove(r);
+            }
+
             await _context.SaveChangesAsync();
 
             var result = await _userManager.DeleteAsync(user);

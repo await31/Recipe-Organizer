@@ -49,7 +49,8 @@ namespace CapstoneProject.Controllers {
             return Json(result);
         }
 
-        private List<SelectListItem> GetDifficultyList() {
+        private List<SelectListItem> GetDifficultyList()
+        {
             return new List<SelectListItem>
                     {
                     new SelectListItem { Text = "Easy", Value = "1"},
@@ -57,20 +58,25 @@ namespace CapstoneProject.Controllers {
                     new SelectListItem { Text = "Hard", Value = "3"},
                     };
         }
-        private List<SelectListItem> GetPrepTimeList() {
+        private List<SelectListItem> GetPrepTimeList()
+        {
             var list = new List<SelectListItem>();
-            for (int i = 5; i < 30; i += 5) {
+            for (int i = 5; i < 30; i += 5)
+            {
                 list.Add(new SelectListItem { Text = i + " minutes", Value = i.ToString() });
             }
-            for (int i = 30; i <= 360; i += 30) {
+            for (int i = 30; i <= 360; i += 30)
+            {
                 list.Add(new SelectListItem { Text = i + " minutes", Value = i.ToString() });
             }
-            for (int i = 420; i <= 720; i += 60) {
-                list.Add(new SelectListItem { Text = i / 60 + " hours", Value = i.ToString() });
+            for (int i = 420; i <= 720; i += 60)
+            {
+                list.Add(new SelectListItem { Text = i/60 + " hours", Value = i.ToString() });
             }
             return list;
         }
-        private List<SelectListItem> GetUnitsofMeasureList() {
+        private List<SelectListItem> GetUnitsofMeasureList()
+        {
             return new List<SelectListItem>
                     {
                     new SelectListItem { Text = "milliliters", Value = "milliliters"},
@@ -264,7 +270,8 @@ namespace CapstoneProject.Controllers {
             full = full.Replace(remove, "");
             return full;
         }
-        private List<RecipeFeedback> GetRecipeFeedbacks(int recipeId) {
+        private List<RecipeFeedback> GetRecipeFeedbacks(int recipeId)
+        {
             var feedbacks = _context.RecipeFeedbacks
                 .OrderByDescending(x => x.CreatedDate)
                 .Where(a => a.RecipeId == recipeId)
@@ -272,7 +279,8 @@ namespace CapstoneProject.Controllers {
                 .ToList();
             return feedbacks;
         }
-        private List<RecipeFeedback> GetRecipeFeedbackPage(List<RecipeFeedback> feedbacks, int pg) {
+        private List<RecipeFeedback> GetRecipeFeedbackPage(List<RecipeFeedback> feedbacks, int pg)
+        {
             const int pageSize = 5; // Number of comments in 1 page
             if (pg < 1)
                 pg = 1;
@@ -565,10 +573,15 @@ namespace CapstoneProject.Controllers {
                 try {
                     existingRecipe.Status = false;
                     await _context.SaveChangesAsync();
-                } catch (DbUpdateConcurrencyException) {
-                    if (!RecipeExists(recipe.Id)) {
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!RecipeExists(recipe.Id))
+                    {
                         return NotFound();
-                    } else {
+                    }
+                    else
+                    {
                         throw;
                     }
                 }
@@ -617,7 +630,8 @@ namespace CapstoneProject.Controllers {
         private bool RecipeExists(int id) {
             return (_context.Recipes?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-        public bool IngredientNameExists(string name) {
+        public bool IngredientNameExists(string name)
+        {
             return (_context.Ingredients?.Any(e => e.Name.Equals(name))).GetValueOrDefault();
         }
 
