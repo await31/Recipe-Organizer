@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CapstoneProject.Migrations
 {
     [DbContext(typeof(RecipeOrganizerContext))]
-    [Migration("20230618125421_InitDB")]
+    [Migration("20230629085013_InitDB")]
     partial class InitDB
     {
         /// <inheritdoc />
@@ -145,6 +145,9 @@ namespace CapstoneProject.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool?>("isPrivate")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
@@ -247,6 +250,9 @@ namespace CapstoneProject.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("Fat")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Fibre")
                         .HasColumnType("int");
 
                     b.Property<int?>("Protein")

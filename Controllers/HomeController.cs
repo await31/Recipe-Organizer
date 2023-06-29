@@ -17,13 +17,12 @@ namespace CapstoneProject.Controllers {
     [DefaultBreadcrumb]
     public class HomeController : Controller {
 
-        private readonly ILogger<HomeController> _logger;
+        //private readonly ILogger<HomeController> _logger;
 
         private readonly RecipeOrganizerContext _context;
         private readonly UserManager<Account> _userManager;
 
         public HomeController(RecipeOrganizerContext context, UserManager<Account> userManager) {
-            //_logger = logger;
             _context = context;
             _userManager = userManager;
         }

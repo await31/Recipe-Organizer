@@ -58,9 +58,7 @@ namespace CapstoneProject.Controllers {
             // Generate data based on the selected dietary
             var allRecipes = _context.Recipes
                 .Where(a => a.Status == true);
-
             IEnumerable<Recipe> recipes = new List<Recipe>();
-
             switch(dietary) {
                 case "highcalorie":
                     recipes = allRecipes.Where(a=>a.Nutrition.Calories!= null).OrderByDescending(a=>a.Nutrition.Calories).Take(6).ToList();

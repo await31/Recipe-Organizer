@@ -212,6 +212,7 @@ namespace CapstoneProject.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    isPrivate = table.Column<bool>(type: "bit", nullable: true),
                     AccountId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
@@ -388,6 +389,7 @@ namespace CapstoneProject.Migrations
                     Calories = table.Column<int>(type: "int", nullable: true),
                     Fat = table.Column<int>(type: "int", nullable: true),
                     Protein = table.Column<int>(type: "int", nullable: true),
+                    Fibre = table.Column<int>(type: "int", nullable: true),
                     Carbohydrate = table.Column<int>(type: "int", nullable: true),
                     Cholesterol = table.Column<int>(type: "int", nullable: true)
                 },
