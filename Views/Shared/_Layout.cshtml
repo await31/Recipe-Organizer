@@ -14,7 +14,7 @@
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap-5.3.0/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-    <link rel="stylesheet" href="~/css/recipedetail.css"/>
+    <link rel="stylesheet" href="~/css/recipedetail.css" />
     <link rel="stylesheet" href="~/css/togglestyle.css"/>
     <link rel="icon" type="image/x-icon" href="\images\logo.png">
     <script src="https://kit.fontawesome.com/08194921a9.js" crossorigin="anonymous"></script>
@@ -130,13 +130,13 @@
     <!-- Footer -->
     <div class="container-fluid shadow-sm">
         <footer class="d-flex flex-wrap justify-content-between align-items-center pt-3 pb-2 my-1 border-top">
-            <p class="col-md-4 mb-0 ps-2 text-color-change">&copy; 2023 Cookez, Inc</p>
+            <p class="col-md-4 mb-0 text-color-change" style="padding-left:50px">&copy; 2023 Cookez, Inc</p>
 
             <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
                 <img class="img-fluid" style="width: 60px; height: 60px;" src="~/images/logo.png"/>
             </a>
 
-            <ul class="nav col-md-4 justify-content-end text-color-change">
+            <ul class="nav col-md-4 justify-content-end text-color-change" style="padding-right:50px">
                 <li class="nav-item"><a asp-action="Privacy" asp-controller="Home" class="nav-link px-2 text-color-change" target="_blank">Privacy</a></li>
                 <li class="nav-item"><a asp-action="Contact" asp-controller="Home" class="nav-link px-2 text-color-change" target="_blank">Contact us</a></li>
             </ul>

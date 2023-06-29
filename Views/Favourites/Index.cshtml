@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "My Collections";
 }
+
 <link rel="stylesheet" href="~/css/collection.css" />
 <style>
     .card-limit-1 {
@@ -31,6 +32,7 @@
         }
 
 </style>
+
 
 <div class="container mx-2">
     <div class="row">
@@ -100,7 +102,7 @@
                         </a>
                         @if (collection.Description == null)
                         {
-                            <p class="card-text card-limit-2" style="height:52px">This collection doesn't have a description yet.</p>
+                            <p class="card-text card-limit-2 text-color-change" style="height:52px">This collection doesn't have a description yet.</p>
                         }
                         else
                         {

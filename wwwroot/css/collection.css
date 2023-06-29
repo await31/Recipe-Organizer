@@ -1,6 +1,7 @@
 ﻿.collection-card {
     height: 450px;
     width: 18rem;
+    height:450px;
     padding: 0;
     display: flex;
     border-style: solid;
@@ -14,8 +15,8 @@
     }
 
 .recipe-card {
-    width: 320px;
-    height: 400px;
+    width: 340px;
+    height: 420px;
 }
 
     .recipe-card .card-head {
@@ -28,19 +29,19 @@
     }
 
 @media (max-width: 767px) {
-    .recipe-card, .collection-card {
+    .recipe-card, .collection-card{
         width: 100%;
         height: 280px;
         display: flex;
         flex-direction: row;
     }
 
-        .recipe-card .card-head {
+        .recipe-card .card-head, .collection-card .card-head {
             height: 100%;
             width: 100%;
         }
 
-        .recipe-card .card-body {
+        .recipe-card .card-body, .collection-card .card-body {
             height: 100%;
             width: 100%;
         }

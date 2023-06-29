@@ -16,6 +16,7 @@
     ViewBag.Title = "Search recipe";
 }
 
+<link rel="stylesheet" href="~/css/favouritemodal.css" />
 <div class="row">
     <div class="px-0">
         <br />
@@ -53,6 +54,7 @@
                             </span>
                         }
                     }
+                    <br />
                     <label for="recipeCategory" class="control-label mt-3 mb-1">Category:</label>
                     <select class="form-control" name="recipeCategory" asp-items="ViewBag.FkRecipeCategoryId" onchange="document.getElementById('btnSubmit').click();">
                         <option value="All">All</option>
@@ -90,7 +92,8 @@
                                 <div class="position-relative" style="height: 60%;">
                                     @if (SignInManager.IsSignedIn(User)) {
                                         <div class="position-absolute rounded-circle bg-light p-2 pb-1" style="top: 3%; right: 3%;">
-                                            <button class="unstyled-button add-favourite-button" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@recipe.Id">
+                                            <button class="unstyled-button add-favourite-button" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@recipe.Id"
+                                                    data-recipe-imgpath="@recipe.ImgPath" data-recipe-name="@recipe.Name">
                                                 <i id="favourite-icon-@recipe.Id" class="fa fa-heart-o" style="font-size:32px;color:red"></i>
                                             </button>
                                         </div>
@@ -127,28 +130,47 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="favouriteModal" tabindex="-1" aria-labelledby="favouriteModalLabel" aria-hidden="true">
+<div class="favourite-modal modal fade" id="favouriteModal" tabindex="-1" aria-labelledby="favouriteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="favouriteModalLabel">Add to Collections</h1>
+                <h1 class="modal-title fs-5" id="favouriteModalLabel"><i class="fa fa-heart mx-1" style="color:red"></i>Add to Collections</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                @{
-                    if (ViewBag.FavouriteList != null) {
-                        foreach (var item in ViewBag.FavouriteList) {
-                            <div class="form-check">
-                                <input class="form-check-input favourite-checkbox" type="checkbox" id="favourite-checkbox-@item.Id" value="@item.Id">
-                                <label class="form-check-label">@item.Name</label>
-                            </div>
+                <div class="row mb-3" style="height: 64px;">
+                    <div class="col-3" style="height:100%">
+                        <img id="favourite-recipe-image" src="" class="img-fluid" alt="Food" style="height: 100%; width: 100%;object-fit: cover;">
+                    </div>
+                    <div class="col-9 text-center" id="favourite-recipe-name" style="font-size:24px">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    Please check all the collections you want this recipe to be added
+                </div>
+                <div class="container list-container" style="">
+                    <div class="overflow-auto" style="max-height:100%">
+                        @{
+                            if (ViewBag.FavouriteList != null)
+                            {
+                                foreach (var item in ViewBag.FavouriteList)
+                                {
+                                    <div class="form-check my-5">
+                                        <label class="control control-checkbox">
+                                            @item.Name
+                                            <input class="form-check-input favourite-checkbox" type="checkbox" checked="checked" id="favourite-checkbox-@item.Id" value="@item.Id" />
+                                            <div class="control_indicator"></div>
+                                        </label>
+                                    </div>
+                                }
+                            }
                         }
-                    }
-                }
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button id="favourite-save" type="button" class="btn btn-primary" data-bs-dismiss="modal" data-recipe-id="0">Save</button>
+                <button id="favourite-save" type="button" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
             </div>
         </div>
     </div>
@@ -196,6 +218,10 @@
         //also unchecked all checkboxes
         $('.add-favourite-button').click(function () {
             var recipeId = $(this).data('recipe-id');
+            var recipeName = $(this).data('recipe-name');
+            var recipeImg = $(this).data('recipe-imgpath');
+            document.getElementById("favourite-recipe-name").innerHTML = recipeName;
+            document.getElementById("favourite-recipe-image").src = recipeImg;
             $("#favourite-save").attr("data-recipe-id", recipeId);
             UpdateCheckbox(recipeId);
         });
