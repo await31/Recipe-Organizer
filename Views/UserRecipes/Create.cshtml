@@ -31,7 +31,7 @@
     <div class="col-8 rounded-3 bg-white border border-dark border-2" style="background-color: #e7f9fd;">
         <form id="recipe-form" asp-action="Create" enctype="multipart/form-data" class="p-5">
             <h1 class="text-center mb-5 text-dark label-font">Information</h1>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger text-color-change-red"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label mb-2 label-font">Recipe Name</label>
                 <input asp-for="Name" class="form-control" placeholder="e.g. Egg fried rice" />

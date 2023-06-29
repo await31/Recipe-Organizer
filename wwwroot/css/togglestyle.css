@@ -87,9 +87,18 @@ body.dark *.text-color-change {
 body.dark *.text-color-change-black {
     color: black; /*dark mode*/
 }
+body.dark .text-color-change-red li{
+    color: red; /*dark mode*/
+}
 body.dark td {
     color: white;
 }
+
+/*Trivia*/
+body.dark p.darkmode-shadow {
+    text-shadow: 2px 2px 4px #000000;
+}
+
 
 /*Admin page*/
 body.dark nav.bar-admin-change {

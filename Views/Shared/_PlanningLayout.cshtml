@@ -76,6 +76,15 @@
         text-overflow: ellipsis;
     }
 </style>
+<script>
+    window.chatbaseConfig = {
+        chatbotId: "mQrtSXYqLsinfPowHB8N4",
+    }
+</script>
+<script src="https://www.chatbase.co/embed.min.js"
+        id="mQrtSXYqLsinfPowHB8N4"
+        defer>
+</script>
 <body class="dark">
     <header class="pb-2 bg-light shadow-sm">
         <div class="container-fluid">
@@ -121,8 +130,8 @@
             </a>
 
             <ul class="nav col-md-4 justify-content-end text-color-change">
-                <li class="nav-item"><a asp-action="Privacy" class="nav-link px-2 text-color-change" target="_blank">Privacy</a></li>
-                <li class="nav-item"><a href="#" class="nav-link px-2 text-color-change" target="_blank">Contact us</a></li>
+                <li class="nav-item"><a asp-action="Privacy" asp-controller="Home" class="nav-link px-2 text-color-change" target="_blank">Privacy</a></li>
+                <li class="nav-item"><a asp-action="Contact" asp-controller="Home" class="nav-link px-2 text-color-change" target="_blank">Contact us</a></li>
             </ul>
         </footer>
     </div>

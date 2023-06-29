@@ -222,7 +222,6 @@
         border-color: rgba(255,255,255,.6);
     }
 </style>
-
 @if (hotRecipe != null) {
     <div class="card col-md-12 rounded-5 overflow-hidden border-0 mb-5 mt-3">
         <div class="row g-0">
@@ -285,12 +284,13 @@
         <h1 class="text-center label-font">Ingredient Categories</h1>
     </div>
     <div class="container text-center">
-        <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+        <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3 dark">
+
             <div class="col">
                 <div class="mx-3 shadow-sm rounded-4 p-3" style="height:100%; background: rgb(255 118 118 / 41%);">
-                    <a class="text-decoration-none text-dark" asp-action="ViewIngredient" asp-route-id="1">
+                    <a class="text-decoration-none" asp-action="ViewIngredient" asp-route-id="1">
                         <img src="~/images/category-protein.png" class="img-fluid w-100 h-50" />
-                        <p class="fw-bold fs-4 pt-4 text-danger label-font">Protein</p>
+                        <p class="fw-bold fs-4 pt-4 text-danger label-font darkmode-shadow">Protein</p>
                     </a>
                 </div>
             </div>
@@ -298,7 +298,7 @@
                 <div class="mx-3 shadow-sm rounded-4 p-3" style="height:100%; background: rgb(255 243 116 / 41%);">
                     <a class="text-decoration-none text-dark" asp-action="ViewIngredient" asp-route-id="2">
                         <img src="~/images/category-carb.png" class="img-fluid w-100 h-50" />
-                        <p class="fw-bold fs-4 pt-4 label-font" style="color: #dec418;">Carbs</p>
+                        <p class="fw-bold fs-4 pt-4 label-font darkmode-shadow" style="color: #dec418;">Carbs</p>
                     </a>
                 </div>
             </div>
@@ -306,7 +306,7 @@
                 <div class="mx-3 shadow-sm rounded-4 p-3" style="height:100%; background: rgb(150 255 81 / 41%);">
                     <a class="text-decoration-none text-dark" asp-action="ViewIngredient" asp-route-id="3">
                         <img src="~/images/category-fiber.png" class="img-fluid w-100 h-50" />
-                        <p class="fw-bold fs-4 pt-4 text-success label-font">Fiber</p>
+                        <p class="fw-bold fs-4 pt-4 text-success label-font darkmode-shadow">Fibre</p>
                     </a>
                 </div>
             </div>
@@ -314,7 +314,7 @@
                 <div class="mx-3 shadow-sm rounded-4 p-3" style="height:100%; background:rgba(192,246,255,0.4086426807050946);">
                     <a class="text-decoration-none text-dark" asp-action="ViewIngredient" asp-route-id="4">
                         <img src="~/images/category-fat.png" class="img-fluid w-100 h-50" />
-                        <p class="fw-bold fs-4 pt-4 text-info label-font">Fat</p>
+                        <p class="fw-bold fs-4 pt-4 text-info label-font darkmode-shadow">Fat</p>
                     </a>
                 </div>
             </div>
@@ -322,17 +322,23 @@
                 <div class="mx-3 shadow-sm rounded-4 p-3" style="height:100%; background: rgb(255 150 75 / 41%);">
                     <a class="text-decoration-none text-dark" asp-action="ViewIngredient" asp-route-id="5">
                         <img src="~/images/category-spices.png" class="img-fluid w-100 h-50" />
-                        <p class="fw-bold fs-4 pt-4 label-font" style="color: darkorange;">Spices</p>
+                        <p class="fw-bold fs-4 pt-4 label-font darkmode-shadow" style="color: darkorange;">Spices</p>
                     </a>
                 </div>
             </div>
+
         </div>
-        <hr />
-        <div class="col-md-12 mt-5 mb-5 h-auto">
-            <div class="row d-flex mb-5">
-                <h1 class="text-center label-font">Latest Recipes</h1>
-            </div>
-        </div>
+    </div>
+</div>
+
+<hr />
+<div class="col-md-12 mt-5 mb-5 h-auto">
+    <div class="row d-flex mb-5">
+        <h1 class="text-center label-font">Latest Recipes</h1>
+    </div>
+</div>
+
+        <!--start div-->
         <div class="container text-center">
             <div class="row row-cols-1 row-cols-lg-4 g-2 g-lg-3">
                 @foreach (var recipe in Model) {
@@ -372,6 +378,8 @@
                 }
             </div>
         </div>
+        <!--end div-->
+
 
         <!-- Modal -->
         <div class="modal fade" id="favouriteModal" tabindex="-1" aria-labelledby="favouriteModalLabel" aria-hidden="true">
@@ -400,143 +408,143 @@
                 </div>
             </div>
         </div>
-        <script src="~/lib/jquery-3.7.0.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
-        <script type="text/javascript">
-            function removeParameterFromUrl(urlString, parameterName, parameterValue) {
-                const url = new URL(urlString);
-                const parameterValues = url.searchParams.get(parameterName).split(',');
-                const updatedParameterValues = parameterValues.filter((item) => item != parameterValue);
-                url.searchParams.set(parameterName, updatedParameterValues.join(','));
-                console.log(url.href);
-                return url.href;
-            }
-            $(document).ready(function () {
-                UpdateIcon();
-                //This function will update the recipe id of modal
-                //also unchecked all checkboxes
-                $('.add-favourite-button').click(function () {
-                    var recipeId = $(this).data('recipe-id');
-                    $("#favourite-save").attr("data-recipe-id", recipeId);
-                    UpdateCheckbox(recipeId);
-                });
-                //This function will add the recipe into all selected favourite lists on clicking button with class add-favourite
-                //currently only add in favourite list
-                $('#favourite-save').click(function () {
-                    var recipeId = document.getElementById("favourite-save").dataset.recipeId;
-                    //Get all checked boxes' favourite ids
-                    var favouriteIds = $('input.favourite-checkbox:checkbox:checked').map(function () {
-                        return $(this).val();
-                    }).get();
-                    //Get all boxes' favourite ids
-                    var allfavouriteIds = $('.favourite-checkbox').map(function () {
-                        return $(this).val();
-                    }).get();
+<script src="~/lib/jquery-3.7.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<script type="text/javascript">
+    function removeParameterFromUrl(urlString, parameterName, parameterValue) {
+        const url = new URL(urlString);
+        const parameterValues = url.searchParams.get(parameterName).split(',');
+        const updatedParameterValues = parameterValues.filter((item) => item != parameterValue);
+        url.searchParams.set(parameterName, updatedParameterValues.join(','));
+        console.log(url.href);
+        return url.href;
+    }
+    $(document).ready(function () {
+        UpdateIcon();
+        //This function will update the recipe id of modal
+        //also unchecked all checkboxes
+        $('.add-favourite-button').click(function () {
+            var recipeId = $(this).data('recipe-id');
+            $("#favourite-save").attr("data-recipe-id", recipeId);
+            UpdateCheckbox(recipeId);
+        });
+        //This function will add the recipe into all selected favourite lists on clicking button with class add-favourite
+        //currently only add in favourite list
+        $('#favourite-save').click(function () {
+            var recipeId = document.getElementById("favourite-save").dataset.recipeId;
+            //Get all checked boxes' favourite ids
+            var favouriteIds = $('input.favourite-checkbox:checkbox:checked').map(function () {
+                return $(this).val();
+            }).get();
+            //Get all boxes' favourite ids
+            var allfavouriteIds = $('.favourite-checkbox').map(function () {
+                return $(this).val();
+            }).get();
 
-                    $.ajax({
-                        url: '/Favourites/AddRecipe',
-                        type: 'POST',
-                        data: { recipeId: recipeId, favouriteIds: favouriteIds, allfavouriteIds: allfavouriteIds },
-                        success: UpdateIcon,
-                        error: function () {
-                            alert('Error adding recipes to favorites.');
-                        }
-                    });
-                });
+            $.ajax({
+                url: '/Favourites/AddRecipe',
+                type: 'POST',
+                data: { recipeId: recipeId, favouriteIds: favouriteIds, allfavouriteIds: allfavouriteIds },
+                success: UpdateIcon,
+                error: function () {
+                    alert('Error adding recipes to favorites.');
+                }
             });
-            function UpdateCheckbox(recipeId) {
-                var favouriteIds = $('.favourite-checkbox').map(function () {
-                    return $(this).val();
-                }).get();
-                $('.favourite-checkbox').prop('checked', false); // Unchecks all boxes
+        });
+    });
+    function UpdateCheckbox(recipeId) {
+        var favouriteIds = $('.favourite-checkbox').map(function () {
+            return $(this).val();
+        }).get();
+        $('.favourite-checkbox').prop('checked', false); // Unchecks all boxes
 
-                $.ajax({
-                    url: '/Favourites/GetAllFavouriteLists',
-                    type: 'POST',
-                    data: { recipeId: recipeId, favouriteIds: favouriteIds },
-                    success: function (data) {
-                        for (var i = 0; i < data.length; i++) {
-                            if (data[i].isFavorite) {
-                                $('#favourite-checkbox-' + data[i].id).prop('checked', true); // Checks all boxes
-                                console.log('#favourite-checkbox-' + data[i].id)
-                            }
-                        }
-                    },
-                    error: function () {
-                        alert('Error getting favorite status.');
+        $.ajax({
+            url: '/Favourites/GetAllFavouriteLists',
+            type: 'POST',
+            data: { recipeId: recipeId, favouriteIds: favouriteIds },
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].isFavorite) {
+                        $('#favourite-checkbox-' + data[i].id).prop('checked', true); // Checks all boxes
+                        console.log('#favourite-checkbox-' + data[i].id)
                     }
-                });
-            };
-            function UpdateIcon() {
-                var recipeId = @Html.Raw(Json.Serialize(@Model.Select(r=> r.Id).ToArray()));
-
-                $.ajax({
-                    url: '/Favourites/GetAllFavouriteRecipes',
-                    type: 'POST',
-                    data: { recipeIds: recipeId },
-                    success: function (data) {
-                        for (var i = 0; i < data.length; i++) {
-                            if (data[i].isFavorite) {
-                                $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart');
-                                $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart-o');
-                            }
-                            else {
-                                $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart');
-                                $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart-o');
-                            }
-                        }
-                    },
-                    error: function () {
-                        alert('Error getting favorite status.');
-                    }
-                });
+                }
+            },
+            error: function () {
+                alert('Error getting favorite status.');
             }
+        });
+    };
+    function UpdateIcon() {
+        var recipeId = @Html.Raw(Json.Serialize(@Model.Select(r=> r.Id).ToArray()));
 
-            $("#sendContactBtn").click(function () {
-                // Get the form values
-                var name = $("#name").val();
-                var email = $("#email").val();
-                var message = $("#message").val();
-                var userId = $("#userid").val();
-                console.log(name + email + message + userId);
-
-                var formData = new FormData();
-                formData.append("UserName", name);
-                formData.append("Email", email);
-                formData.append("Message", message);
-                formData.append("UserId", userId);
-
-                console.log(formData);
-
-
-                $.ajax({
-                    url: '/Contacts/CreateAjax',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (response) {
-                        if (response.success) {
-                            // Handle success response
-                            alert('Contact created successfully!');
-                        } else {
-                            // Handle failure response
-                            alert('Failed to create contact.');
-                        }
-                    },
-
-                    error: function (xhr, status, error) {
-                        // Handle error
-                        alert('An error occurred while creating the contact.');
+        $.ajax({
+            url: '/Favourites/GetAllFavouriteRecipes',
+            type: 'POST',
+            data: { recipeIds: recipeId },
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].isFavorite) {
+                        $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart');
+                        $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart-o');
                     }
-                });
-                // Clear input values
-                $("#name").val("");
-                $("#email").val("");
-                $("#message").val("");
-                $("#userid").val("");
+                    else {
+                        $('#favourite-icon-' + data[i].recipeId).removeClass('fa-heart');
+                        $('#favourite-icon-' + data[i].recipeId).addClass('fa-heart-o');
+                    }
+                }
+            },
+            error: function () {
+                alert('Error getting favorite status.');
+            }
+        });
+    }
 
-            });
-        </script>
+    $("#sendContactBtn").click(function () {
+        // Get the form values
+        var name = $("#name").val();
+        var email = $("#email").val();
+        var message = $("#message").val();
+        var userId = $("#userid").val();
+        console.log(name + email + message + userId);
+
+        var formData = new FormData();
+        formData.append("UserName", name);
+        formData.append("Email", email);
+        formData.append("Message", message);
+        formData.append("UserId", userId);
+
+        console.log(formData);
+
+
+        $.ajax({
+            url: '/Contacts/CreateAjax',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.success) {
+                    // Handle success response
+                    alert('Contact created successfully!');
+                } else {
+                    // Handle failure response
+                    alert('Failed to create contact.');
+                }
+            },
+
+            error: function (xhr, status, error) {
+                // Handle error
+                alert('An error occurred while creating the contact.');
+            }
+        });
+        // Clear input values
+        $("#name").val("");
+        $("#email").val("");
+        $("#message").val("");
+        $("#userid").val("");
+
+    });
+</script>
 
 

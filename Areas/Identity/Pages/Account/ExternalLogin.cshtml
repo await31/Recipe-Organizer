@@ -39,7 +39,7 @@
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-md-7">
                 <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger text-color-change-red"></div>
 
                     @if(Model.ProviderDisplayName != "Google")
                     {
