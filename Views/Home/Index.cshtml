@@ -255,7 +255,7 @@
                                         <img src="@hotRecipe.FkUser.ImgPath" class="rounded-circle" style="height: 50px; width: 50px;" alt="Food">
                                         <div class="ms-2 user-info">
                                             <p class="fw-bold mb-0">@hotRecipe.FkUser.UserName</p>
-                                            <p class="text-secondary mb-0">@hotRecipe.CreatedDate</p>
+                                            <p class="text-secondary mb-0">@hotRecipe.CreatedDate?.ToShortDateString()</p>
                                         </div>
                                     </a>
                                 } else {
@@ -263,7 +263,7 @@
                                         <img src="@hotRecipe.FkUser.ImgPath" class="rounded-circle" style="height: 50px; width: 50px;" alt="Food">
                                         <div class="ms-2 user-info">
                                             <p class="fw-bold mb-0">@hotRecipe.FkUser.UserName</p>
-                                            <p class="text-secondary mb-0">@hotRecipe.CreatedDate</p>
+                                            <p class="text-secondary mb-0">@hotRecipe.CreatedDate?.ToShortDateString()</p>
                                         </div>
                                     </a>
                                 }

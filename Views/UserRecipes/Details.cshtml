@@ -83,23 +83,47 @@
                     <div class="row">
                         @if (Model?.FkUser != null)
                         {
-                            <div class="col-md excludePrint"
-                                 style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
-                                <div class="row">
-                                    <div class="col-lg-4 col-2 px-0" style="align-self: center;">
-                                        <div>
-                                            <img class="img-fluid rounded-circle"
-                                                 src="@Model?.FkUser?.ImgPath" style="height: 60px; width: 60px;">
+                                if (SignInManager.IsSignedIn(User)) {
+                                    <div class="col-md excludePrint"
+                                         style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
+                                    <a asp-controller="Home" asp-action="UserProfile" asp-route-userId="@Model.FkUserId" class="text-decoration-none text-dark d-flex">
+                                         <div class="row">
+                                            <div class="col-lg-4 col-2 px-0" style="align-self: center;">
+                                                <div>
+                                                    <img class="img-fluid rounded-circle"
+                                                         src="@Model?.FkUser?.ImgPath" style="height: 60px; width: 60px;">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-8 col-10">
+                                                <div>
+                                                    <h5 class="text-color-change" style="font-size: 1rem;">@Model?.FkUser.UserName</h5>
+                                                    @Model.CreatedDate?.ToShortDateString()
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-8 col-10">
-                                        <div>
-                                            <h5 class="text-color-change" style="font-size: 1rem;">@Model?.FkUser.UserName</h5>
-                                            @Model?.CreatedDate
-                                        </div>
-                                    </div>
+                                        </a>
                                 </div>
-                            </div>
+                            } else {
+                                <div class="col-md excludePrint"
+                                     style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
+                                    <a asp-area="Identity" asp-page="/Account/Login" class="text-decoration-none text-dark d-flex">
+                                        <div class="row">
+                                            <div class="col-lg-4 col-2 px-0" style="align-self: center;">
+                                                <div>
+                                                    <img class="img-fluid rounded-circle"
+                                                         src="@Model?.FkUser?.ImgPath" style="height: 60px; width: 60px;">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-8 col-10">
+                                                <div>
+                                                    <h5 class="text-color-change" style="font-size: 1rem;">@Model?.FkUser.UserName</h5>
+                                                    @Model?.CreatedDate?.ToShortDateString()
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            }
                         }
                         <div class="col-md"
                              style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
