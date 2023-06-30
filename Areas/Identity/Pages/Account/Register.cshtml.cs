@@ -131,8 +131,10 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
             [Display(Name = "Profile image")]
             public IFormFile File { get; set; }
 
-            [Required]
+            /*[Required]
             [RegularExpression("True", ErrorMessage = "You must agree to our terms of service to continue register")]
+             */
+            [ValidateNever]
             public bool AgreeTerms { get; set; }
 
             [ValidateNever]
