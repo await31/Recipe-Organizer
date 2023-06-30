@@ -10,7 +10,6 @@
         color: black;
     }
 </style>
-
 @if (SignInManager.IsSignedIn(User)) {
     <div class="mt-3">
         <a class="text-decoration-none btn btn-success text-light btn-sm me-1" asp-controller="UserRecipes" asp-action="Create"><i class="fa-solid fa-plus"></i> New recipe</a>
@@ -18,7 +17,7 @@
     <div class="btn-group">
     </div>
     <div class="dropdown">
-        <button class="btn btn-white border-0 dropdown-toggle p-0 mt-2" type="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+        <button class="btn btn-white border-0 dropdown-toggle p-0 mt-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
              <img src="@user.ImgPath" class="img-fluid rounded-circle ms-2" style="width: 40px; height: 40px;" alt="avatar">
         </button>
         <ul class="dropdown-menu pb-0">
@@ -50,7 +49,9 @@
             </li>
         </ul>
     </div>
+    <script src="~/lib/bootstrap-5.3.0/js/bootstrap.bundle.min.js"></script>
 } else {
     <a class="btn btn-outline-dark me-2" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
     <a class="btn btn-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
 }
+

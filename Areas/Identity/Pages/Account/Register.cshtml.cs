@@ -180,7 +180,7 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded) {
-                    await _userManager.AddToRoleAsync(user, "Admin");
+                    await _userManager.AddToRoleAsync(user, "Cooker");
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
