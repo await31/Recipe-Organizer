@@ -150,6 +150,7 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
                 var up = new Favourite() {
                     Name = "Favourite",
                     Account = user,
+                    isPrivate = true,
                 };
                 _context.Favourites.Add(up);
 
