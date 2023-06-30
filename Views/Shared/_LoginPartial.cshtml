@@ -21,8 +21,8 @@
              <img src="@user.ImgPath" class="img-fluid rounded-circle ms-2" style="width: 40px; height: 40px;" alt="avatar">
         </button>
         <ul class="dropdown-menu pb-0">
-            <li class="mt-1 ps-3 py-1">
-                @user.UserName
+            <li class="mt-2 ps-3 mb-0">
+                <a id="manage" class="nav-link text-dark" asp-controller="Home" asp-action="UserProfile" asp-route-userId="@user.Id" title="Preview">@user.UserName <i class="fa-regular fa-id-card"></i></a>
             </li>
             @if (UserManager.IsInRoleAsync(user, "Admin").Result) {
                 <li class="ms-3 mt-1">
@@ -30,21 +30,21 @@
                 </li>
             }
             <li class="mt-1">
-                <a id="manage" class="nav-link text-dark ps-3 py-1" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">My Profile</a>
+                <a id="manage" class="nav-link text-dark ps-3 py-1" asp-controller="Home" asp-action="MyRecipes" title="My Recipes">Manage recipes</a>
             </li>
             <li class="mt-0">
-                <a id="manage" class="nav-link text-dark ps-3 py-1" asp-controller="Home" asp-action="MyRecipes" title="My Recipes">My Recipes</a>
+                <a id="manage" class="nav-link text-dark ps-3 py-1" asp-controller="MealPlan" asp-action="Index" title="My Planning">Manage planning</a>
             </li>
             <li class="mt-0">
-                <a id="manage" class="nav-link text-dark ps-3 py-1" asp-controller="MealPlan" asp-action="Index" title="My Planning">My Planning</a>
+                <a id="manage" class="nav-link text-dark ps-3 py-1" asp-controller="Favourites" asp-action="Index" title="My Collections">Manage collections</a>
             </li>
             <li class="mt-0">
-                <a id="manage" class="nav-link text-dark ps-3 py-1" asp-controller="Favourites" asp-action="Index" title="My Collections">My Collections</a>
+                <a id="manage" class="nav-link text-dark ps-3 py-1" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Settings</a>
             </li>
             <li style="height: 0.5px; width: 100%; opacity: 0.5;" class="bg-secondary mt-2"></li>
             <li>
                 <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                    <button id="logout" type="submit" class="btn btn-link text-dark text-decoration-none ps-3 w-100 text-start">Logout</button>
+                    <button id="logout" type="submit" class="btn btn-link text-dark text-decoration-none ps-3 w-100 text-start">Log out</button>
                 </form>
             </li>
         </ul>
