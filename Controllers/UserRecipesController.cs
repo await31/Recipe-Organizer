@@ -320,6 +320,7 @@ namespace CapstoneProject.Controllers {
             var footerRecipes = _context.Recipes
                 .Where(a => a.Status == true)
                 .Where(a => a.Id != id)
+                .Include(a=> a.FkRecipeCategory)
                 .OrderByDescending(x => x.ViewCount)
                 .Take(4)
                 .ToList();
