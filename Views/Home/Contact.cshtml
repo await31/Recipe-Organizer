@@ -108,13 +108,10 @@
                             <div class="col-6 mb-3">
                                 <input type="email" id="email" class="form-control text-color-change" placeholder="Your Email">
                             </div>
-                            <div class="col-12 mb-3">
-                                <input type="text" class="form-control text-color-change" placeholder="Subject">
-                            </div>
+
                             <div class="col-12 mb-3">
                                 <textarea id="message" cols="30" rows="7" class="form-control textarea text-color-change"
-                                          placeholder="Message" style="
-                                    min-height: 168px;
+                                          placeholder="Message" style="min-height: 168px;
                                 "></textarea>
                             </div>
                             <div class="app-form-group message">
@@ -147,6 +144,7 @@
         var email = $("#email").val();
         var message = $("#message").val();
         var userId = $("#userid").val();
+
         console.log(name + email + message + userId);
 
         var formData = new FormData();
@@ -167,10 +165,10 @@
             success: function (response) {
                 if (response.success) {
                     // Handle success response
-                    toastr.success('Contact created successfully!');
+                    //toastr.success('Contact created successfully!');
                 } else {
                     // Handle failure response
-                    toastr.error('Failed to create contact.');
+                    //toastr.error('Failed to create contact.');
                 }
             },
 
