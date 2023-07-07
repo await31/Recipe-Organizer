@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CapstoneProject.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using Microsoft.AspNetCore.Identity;
@@ -23,34 +22,54 @@ using System.Xml.Linq;
 using SixLabors.ImageSharp.Formats.Webp;
 using Microsoft.AspNetCore;
 using System.Globalization;
-
+using Repositories;
+using BusinessObjects.Models;
 
 namespace CapstoneProject.Controllers {
 
     public class UserRecipesController : Controller {
 
-        private readonly RecipeOrganizerContext _context;
         private readonly UserManager<Account> _userManager;
+        private readonly IRecipeRepository _recipeRepository;
+        private readonly IAccountRepository _accountRepository;
+        private readonly IRecipeCategoryRepository _recipeCategoryRepository;
+        private readonly IFavouriteRepository _favouriteRepository;
+        private readonly IRecipeFeedbackRepository _feedbackRepository;
+        private readonly IIngredientCategoryRepository _ingredientCategoryRepository;
+        private readonly IIngredientRepository _ingredientRepository;
 
         public static string ApiKey = "AIzaSyDIXdDdvo8NguMgxLvn4DWMNS-vXkUxoag";
         public static string Bucket = "cookez-cloud.appspot.com";
         public static string AuthEmail = "cookez.mail@gmail.com";
         public static string AuthPassword = "cookez";
-        public UserRecipesController(RecipeOrganizerContext context, UserManager<Account> userManager) {
-            _context = context;
+        public UserRecipesController(
+            UserManager<Account> userManager,
+            IRecipeRepository recipeRepository,
+            IRecipeCategoryRepository recipeCategoryRepository,
+            IAccountRepository accountRepository,
+            IFavouriteRepository favouriteRepository,
+            IRecipeFeedbackRepository feedbackRepository,
+            IIngredientCategoryRepository ingredientCategoryRepository,
+            IIngredientRepository ingredientRepository) {
             _userManager = userManager;
+            _recipeRepository = recipeRepository;
+            _accountRepository = accountRepository;
+            _recipeCategoryRepository = recipeCategoryRepository;
+            _favouriteRepository = favouriteRepository;
+            _feedbackRepository = feedbackRepository;
+            _ingredientCategoryRepository = ingredientCategoryRepository;
+            _ingredientRepository = ingredientRepository;
         }
 
         [HttpPost]
         public JsonResult AutoComplete(string term) {
-            var result = (_context.Recipes.Where(t => t.Name.ToLower().Contains(term.ToLower()))
+            var result = (_recipeRepository.GetRecipes().Where(t => t.Name.ToLower().Contains(term.ToLower()))
                  .Select(t => new { t.Name }))
                  .ToList();
             return Json(result);
         }
 
-        private List<SelectListItem> GetDifficultyList()
-        {
+        private List<SelectListItem> GetDifficultyList() {
             return new List<SelectListItem>
                     {
                     new SelectListItem { Text = "Easy", Value = "1"},
@@ -58,25 +77,20 @@ namespace CapstoneProject.Controllers {
                     new SelectListItem { Text = "Hard", Value = "3"},
                     };
         }
-        private List<SelectListItem> GetPrepTimeList()
-        {
+        private List<SelectListItem> GetPrepTimeList() {
             var list = new List<SelectListItem>();
-            for (int i = 5; i < 30; i += 5)
-            {
+            for (int i = 5; i < 30; i += 5) {
                 list.Add(new SelectListItem { Text = i + " minutes", Value = i.ToString() });
             }
-            for (int i = 30; i <= 360; i += 30)
-            {
+            for (int i = 30; i <= 360; i += 30) {
                 list.Add(new SelectListItem { Text = i + " minutes", Value = i.ToString() });
             }
-            for (int i = 420; i <= 720; i += 60)
-            {
-                list.Add(new SelectListItem { Text = i/60 + " hours", Value = i.ToString() });
+            for (int i = 420; i <= 720; i += 60) {
+                list.Add(new SelectListItem { Text = i / 60 + " hours", Value = i.ToString() });
             }
             return list;
         }
-        private List<SelectListItem> GetUnitsofMeasureList()
-        {
+        private List<SelectListItem> GetUnitsofMeasureList() {
             return new List<SelectListItem>
                     {
                     new SelectListItem { Text = "milliliters", Value = "milliliters"},
@@ -89,10 +103,7 @@ namespace CapstoneProject.Controllers {
             const int pageSize = 6; // Number of recipes in 1 page
             if (pg < 1)
                 pg = 1;
-            var recipes = _context.Recipes
-                .Where(a => a.Status == true)
-                .Include(b => b.Ingredients)
-                .Select(b => b);
+            var recipes = _recipeRepository.GetRecipesIndex();
             if (recipes != null) {
                 string? searchString = Request.Query["SearchString"];
                 string? prepTime = Request.Query["PrepTime"];
@@ -111,7 +122,7 @@ namespace CapstoneProject.Controllers {
                     recipeCategory = "All";
                 if (String.IsNullOrEmpty(sortBy))
                     sortBy = "SortPopular";
-                ViewBag.FkRecipeCategoryId = new SelectList(_context.RecipeCategories, "Id", "Name", recipeCategory);
+                ViewBag.FkRecipeCategoryId = new SelectList(_recipeCategoryRepository.GetRecipeCategories(), "Id", "Name", recipeCategory);
                 ViewBag.PrepTime = new SelectList(GetPrepTimeList(), "Value", "Text", prepTime);
                 ViewBag.Difficulty = new SelectList(GetDifficultyList(), "Value", "Text", difficulty);
                 ViewBag.SortBy = new SelectList(
@@ -183,7 +194,7 @@ namespace CapstoneProject.Controllers {
                 //Favourite list
                 var currentUser = await _userManager.GetUserAsync(User);
                 if (currentUser != null)
-                    ViewBag.FavouriteList = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.Select(f => new { f.Id, f.Name }).ToList();
+                    ViewBag.FavouriteList = _accountRepository.GetAccounts().FirstOrDefault(u => u.Id == currentUser.Id).Favourites.Select(f => new { f.Id, f.Name }).ToList();
                 else
                     ViewBag.FavouriteList = null;
 
@@ -243,22 +254,21 @@ namespace CapstoneProject.Controllers {
             return RedirectToAction("Index", parameter);
         }
         public async Task<IActionResult> Favorite(int? id, int? favouriteId, string returnUrl, string parameters) {
-            var entity = _context.Recipes.FirstOrDefault(item => item.Id == id);
+            var entity = _recipeRepository.GetRecipeById(id);
             if (entity != null) {
                 var currentUser = await _userManager.GetUserAsync(User);
-                var userFavouriteId = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToArray();
+                var userFavouriteId = _accountRepository.GetAccounts().FirstOrDefault(u => u.Id == currentUser.Id).Favourites.ToArray();
                 favouriteId = userFavouriteId[0].Id;
                 //Get user from dbContext which include favorites
-                var favourite = _context.Favourites.Include(a => a.Recipes).FirstOrDefault(a => a.Id == favouriteId);
+                var favourite = _favouriteRepository.GetFavouriteById(favouriteId);
 
                 if (!favourite.Recipes.Contains(entity)) {
-                    favourite.Recipes.Add(entity);
+                    _favouriteRepository.InsertRecipeToFavourite(favourite, entity);
                     TempData["success"] = "Add to favourites successfully";
                 } else {
-                    favourite.Recipes.Remove(entity);
+                    _favouriteRepository.DeleteRecipeFromFavourite(favourite, entity);
                     TempData["success"] = "Removed from favourites successfully";
                 }
-                await _context.SaveChangesAsync();
             }
 
             return LocalRedirect(returnUrl + parameters);
@@ -270,17 +280,8 @@ namespace CapstoneProject.Controllers {
             full = full.Replace(remove, "");
             return full;
         }
-        private List<RecipeFeedback> GetRecipeFeedbacks(int recipeId)
-        {
-            var feedbacks = _context.RecipeFeedbacks
-                .OrderByDescending(x => x.CreatedDate)
-                .Where(a => a.RecipeId == recipeId)
-                .Include(a => a.User)
-                .ToList();
-            return feedbacks;
-        }
-        private List<RecipeFeedback> GetRecipeFeedbackPage(List<RecipeFeedback> feedbacks, int pg)
-        {
+        private List<RecipeFeedback> GetRecipeFeedbacks(int recipeId) => (List<RecipeFeedback>)_feedbackRepository.GetRecipeFeedbacks(recipeId);
+        private List<RecipeFeedback> GetRecipeFeedbackPage(List<RecipeFeedback> feedbacks, int pg) {
             const int pageSize = 5; // Number of comments in 1 page
             if (pg < 1)
                 pg = 1;
@@ -299,15 +300,7 @@ namespace CapstoneProject.Controllers {
         [Breadcrumb("Details")]
         // GET: Recipes/Details/5
         public IActionResult Details(int id, int pg = 1) {
-            var recipe = _context.Recipes
-                .Where(a => a.Status == true)
-                .Include(x => x.FkUser)
-                .Include(y => y.FkRecipeCategory)
-                .Include(t => t.Nutrition)
-                .Include(a => a.RecipeIngredients)
-                .ThenInclude(a => a.Ingredient)
-                .Where(Ingredient => Ingredient.Status == true)
-                .FirstOrDefault(a => a.Id == id);
+            var recipe = _recipeRepository.GetRecipeForDetails(id);
             var feedbacks = GetRecipeFeedbacks(id);
             var data = GetRecipeFeedbackPage(feedbacks, pg);
             ViewData["feedbacks"] = data;
@@ -317,23 +310,16 @@ namespace CapstoneProject.Controllers {
                 recipe.ViewCount++;
             }
 
-            var footerRecipes = _context.Recipes
-                .Where(a => a.Status == true)
-                .Where(a => a.Id != id)
-                .Include(a=> a.FkRecipeCategory)
-                .OrderByDescending(x => x.ViewCount)
-                .Take(4)
-                .ToList();
+            var suggestRecipes = _recipeRepository.GetSuggestRecipes(id);
 
-            ViewData["footerRecipes"] = footerRecipes;
+            ViewData["footerRecipes"] = suggestRecipes;
 
             //Favourite list
             var currentUser = _userManager.GetUserId(User);
             if (currentUser != null)
-                ViewBag.FavouriteList = _context.Accounts.Include(u => u.Favourites).FirstOrDefault(u => u.Id == currentUser).Favourites.Select(f => new { f.Id, f.Name }).ToList();
+                ViewBag.FavouriteList = _accountRepository.GetAccounts().FirstOrDefault(u => u.Id == currentUser).Favourites.Select(f => new { f.Id, f.Name }).ToList();
             else
                 ViewBag.FavouriteList = null;
-            _context.SaveChanges();
             return View(recipe);
         }
 
@@ -351,8 +337,7 @@ namespace CapstoneProject.Controllers {
                         Rating = 0,
                         CreatedDate = DateTime.Now
                     };
-                    _context.RecipeFeedbacks.Add(feedback);
-                    await _context.SaveChangesAsync(); // Save changes to the database
+                    _feedbackRepository.InsertRecipeFeedback(feedback);
                 }
             }
             var feedbacks = GetRecipeFeedbacks(recipeId);
@@ -362,11 +347,10 @@ namespace CapstoneProject.Controllers {
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteFeedbackAsync(int recipeId, int id, int pg = 1) {
-            var feedback = await _context.RecipeFeedbacks.FirstOrDefaultAsync(x => x.Id == id);
+        public IActionResult DeleteFeedbackAsync(int recipeId, int id, int pg = 1) {
+            var feedback = _feedbackRepository.GetRecipeFeedbackById(id);
             if (feedback != null) {
-                _context.RecipeFeedbacks.Remove(feedback);
-                await _context.SaveChangesAsync(); // Save changes to the database
+                _feedbackRepository.DeleteRecipeFeedback(feedback);
             }
             var feedbacks = GetRecipeFeedbacks(recipeId);
             var data = GetRecipeFeedbackPage(feedbacks, pg);
@@ -389,20 +373,18 @@ namespace CapstoneProject.Controllers {
         [Breadcrumb("Create recipe")]
         [Authorize]
         public IActionResult Create() {
-            ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id");
-            ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name");
-            IEnumerable<IngredientCategory> ingCategoryList = _context.IngredientCategories.ToList();
+            ViewData["FkRecipeId"] = new SelectList(_recipeRepository.GetRecipes(), "Id", "Id");
+            ViewData["FkRecipeCategoryId"] = new SelectList(_recipeCategoryRepository.GetRecipeCategories(), "Id", "Name");
+            IEnumerable<IngredientCategory> ingCategoryList = _ingredientCategoryRepository.GetIngredientCategories();
 
             // lay danh sach ingredient tu database
-            var ingredients = _context
-                .Ingredients
-                .Where(i => i.Status == true)
-                .ToList();
+            var ingredients = _ingredientRepository.GetStatusTrueIngredients();
             ViewData["IngCategories"] = ingCategoryList;
             ViewData["Ingredients"] = new SelectList(ingredients, "Id", "Name"); // truyen qua view create
 
             return View();
         }
+
 
         // POST: Recipes/Create
         [HttpPost]
@@ -424,29 +406,20 @@ namespace CapstoneProject.Controllers {
                         recipe.ViewCount = 0;
                         recipe.CreatedDate = DateTime.Now;
                         recipe.FkUserId = await _userManager.GetUserIdAsync(currentUser);
-                        // Save ingredient, recipe to IngredientRecipe
-                        // Save ingredient IDs to recipe
                         if (IngredientNames != null) {
-
-                            var allIngredients = await _context.Ingredients
-                                               .Where(i => i.Status == true)
-                                               .ToListAsync();
+                            var allIngredients = _ingredientRepository.GetStatusTrueIngredients();
 
                             var ingredients = allIngredients
                                               .Where(i => IngredientNames.Any(input => i.Name.Contains(input)))
                                               .ToList();
 
                             var IngredientIds = ingredients.Select(i => i.Id).ToArray();
-                            recipe.Ingredients.Clear();
-                            recipe.Ingredients.AddRange(ingredients);
-                            _context.Recipes.Add(recipe);
-                            await _context.SaveChangesAsync();
-
                             List<RecipeIngredient> recipeIngredients = new();
                             for (int i = 0; i < IngredientNames.Length; i++) {
-                                bool exists = _context.Ingredients
-                                                      .Any(ingredient => ingredient.Status == true && ingredient.Name
-                                                      .Contains(IngredientNames[i]));
+
+                                var list = _ingredientRepository.GetStatusTrueIngredients();
+                                bool exists = list.Any(ingredient => ingredient.Name
+                                                  .Contains(IngredientNames[i]));
                                 if (exists) {
                                     getIngredientIdFromName(IngredientNames[i], out int id);
                                     recipeIngredients.Add(new RecipeIngredient {
@@ -460,23 +433,23 @@ namespace CapstoneProject.Controllers {
                                 }
                             }
                             RemoveDuplicateRecipeIngredients(recipeIngredients);
-                            recipe.RecipeIngredients.AddRange(recipeIngredients);
-                            await _context.SaveChangesAsync();
-                            TempData["success"] = "The recipe has been submitted for review. We sincerely appreciate your contribution in sharing this valuable recipe with the community!";
+                            _recipeRepository.InsertRecipe(recipe, ingredients, recipeIngredients);
+                            TempData["success"] = "The recipe has been submitted for review!";
                             return RedirectToAction(nameof(Index));
                         }
                     } else {
                         recipe.ImgPath = "untitle.jpg";
                     }
                 }
-                ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id", recipe.FkRecipeId);
-                ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.FkRecipeCategoryId);
+                ViewData["FkRecipeId"] = new SelectList(_recipeRepository.GetRecipes(), "Id", "Id", recipe.FkRecipeId);
+                ViewData["FkRecipeCategoryId"] = new SelectList(_recipeCategoryRepository.GetRecipeCategories(), "Id", "Name", recipe.FkRecipeCategoryId);
             }
             return View(recipe);
         }
 
         public void getIngredientIdFromName(string name, out int id) {
-            var ingredient = _context.Ingredients.FirstOrDefault(x => x.Name.Equals(name));
+            var ingredient = _ingredientRepository.GetIngredients()
+                .FirstOrDefault(x => x.Name.Equals(name));
             id = ingredient.Id;
         }
 
@@ -487,18 +460,17 @@ namespace CapstoneProject.Controllers {
 
         // GET: Recipes/Edit/5
         [Authorize]
-        public async Task<IActionResult> Edit(int? id) {
-            if (id == null || _context.Recipes == null) {
+        public IActionResult Edit(int? id) {
+            if (id == null || _recipeRepository.GetRecipes() == null) {
                 return NotFound();
             }
-
-            var recipe = await _context.Recipes.Include(r => r.RecipeIngredients).Include(r => r.Ingredients).Include(r => r.Nutrition).FirstOrDefaultAsync(r => r.Id == id);
+            var recipe = _recipeRepository.GetRecipeForEdit(id);
             if (recipe == null) {
                 return NotFound();
             }
 
-            ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id", recipe.FkRecipeId);
-            ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.FkRecipeCategoryId);
+            ViewData["FkRecipeId"] = new SelectList(_recipeRepository.GetRecipes(), "Id", "Id", recipe.FkRecipeId);
+            ViewData["FkRecipeCategoryId"] = new SelectList(_recipeCategoryRepository.GetRecipeCategories(), "Id", "Name", recipe.FkRecipeCategoryId);
             ViewBag.PrepTime = new SelectList(GetPrepTimeList(), "Value", "Text", recipe.PrepTime);
             ViewBag.Difficulty = new SelectList(GetDifficultyList(), "Value", "Text", recipe.Difficult);
             foreach (var item in recipe.RecipeIngredients) {
@@ -509,80 +481,64 @@ namespace CapstoneProject.Controllers {
             return View(recipe);
         }
 
-        [HttpPost]
+
+         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Recipe recipe, string[] IngredientNames, double[] Quantities, string[] UnitOfMeasures) {
-            if (id != recipe.Id) {
-                return NotFound();
-            }
-            var existingRecipe = _context.Recipes
-                .Include(r => r.Nutrition)
-                .Include(r => r.Ingredients)
-                .Include(r => r.RecipeIngredients)
-                .Single(r => r.Id == id);
-            _context.Entry(existingRecipe).CurrentValues.SetValues(recipe);
-            if (recipe.file != null && recipe.file.Length > 0) {
-                IFormFile file = recipe.file;
-                // Generate a unique file name
-                string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-                var currentUser = await _userManager.GetUserAsync(User);
-                if (currentUser != null) {
-                    // Upload the file to Firebase Storage
-                    string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
-                    Uri imageUrlUri = new(imageUrl);
-                    string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
-                    existingRecipe.ImgPath = baseUrl;
-                }
-            }
-            if (IngredientNames != null) {
-
-                existingRecipe.Ingredients.Clear();
-                var allIngredients = await _context.Ingredients
-                                   .Where(i => i.Status == true)
-                                   .ToListAsync();
-
-                var ingredients = allIngredients
-                                  .Where(i => IngredientNames.Any(input => i.Name.Contains(input)))
-                                  .ToList();
-
-                var IngredientIds = ingredients.Select(i => i.Id).ToArray();
-                existingRecipe.Ingredients.AddRange(ingredients);
-                existingRecipe.RecipeIngredients.Clear();
-                // Create recipe ingredients with quantities and unit of measure
-                var recipeIngredients = new List<RecipeIngredient>();
-                for (int i = 0; i < IngredientNames.Length; i++) {
-                    bool exists = _context.Ingredients
-                                          .Any(ingredient => ingredient.Status == true && ingredient.Name
-                                          .Contains(IngredientNames[i]));
-                    if (exists) {
-                        getIngredientIdFromName(IngredientNames[i], out int ingredientId);
-                        recipeIngredients.Add(new RecipeIngredient {
-                            IngredientId = ingredientId,
-                            RecipeId = recipe.Id,
-                            Quantity = Quantities[i],
-                            UnitOfMeasure = UnitOfMeasures[i]
-                        });
-                    } else {
-                        return NotFound();
-                    }
-                }
-                RemoveDuplicateRecipeIngredients(recipeIngredients);
-                existingRecipe.RecipeIngredients = recipeIngredients;
-                _context.RecipeIngredient.AddRange(recipeIngredients);
-            }
             if (ModelState.IsValid) {
-                try {
-                    existingRecipe.Status = false;
-                    await _context.SaveChangesAsync();
+                if (id != recipe.Id) {
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RecipeExists(recipe.Id))
-                    {
-                        return NotFound();
+                var existingRecipe = _recipeRepository.GetRecipeForEdit(id);
+                _recipeRepository.SetValueForEdit(existingRecipe, recipe);
+                if (recipe.file != null && recipe.file.Length > 0) {
+                    IFormFile file = recipe.file;
+                    // Generate a unique file name
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                    var currentUser = await _userManager.GetUserAsync(User);
+                    if (currentUser != null) {
+                        // Upload the file to Firebase Storage
+                        string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
+                        Uri imageUrlUri = new(imageUrl);
+                        string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
+                        existingRecipe.ImgPath = baseUrl;
                     }
-                    else
-                    {
+                }
+                if (IngredientNames != null) {
+
+                    existingRecipe.Ingredients.Clear();
+                    var allIngredients = _ingredientRepository.GetStatusTrueIngredients();
+
+                    var ingredients = allIngredients
+                                      .Where(i => IngredientNames.Any(input => i.Name.Contains(input)))
+                                      .ToList();
+
+                    var recipeIngredients = new List<RecipeIngredient>();
+                    for (int i = 0; i < IngredientNames.Length; i++) {
+                        bool exists = _ingredientRepository.GetStatusTrueIngredients()
+                                              .Any(ingredient => ingredient.Name
+                                              .Contains(IngredientNames[i]));
+                        if (exists) {
+                            getIngredientIdFromName(IngredientNames[i], out int ingredientId);
+                            recipeIngredients.Add(new RecipeIngredient {
+                                IngredientId = ingredientId,
+                                RecipeId = recipe.Id,
+                                Quantity = Quantities[i],
+                                UnitOfMeasure = UnitOfMeasures[i]
+                            });
+                        } else {
+                            return NotFound();
+                        }
+                    }
+                    RemoveDuplicateRecipeIngredients(recipeIngredients);
+                    _recipeRepository.UpdateRecipe(existingRecipe, ingredients, recipeIngredients);
+                }
+                try {
+                    _recipeRepository.SetStatusFalse(existingRecipe);
+                } catch (DbUpdateConcurrencyException) {
+                    if (!RecipeExists(recipe.Id)) {
+                        return NotFound();
+                    } else {
                         throw;
                     }
                 }
@@ -595,16 +551,13 @@ namespace CapstoneProject.Controllers {
 
         // GET: Recipes/Delete/5
         [Authorize]
-        public async Task<IActionResult> Delete(int? id) {
+        public IActionResult Delete(int? id) {
             ViewBag.Title = "Create recipe";
-            if (id == null || _context.Recipes == null) {
+            if (id == null || _recipeRepository.GetRecipes() == null) {
                 return NotFound();
             }
 
-            var recipe = await _context.Recipes
-                .Include(r => r.FkRecipe)
-                .Include(r => r.FkRecipeCategory)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var recipe = _recipeRepository.GetRecipeForDelete(id);
             if (recipe == null) {
                 return NotFound();
             }
@@ -615,25 +568,23 @@ namespace CapstoneProject.Controllers {
         // POST: Recipes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id) {
-            if (_context.Recipes == null) {
+        public IActionResult DeleteConfirmed(int id) {
+            if (_recipeRepository.GetRecipes() == null) {
                 return Problem("Entity set 'RecipeOrganizerContext.Recipes'  is null.");
             }
-            var recipe = await _context.Recipes.FindAsync(id);
+            var recipe = _recipeRepository.GetRecipeById(id);
             if (recipe != null) {
-                _context.Recipes.Remove(recipe);
+                _recipeRepository.DeleteRecipe(recipe);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool RecipeExists(int id) {
-            return (_context.Recipes?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_recipeRepository.GetRecipes()?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-        public bool IngredientNameExists(string name)
-        {
-            return (_context.Ingredients?.Any(e => e.Name.Equals(name))).GetValueOrDefault();
+        public bool IngredientNameExists(string name) {
+            return (_ingredientRepository.GetIngredients()?.Any(e => e.Name.Equals(name))).GetValueOrDefault();
         }
 
         //firebase

@@ -11,12 +11,12 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
 {
     public class SetPasswordModel : PageModel
     {
-        private readonly UserManager<Models.Account> _userManager;
-        private readonly SignInManager<Models.Account> _signInManager;
+        private readonly UserManager<BusinessObjects.Models.Account> _userManager;
+        private readonly SignInManager<BusinessObjects.Models.Account> _signInManager;
 
         public SetPasswordModel(
-            UserManager<Models.Account> userManager,
-            SignInManager<Models.Account> signInManager)
+            UserManager<BusinessObjects.Models.Account> userManager,
+            SignInManager<BusinessObjects.Models.Account> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;

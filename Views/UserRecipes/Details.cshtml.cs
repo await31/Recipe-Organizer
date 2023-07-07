@@ -11,14 +11,14 @@ namespace CapstoneProject.Views.UserRecipes
 {
     public class DetailsModel : PageModel
     {
-        private readonly CapstoneProject.Models.RecipeOrganizerContext _context;
+        private readonly BusinessObjects.Models.RecipeOrganizerContext _context;
 
-        public DetailsModel(CapstoneProject.Models.RecipeOrganizerContext context)
+        public DetailsModel(BusinessObjects.Models.RecipeOrganizerContext context)
         {
             _context = context;
         }
 
-        public Recipe Recipe { get; set; }
+        public BusinessObjects.Models.Recipe Recipe { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {

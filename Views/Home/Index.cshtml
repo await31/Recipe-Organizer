@@ -1,11 +1,11 @@
-﻿@model IEnumerable<Recipe>
-@inject SignInManager<Account> SignInManager
+﻿@model IEnumerable<BusinessObjects.Models.Recipe>
+@inject SignInManager<BusinessObjects.Models.Account> SignInManager
 @using Microsoft.AspNetCore.Identity;
-@inject UserManager<Account> UserManager
+@inject UserManager<BusinessObjects.Models.Account> UserManager
 
 @{
     var parameters = string.IsNullOrEmpty(Context.Request.Path) ? "" : $"{Context.Request.QueryString.Value}";
-    var hotRecipe = ViewData["HotRecipe"] as Recipe;
+    var hotRecipe = ViewData["HotRecipe"] as BusinessObjects.Models.Recipe;
     ViewData["Title"] = "Cookez";
 }
 

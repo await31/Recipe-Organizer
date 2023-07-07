@@ -1,8 +1,8 @@
 ﻿@model Recipe
 
-@inject SignInManager<Account> SignInManager
+@inject SignInManager<BusinessObjects.Models.Account> SignInManager
 @using Microsoft.AspNetCore.Identity;
-@inject UserManager<Account> UserManager﻿
+@inject UserManager<BusinessObjects.Models.Account> UserManager﻿
 @{
     ViewBag.Title = "Edit recipe";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -165,16 +165,6 @@ else
     <h1 class="text-danger text-center">USER IS NOT THE OWNER OF THIS RECIPE</h1>
 }
 
-@*@section Scripts {
-    @{
-        <script src="~/ckeditor/ckeditor.js"></script>
-        <script>
-            CKEDITOR.replace('Description');
-            CKEDITOR.config.filebrowserUploadUrl = '/your-upload-endpoint';
-        </script>
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}*@
 
 <script src="~/lib/jquery-3.7.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>

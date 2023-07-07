@@ -13,19 +13,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using CapstoneProject.Models;
 using Firebase.Auth;
 using Firebase.Storage;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Webp;
+using BusinessObjects.Models;
 
 namespace CapstoneProject.Areas.Identity.Pages.Account {
     [AllowAnonymous]
     public class ExternalLoginModel : PageModel {
-        private readonly SignInManager<Models.Account> _signInManager;
-        private readonly UserManager<Models.Account> _userManager;
+        private readonly SignInManager<BusinessObjects.Models.Account> _signInManager;
+        private readonly UserManager<BusinessObjects.Models.Account> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
         private readonly RecipeOrganizerContext _context;
@@ -36,8 +36,8 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
         public static string AuthPassword = "cookez";
 
         public ExternalLoginModel(
-            SignInManager<Models.Account> signInManager,
-            UserManager<Models.Account> userManager,
+            SignInManager<BusinessObjects.Models.Account> signInManager,
+            UserManager<BusinessObjects.Models.Account> userManager,
             ILogger<ExternalLoginModel> logger,
             IEmailSender emailSender,
             RecipeOrganizerContext context) {
@@ -140,7 +140,7 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
                 Uri imageUrlUri = new Uri(imageUrl);
                 string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
                 
-                var user = new Models.Account {
+                var user = new BusinessObjects.Models.Account {
                     UserName = Input.Username,
                     Email = Input.Email,
                     ImgPath = baseUrl,

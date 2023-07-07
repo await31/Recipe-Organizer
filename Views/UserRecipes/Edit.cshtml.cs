@@ -12,15 +12,15 @@ namespace CapstoneProject.Views.UserRecipes
 {
     public class EditModel : PageModel
     {
-        private readonly CapstoneProject.Models.RecipeOrganizerContext _context;
+        private readonly BusinessObjects.Models.RecipeOrganizerContext _context;
 
-        public EditModel(CapstoneProject.Models.RecipeOrganizerContext context)
+        public EditModel(BusinessObjects.Models.RecipeOrganizerContext context)
         {
             _context = context;
         }
 
         [BindProperty]
-        public Recipe Recipe { get; set; }
+        public BusinessObjects.Models.Recipe Recipe { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {

@@ -11,14 +11,14 @@ namespace CapstoneProject.Views.UserRecipes
 {
     public class IndexModel : PageModel
     {
-        private readonly CapstoneProject.Models.RecipeOrganizerContext _context;
+        private readonly BusinessObjects.Models.RecipeOrganizerContext _context;
 
-        public IndexModel(CapstoneProject.Models.RecipeOrganizerContext context)
+        public IndexModel(BusinessObjects.Models.RecipeOrganizerContext context)
         {
             _context = context;
         }
 
-        public IList<Recipe> Recipe { get;set; }
+        public IList<BusinessObjects.Models.Recipe> Recipe { get;set; }
 
         public async Task OnGetAsync()
         {

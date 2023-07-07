@@ -1,8 +1,8 @@
-﻿@model IEnumerable<Ingredient>
+﻿@model IEnumerable<BusinessObjects.Models.Ingredient>
 
 @{
     ViewBag.Title = "View Ingredient";
-    Pager pager = new Pager();
+    BusinessObjects.Models.Pager pager = new BusinessObjects.Models.Pager();
     int pageNo = 0;
     if(ViewBag.Pager != null) {
         pager = ViewBag.Pager;

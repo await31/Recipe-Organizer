@@ -1,8 +1,8 @@
-﻿@model IEnumerable<Recipe>
+﻿@model IEnumerable<BusinessObjects.Models.Recipe>
 
-@inject SignInManager<Account> SignInManager
+@inject SignInManager<BusinessObjects.Models.Account> SignInManager
 @using Microsoft.AspNetCore.Identity;
-@inject UserManager<Account> UserManager
+@inject UserManager<BusinessObjects.Models.Account> UserManager
 @{
     ViewData["Title"] = "Details";
     var currentUser = await UserManager.GetUserAsync(User);

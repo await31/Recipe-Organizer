@@ -11,9 +11,9 @@ namespace CapstoneProject.Views.UserRecipes
 {
     public class CreateModel : PageModel
     {
-        private readonly RecipeOrganizerContext _context;
+        private readonly BusinessObjects.Models.RecipeOrganizerContext _context;
 
-        public CreateModel(RecipeOrganizerContext context)
+        public CreateModel(BusinessObjects.Models.RecipeOrganizerContext context)
         {
             _context = context;
         }
@@ -26,7 +26,7 @@ namespace CapstoneProject.Views.UserRecipes
         }
 
         [BindProperty]
-        public Recipe Recipe { get; set; }
+        public BusinessObjects.Models.Recipe Recipe { get; set; }
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()

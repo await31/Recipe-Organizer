@@ -1,4 +1,4 @@
-﻿@using CapstoneProject.Models;
+﻿@using BusinessObjects.Models;
 @inject SignInManager<Account> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();

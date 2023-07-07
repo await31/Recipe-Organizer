@@ -1,8 +1,7 @@
-﻿@model Recipe
+﻿@model BusinessObjects.Models.Recipe
 @{
     ViewBag.Title = "Create recipe";
     ViewData["Title"] = Model.Name;
-    //Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 @inject SignInManager<Account> SignInManager
 @using Microsoft.AspNetCore.Identity;

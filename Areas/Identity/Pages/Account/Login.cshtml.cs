@@ -14,13 +14,14 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using BusinessObjects.Models;
 
 namespace CapstoneProject.Areas.Identity.Pages.Account {
     public class LoginModel : PageModel {
-        private readonly SignInManager<Models.Account> _signInManager;
+        private readonly SignInManager<BusinessObjects.Models.Account> _signInManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<Models.Account> signInManager, ILogger<LoginModel> logger) {
+        public LoginModel(SignInManager<BusinessObjects.Models.Account> signInManager, ILogger<LoginModel> logger) {
             _signInManager = signInManager;
             _logger = logger;
         }

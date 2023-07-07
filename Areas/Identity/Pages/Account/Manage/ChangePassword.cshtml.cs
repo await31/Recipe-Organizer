@@ -11,13 +11,13 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
 {
     public class ChangePasswordModel : PageModel
     {
-        private readonly UserManager<Models.Account> _userManager;
-        private readonly SignInManager<Models.Account> _signInManager;
+        private readonly UserManager<BusinessObjects.Models.Account> _userManager;
+        private readonly SignInManager<BusinessObjects.Models.Account> _signInManager;
         private readonly ILogger<ChangePasswordModel> _logger;
 
         public ChangePasswordModel(
-            UserManager<Models.Account> userManager,
-            SignInManager<Models.Account> signInManager,
+            UserManager<BusinessObjects.Models.Account> userManager,
+            SignInManager<BusinessObjects.Models.Account> signInManager,
             ILogger<ChangePasswordModel> logger)
         {
             _userManager = userManager;

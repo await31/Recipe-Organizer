@@ -1,46 +1,51 @@
-﻿using CapstoneProject.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartBreadcrumbs.Attributes;
 using System.Data;
+using BusinessObjects.Models;
+using Repositories;
 
 namespace CapstoneProject.Controllers {
 
     [Authorize(Roles = "Admin")]
     public class DashboardController : Controller {
 
-        private readonly RecipeOrganizerContext _context;
+        private readonly IRecipeRepository _recipeRepository;
+        private readonly IRecipeCategoryRepository _recipeCategoryRepository;
+        private readonly IIngredientRepository _ingredientRepository;
+        private readonly IIngredientCategoryRepository _ingredientCategoryRepository;
+        private readonly IContactRepository _contactRepository;
+        private readonly IAccountRepository _accountRepository;
 
-        public DashboardController(RecipeOrganizerContext context) {
-            _context = context;
+
+        public DashboardController(IRecipeCategoryRepository recipeCategoryRepository, IIngredientCategoryRepository ingredientCategoryRepository, IAccountRepository accountRepository, IRecipeRepository recipeRepository, IIngredientRepository ingredientRepository, IContactRepository contactRepository) {
+            _recipeRepository = recipeRepository;
+            _ingredientRepository = ingredientRepository;
+            _contactRepository = contactRepository;
+            _accountRepository = accountRepository;
+            _recipeCategoryRepository = recipeCategoryRepository;
+            _ingredientCategoryRepository = ingredientCategoryRepository;
         }
+
 
         [Breadcrumb("Dashboard")]
         public IActionResult Index() {
-            IEnumerable<Recipe> objRecipe = _context.Recipes
-                .Include(a => a.FkUser)
-                .Where(b=>b.Status == false)
-                .ToList();
+            IEnumerable<Recipe> objRecipe = _recipeRepository.GetStatusFalseRecipes();
 
-            IEnumerable<Ingredient> pendingIngredients = _context.Ingredients
-                 .Where(a => a.Status == false)
-                 .ToList();
+            IEnumerable<Ingredient> pendingIngredients = _ingredientRepository.GetStatusFalseIngredients();
 
-            IEnumerable<Contact> contact = _context.Contacts
-                .ToList();
+            IEnumerable<Contact> contact = _contactRepository.GetContacts();
 
-            IEnumerable<Account> accounts = _context.Accounts
-                .ToList();
+            IEnumerable<Account> accounts = _accountRepository.GetAccounts();
 
 
             //Get counts of ingredients, recipes, and pending request
             ViewData["Contact"] = contact;
             ViewData["accCount"] = accounts.Count();
-            ViewData["IngredientsCount"] = _context.Ingredients
+            ViewData["IngredientsCount"] = _ingredientRepository.GetIngredients()
                 .Count();
-            ViewData["RecipesCount"] = _context.Recipes
-                .Where(a => a.Status == true)
+            ViewData["RecipesCount"] = _recipeRepository.GetStatusTrueRecipes()
                 .Count();
             ViewData["PendingRequestsCount"] = objRecipe
                 .Count();
@@ -49,10 +54,9 @@ namespace CapstoneProject.Controllers {
             //chart 
 
             //Ingredient pie chart data
-            var ingredientCounts = _context.Ingredients
-                .Where(b => b.Status == true)
+            var ingredientCounts = _ingredientRepository.GetStatusTrueIngredients()
               .Join(
-                  _context.IngredientCategories,
+                  _ingredientCategoryRepository.GetIngredientCategories(),
                   ingredient => ingredient.FkCategoryId,
                   category => category.Id,
                   (ingredient, category) => new { Ingredient = ingredient, Category = category }
@@ -75,10 +79,9 @@ namespace CapstoneProject.Controllers {
             ViewBag.IngredientChartData = Newtonsoft.Json.JsonConvert.SerializeObject(ingredientChartData);
 
             //Recipe doughnut chart data
-            var recipeCounts = _context.Recipes
-                .Where(b => b.Status == true)
+            var recipeCounts = _recipeRepository.GetStatusTrueRecipes()
                 .Join(
-                    _context.RecipeCategories,
+                    _recipeCategoryRepository.GetRecipeCategories(),
                     recipe => recipe.FkRecipeCategoryId,
                     category => category.Id,
                     (recipe, category) => new { Recipe = recipe, Category = category }
@@ -101,8 +104,7 @@ namespace CapstoneProject.Controllers {
 
             //Recipe line chart daata
 
-            var recipeMonth = _context.Recipes
-                .Where(b => b.Status == true)
+            var recipeMonth = _recipeRepository.GetStatusTrueRecipes()
                 .GroupBy(r => r.CreatedDate.Value.Month)
                  .Select(g => new
                  {

@@ -15,13 +15,13 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
 {
     public partial class EmailModel : PageModel
     {
-        private readonly UserManager<Models.Account> _userManager;
-        private readonly SignInManager<Models.Account> _signInManager;
+        private readonly UserManager<BusinessObjects.Models.Account> _userManager;
+        private readonly SignInManager<BusinessObjects.Models.Account> _signInManager;
         private readonly IEmailSender _emailSender;
 
         public EmailModel(
-            UserManager<Models.Account> userManager,
-            SignInManager<Models.Account> signInManager,
+            UserManager<BusinessObjects.Models.Account> userManager,
+            SignInManager<BusinessObjects.Models.Account> signInManager,
             IEmailSender emailSender)
         {
             _userManager = userManager;
@@ -51,7 +51,7 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
 
         private async Task LoadAsync(IdentityUser user)
         {
-            var email = await _userManager.GetEmailAsync((Models.Account)user);
+            var email = await _userManager.GetEmailAsync((BusinessObjects.Models.Account)user);
             Email = email;
 
             Input = new InputModel
@@ -59,7 +59,7 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
                 NewEmail = email,
             };
 
-            IsEmailConfirmed = await _userManager.IsEmailConfirmedAsync((Models.Account)user);
+            IsEmailConfirmed = await _userManager.IsEmailConfirmedAsync((BusinessObjects.Models.Account)user);
         }
 
         public async Task<IActionResult> OnGetAsync()

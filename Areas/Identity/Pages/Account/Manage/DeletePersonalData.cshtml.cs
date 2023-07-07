@@ -12,16 +12,16 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
 {
     public class DeletePersonalDataModel : PageModel
     {
-        private readonly UserManager<Models.Account> _userManager;
-        private readonly SignInManager<Models.Account> _signInManager;
+        private readonly UserManager<BusinessObjects.Models.Account> _userManager;
+        private readonly SignInManager<BusinessObjects.Models.Account> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
-        private readonly RecipeOrganizerContext _context;
+        private readonly BusinessObjects.Models.RecipeOrganizerContext _context;
 
         public DeletePersonalDataModel(
-            UserManager<Models.Account> userManager,
-            SignInManager<Models.Account> signInManager,
+            UserManager<BusinessObjects.Models.Account> userManager,
+            SignInManager<BusinessObjects.Models.Account> signInManager,
             ILogger<DeletePersonalDataModel> logger,
-            RecipeOrganizerContext context)
+            BusinessObjects.Models.RecipeOrganizerContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;

@@ -34,14 +34,14 @@ using SixLabors.ImageSharp.Formats.Webp;
 
 namespace CapstoneProject.Areas.Identity.Pages.Account {
     public class RegisterModel : PageModel {
-        private readonly SignInManager<Models.Account> _signInManager;
-        private readonly UserManager<Models.Account> _userManager;
-        private readonly IUserStore<Models.Account> _userStore;
-        private readonly IUserEmailStore<Models.Account> _emailStore;
+        private readonly SignInManager<BusinessObjects.Models.Account> _signInManager;
+        private readonly UserManager<BusinessObjects.Models.Account> _userManager;
+        private readonly IUserStore<BusinessObjects.Models.Account> _userStore;
+        private readonly IUserEmailStore<BusinessObjects.Models.Account> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly RecipeOrganizerContext _context;
+        private readonly BusinessObjects.Models.RecipeOrganizerContext _context;
 
         public static string ApiKey = "AIzaSyDIXdDdvo8NguMgxLvn4DWMNS-vXkUxoag";
         public static string Bucket = "cookez-cloud.appspot.com";
@@ -49,16 +49,16 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
         public static string AuthPassword = "cookez";
 
         public RegisterModel(
-            UserManager<Models.Account> userManager,
-            IUserStore<Models.Account> userStore,
-            SignInManager<Models.Account> signInManager,
+            UserManager<BusinessObjects.Models.Account> userManager,
+            IUserStore<BusinessObjects.Models.Account> userStore,
+            SignInManager<BusinessObjects.Models.Account> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
             RoleManager<IdentityRole> roleManager,
-            RecipeOrganizerContext context) {
+            BusinessObjects.Models.RecipeOrganizerContext context) {
             _userManager = userManager;
             _userStore = userStore;
-            _emailStore = (IUserEmailStore<Models.Account>)GetEmailStore();
+            _emailStore = (IUserEmailStore<BusinessObjects.Models.Account>)GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
@@ -165,14 +165,14 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
                 Uri imageUrlUri = new Uri(imageUrl);
                 string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
 
-                var user = new Models.Account {
+                var user = new BusinessObjects.Models.Account {
                     UserName = Input.Username,
                     Email = Input.Email,
                     ImgPath = baseUrl,
                     Status = true,
                     CreatedDate = DateTime.UtcNow
                 };
-                var up = new Favourite() {
+                var up = new BusinessObjects.Models.Favourite() {
                     Name = "Favourite",
                     Account = user,
                     isPrivate= true,
@@ -223,21 +223,21 @@ namespace CapstoneProject.Areas.Identity.Pages.Account {
             return Page();
         }
 
-        private Models.Account CreateUser() {
+        private BusinessObjects.Models.Account CreateUser() {
             try {
-                return Activator.CreateInstance<Models.Account>();
+                return Activator.CreateInstance<BusinessObjects.Models.Account>();
             } catch {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(Models.Account)}'. " +
-                    $"Ensure that '{nameof(Models.Account)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(BusinessObjects.Models.Account)}'. " +
+                    $"Ensure that '{nameof(BusinessObjects.Models.Account)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
         }
 
-        private IUserEmailStore<Models.Account> GetEmailStore() {
+        private IUserEmailStore<BusinessObjects.Models.Account> GetEmailStore() {
             if (!_userManager.SupportsUserEmail) {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<Models.Account>)_userStore;
+            return (IUserEmailStore<BusinessObjects.Models.Account>)_userStore;
         }
 
         public static async Task<string> UploadFirebase(Stream stream, string fileName) {

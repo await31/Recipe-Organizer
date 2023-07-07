@@ -23,12 +23,12 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
         public static string AuthEmail = "cookez.mail@gmail.com";
         public static string AuthPassword = "cookez";
 
-        private readonly UserManager<Models.Account> _userManager;
-        private readonly SignInManager<Models.Account> _signInManager;
+        private readonly UserManager<BusinessObjects.Models.Account> _userManager;
+        private readonly SignInManager<BusinessObjects.Models.Account> _signInManager;
 
         public IndexModel(
-            UserManager<Models.Account> userManager,
-            SignInManager<Models.Account> signInManager)
+            UserManager<BusinessObjects.Models.Account> userManager,
+            SignInManager<BusinessObjects.Models.Account> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -54,8 +54,8 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
 
         private async Task LoadAsync(IdentityUser user)
         {
-            var userName = await _userManager.GetUserNameAsync((Models.Account)user);
-            var phoneNumber = await _userManager.GetPhoneNumberAsync((Models.Account)user);
+            var userName = await _userManager.GetUserNameAsync((BusinessObjects.Models.Account)user);
+            var phoneNumber = await _userManager.GetPhoneNumberAsync((BusinessObjects.Models.Account)user);
 
             Username = userName;
 

@@ -15,10 +15,10 @@ namespace CapstoneProject.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailChangeModel : PageModel
     {
-        private readonly UserManager<Models.Account> _userManager;
-        private readonly SignInManager<Models.Account> _signInManager;
+        private readonly UserManager<BusinessObjects.Models.Account> _userManager;
+        private readonly SignInManager<BusinessObjects.Models.Account> _signInManager;
 
-        public ConfirmEmailChangeModel(UserManager<Models.Account> userManager, SignInManager<Models.Account> signInManager)
+        public ConfirmEmailChangeModel(UserManager<BusinessObjects.Models.Account> userManager, SignInManager<BusinessObjects.Models.Account> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;

@@ -1,7 +1,7 @@
 ﻿@model Account
-@inject SignInManager<Account> SignInManager
+@inject SignInManager<BusinessObjects.Models.Account> SignInManager
 @using Microsoft.AspNetCore.Identity;
-@inject UserManager<Account> UserManager
+@inject UserManager<BusinessObjects.Models.Account> UserManager
 @{
     ViewData["Title"] = "User Profile";
 }
@@ -38,7 +38,7 @@
                             <p class="lead fw-normal mb-0 text-color-change">Popular recipes</p>
                         </div>
                         <div class="row row-cols-2 row-cols-lg-3 g-2 g-lg-3">
-                              @foreach(var item in (List<Recipe>)ViewData["popularRecipes"]) {
+                              @foreach(var item in (IEnumerable<Recipe>)ViewData["popularRecipes"]) {
                                   <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@item.Id" target="_blank">
                                         <div class="col mb-1">
                                             <img src="@item.ImgPath"
@@ -54,7 +54,7 @@
                             <p class="lead fw-normal mb-0 text-color-change">Collections</p>
                         </div>
                         <div class="row row-cols-1 row-cols-lg-1 g-2 g-lg-3 ms-5    ">
-                            @foreach (var collection in (List<Favourite>)ViewData["collections"]) {
+                            @foreach (var collection in (IEnumerable<Favourite>)ViewData["collections"]) {
                                 <div class="card mb-3 mx-2 text-color-change" style="height:450px; width: 18rem; padding: 0;display: flex;">
                                     <div class="card-img-top" style="height: 45%; width: 100%;background-color: darkgray">
                                         <a asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id">

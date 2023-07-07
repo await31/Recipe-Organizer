@@ -16,9 +16,9 @@ namespace CapstoneProject.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailModel : PageModel
     {
-        private readonly UserManager<Models.Account> _userManager;
+        private readonly UserManager<BusinessObjects.Models.Account> _userManager;
 
-        public ConfirmEmailModel(UserManager<Models.Account> userManager)
+        public ConfirmEmailModel(UserManager<BusinessObjects.Models.Account> userManager)
         {
             _userManager = userManager;
         }

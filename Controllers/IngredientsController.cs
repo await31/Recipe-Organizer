@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using CapstoneProject.Models;
 using Microsoft.AspNetCore.Authorization;
 using Firebase.Auth;
 using Firebase.Storage;
@@ -17,25 +16,30 @@ using SixLabors.ImageSharp.Formats.Png;
 using MailKit;
 using System.Text.RegularExpressions;
 using SmartBreadcrumbs.Attributes;
+using BusinessObjects.Models;
+using Repositories;
 
 namespace CapstoneProject.Controllers {
 
     public class IngredientsController : Controller {
-
-        private readonly RecipeOrganizerContext _context;
 
         public static string ApiKey = "AIzaSyDIXdDdvo8NguMgxLvn4DWMNS-vXkUxoag";
         public static string Bucket = "cookez-cloud.appspot.com";
         public static string AuthEmail = "cookez.mail@gmail.com";
         public static string AuthPassword = "cookez";
 
-        public IngredientsController(RecipeOrganizerContext context) {
-            _context = context;
+        private readonly IIngredientRepository _ingredientRepository;
+        private readonly IIngredientCategoryRepository _ingredientCategoryRepository;
+
+        public IngredientsController(IIngredientRepository ingredientRepository, IIngredientCategoryRepository ingredientCategoryRepository) {
+            _ingredientRepository = ingredientRepository;
+            _ingredientCategoryRepository = ingredientCategoryRepository;
         }
         [HttpPost]
         public JsonResult AutoComplete(string term)
         {
-            var result = (_context.Ingredients.Where(i => i.Status == true).Where(t => t.Name.ToLower().Contains(term.ToLower()))
+            var list = _ingredientRepository.GetIngredients();
+            var result = (list.Where(i => i.Status == true).Where(t => t.Name.ToLower().Contains(term.ToLower()))
                  .Select(t => new { t.Name }))
                  .ToList();
             return Json(result);
@@ -44,7 +48,7 @@ namespace CapstoneProject.Controllers {
         [Authorize(Roles = "Admin")]
         [Breadcrumb("Ingredients Management")]
         public IActionResult Index() {
-            IEnumerable<Ingredient> objIngredient = _context.Ingredients.Include(r=>r.FkCategory).ToList();
+            var objIngredient = _ingredientRepository.GetIngredients();
             return View(objIngredient);
         }
 
@@ -52,7 +56,7 @@ namespace CapstoneProject.Controllers {
         [Breadcrumb("Create", FromAction = "Index", FromController = typeof(IngredientsController))]
         [Authorize(Roles = "Admin")]
         public IActionResult Create() {
-            ViewData["FkCategoryId"] = new SelectList(_context.IngredientCategories, "Id", "Name");
+            ViewData["FkCategoryId"] = new SelectList(_ingredientCategoryRepository.GetIngredientCategories(), "Id", "Name");
             return View();
         }
 
@@ -71,8 +75,7 @@ namespace CapstoneProject.Controllers {
                     string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
                     model.ImgPath = baseUrl;
                     model.Status = true;
-                    _context.Ingredients.Add(model);
-                    await _context.SaveChangesAsync();
+                    _ingredientRepository.InsertIngredient(model);
                     TempData["success"] = "Ingredient created successfully";
                     return RedirectToAction("Index");
                 }
@@ -94,8 +97,7 @@ namespace CapstoneProject.Controllers {
                     string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
                     model.ImgPath = baseUrl;
                     model.Status = false;
-                    _context.Ingredients.Add(model);
-                    await _context.SaveChangesAsync();
+                    _ingredientRepository.InsertIngredient(model);
                     TempData["success"] = "Ingredient created successfully";
                     return Json(new { success = true });
                 }
@@ -107,13 +109,11 @@ namespace CapstoneProject.Controllers {
         // GET: Ingredient/Detail/id
         [Authorize(Roles = "Admin")]
         public IActionResult Detail(int? id) {
-
-            if (id == null || _context.Ingredients == null) {
+            if (id == null) {
                 return NotFound();
             }
 
-            var ingredient = _context.Ingredients
-                        .FirstOrDefault(m => m.Id == id);
+            var ingredient = _ingredientRepository.GetIngredientById(id);
 
             if (ingredient == null) {
                 return NotFound();
@@ -177,64 +177,66 @@ namespace CapstoneProject.Controllers {
         //GET
         [Breadcrumb("Edit", FromAction = "Index", FromController = typeof(IngredientsController))]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int? id) {
-            if (id == null || _context.Ingredients == null) {
+        public IActionResult Edit(int? id) {
+            if (id == null) {
                 return NotFound();
             }
-            var ingredient = await _context.Ingredients.FindAsync(id);
+
+            var ingredient = _ingredientRepository.GetIngredientById(id);
+
             if (ingredient == null) {
                 return NotFound();
             }
-            ViewData["FkCategoryId"] = new SelectList(_context.IngredientCategories, "Id", "Name");
+
+            ViewData["FkCategoryId"] = new SelectList(_ingredientCategoryRepository.GetIngredientCategories(), "Id", "Name");
             return View(ingredient);
         }
 
-        //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id, Name, ImgPath, Description, Status, FkCategoryId")] Ingredient ingredient) {
+        public IActionResult Edit(int id, [Bind("Id, Name, ImgPath, Description, Status, FkCategoryId")] Ingredient ingredient) {
             if (id != ingredient.Id) {
                 return NotFound();
             }
 
             if (ModelState.IsValid) {
                 try {
-                    ingredient.Status = true;
-                    _context.Update(ingredient);
-                    await _context.SaveChangesAsync();
-                } catch (DbUpdateConcurrencyException) {
-                    if (!IngredientExists(ingredient.Id)) {
-                        return NotFound();
-                    } else {
-                        throw;
-                    }
+                    _ingredientRepository.UpdateIngredient(ingredient);
+                    TempData["success"] = "Ingredient updated successfully";
+                } catch (Exception) {
+                    return NotFound();
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
-            ViewData["FkCategoryId"] = new SelectList(_context.IngredientCategories, "Id", "Name", ingredient.FkCategoryId);
+
+            ViewData["FkCategoryId"] = new SelectList(_ingredientCategoryRepository.GetIngredientCategories(), "Id", "Name");
             return View(ingredient);
         }
 
         private bool IngredientExists(int id) {
-            return (_context.Ingredients?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_ingredientRepository.GetIngredients()?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-        //GET
+        // GET
         [Breadcrumb("Delete", FromAction = "Index", FromController = typeof(IngredientsController))]
         [Authorize(Roles = "Admin")]
         public IActionResult Delete(int? id) {
-            if (id == null || id == 0) {
+            if (id == null) {
                 return NotFound();
             }
-            var ingredientFromDb = _context.Ingredients.Find(id);
-            if (ingredientFromDb == null) {
+
+            var ingredient = _ingredientRepository.GetIngredientById(id);
+
+            if (ingredient == null) {
                 return NotFound();
             }
-            return View(ingredientFromDb);
+
+            return View(ingredient);
         }
 
-        [HttpPost, ActionName("Delete")]
+        /*
+         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeletePOST(int? id) {
@@ -251,21 +253,31 @@ namespace CapstoneProject.Controllers {
             TempData["success"] = "Ingredient deleted successfully";
             return RedirectToAction("Index");
         }
+         */
+
+        // POST
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteConfirmed(int id) {
+            var ingredient = _ingredientRepository.GetIngredientById(id);
+            await DeleteFromFirebaseStorage(ingredient.ImgPath);
+            _ingredientRepository.DeleteIngredient(ingredient);
+            TempData["success"] = "Ingredient deleted successfully";
+            return RedirectToAction("Index");
+        }
 
 
         // POST: Recipes/Approve
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Approve(int id) {
-            var ingredient = await _context.Ingredients.FindAsync(id);
+        public IActionResult Approve(int id) {
+            var ingredient = _ingredientRepository.GetIngredientById(id);
             if (ingredient == null) {
                 return NotFound();
             }
-
-            ingredient.Status = true; // Set the status to approved
-            await _context.SaveChangesAsync();
-
+            _ingredientRepository.Approve(ingredient);
             return RedirectToAction("Index", "Dashboard");
         }
         [Authorize]
@@ -274,17 +286,12 @@ namespace CapstoneProject.Controllers {
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Deny(int id) {
-            var ingredient = await _context.Ingredients.FindAsync(id);
+            var ingredient = _ingredientRepository.GetIngredientById(id);
             if (ingredient == null) {
                 return NotFound();
             }
-
-            _context.Ingredients.RemoveRange(ingredient);
-
             await DeleteFromFirebaseStorage(ingredient.ImgPath);
-            _context.Ingredients.Remove(ingredient);
-            await _context.SaveChangesAsync();
-
+            _ingredientRepository.Deny(ingredient);
             return RedirectToAction("Index", "Dashboard");
         }
 

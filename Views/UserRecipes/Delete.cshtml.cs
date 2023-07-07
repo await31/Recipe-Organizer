@@ -11,15 +11,15 @@ namespace CapstoneProject.Views.UserRecipes
 {
     public class DeleteModel : PageModel
     {
-        private readonly CapstoneProject.Models.RecipeOrganizerContext _context;
+        private readonly BusinessObjects.Models.RecipeOrganizerContext _context;
 
-        public DeleteModel(CapstoneProject.Models.RecipeOrganizerContext context)
+        public DeleteModel(BusinessObjects.Models.RecipeOrganizerContext context)
         {
             _context = context;
         }
 
         [BindProperty]
-        public Recipe Recipe { get; set; }
+        public BusinessObjects.Models.Recipe Recipe { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {

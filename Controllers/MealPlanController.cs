@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CapstoneProject.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using Microsoft.AspNetCore.Identity;
@@ -23,24 +22,30 @@ using System.Text.Json;
 using System.Drawing.Printing;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using Repositories;
+using BusinessObjects.Models;
 
 namespace CapstoneProject.Controllers {
 
     [Authorize]
     public class MealPlanController : Controller {
 
-        private readonly RecipeOrganizerContext _context;
         private readonly UserManager<Account> _userManager;
+        private readonly IMealPlanRepository _mealPlanRepository;
+        private readonly IRecipeRepository _recipeRepository;
+        private readonly IRecipeCategoryRepository _recipeCategoryRepository;
 
-        public MealPlanController(RecipeOrganizerContext context, UserManager<Account> userManager) {
-            _context = context;
+        public MealPlanController(IRecipeCategoryRepository recipeCategoryRepository, IMealPlanRepository mealPlanRepository, IRecipeRepository recipeRepository, UserManager<Account> userManager) {
+            _mealPlanRepository = mealPlanRepository;
+            _recipeRepository = recipeRepository;
+            _recipeCategoryRepository = recipeCategoryRepository;
             _userManager = userManager;
         }
 
+
         public JsonResult GetEvents() {
             var currentUser = _userManager.GetUserId(User);
-            var mealplans = _context.MealPlans
-                .Where(a => a.FkUserId == currentUser)
+            var mealplans = _mealPlanRepository.GetMealPlans(currentUser)
                 .ToList();
 
             return Json(mealplans);
@@ -49,15 +54,15 @@ namespace CapstoneProject.Controllers {
         [HttpPost]
         public JsonResult RecipeNameExists(string recipe) {
             ExtractIntegerAndString(recipe, out int id, out string name);
-            var exists = _context.Recipes?.Any(r => r.Id == id && r.Name.Equals(name)) ?? false;
+            var exists = _recipeRepository.GetRecipes()?.Any(r => r.Id == id && r.Name.Equals(name)) ?? false;
             return Json(new { exists });
         }
 
         [HttpPost]
         public JsonResult GetDietaryRecipes(string dietary) {
             // Generate data based on the selected dietary
-            var allRecipes = _context.Recipes
-                .Where(a => a.Status == true);
+            var allRecipes = _recipeRepository.GetRecipes().Where(a=>a.Status ==true);
+
             IEnumerable<Recipe> recipes = new List<Recipe>();
             switch(dietary) {
                 case "highcalorie":
@@ -107,7 +112,7 @@ namespace CapstoneProject.Controllers {
 
         [HttpPost]
         public JsonResult RecipesAutoComplete(string term) {
-            var result = _context.Recipes
+            var result = _recipeRepository.GetRecipes()
                 .Where(t => t.Name.ToLower().Contains(term.ToLower()))
                 .Select(t => new { Id = t.Id, Name = t.Name })
                 .ToList();
@@ -122,8 +127,7 @@ namespace CapstoneProject.Controllers {
             var startOfWeek = dateNow.Date.AddDays(-(int)dateNow.DayOfWeek);
             var endOfWeek = startOfWeek.AddDays(6);
 
-            var mealPlans = _context.MealPlans
-                .Where(a => a.FkUserId == currentUser)
+            var mealPlans = _mealPlanRepository.GetMealPlans(currentUser)
                 .Where(a => a.Date >= startOfWeek && a.Date <= endOfWeek)
             .ToList();
 
@@ -136,8 +140,7 @@ namespace CapstoneProject.Controllers {
         [Breadcrumb("Schedule")]
         public IActionResult Schedule() {
             var currentUser = _userManager.GetUserId(User);
-            var mealPlans = _context.MealPlans
-                .Where(a => a.FkUserId == currentUser)
+            var mealPlans = _mealPlanRepository.GetMealPlans(currentUser)
                 .ToList();
             return View(mealPlans);
         }
@@ -145,25 +148,14 @@ namespace CapstoneProject.Controllers {
         [Breadcrumb("Details")]
         public IActionResult Details(int? id) {
 
-            var mealplan = _context.MealPlans
-                       .Include(mp => mp.FkUser)
-                       .Include(mp => mp.Recipes)
-                            .ThenInclude(r => r.FkUser)
-                       .Include(mp => mp.Recipes)
-                            .ThenInclude(r => r.RecipeIngredients)
-                                 .ThenInclude(ri => ri.Ingredient)
-                       .FirstOrDefault(mp => mp.Id == id);
+            var allMealPlan = _mealPlanRepository.GetAllMealPlans();
+
+            var mealplan = _mealPlanRepository.GetMealPlanDetails(id);
 
             if (mealplan == null) {
                 return NotFound();
             }
-
-            var mealPlanWithNutrition = _context.MealPlans
-                .Include(r => r.Recipes)
-                .ThenInclude(r => r.Nutrition)
-                .FirstOrDefault(a => a.Id == id);
-
-
+            var mealPlanWithNutrition = _mealPlanRepository.GetMealPlanWithNutrition(id);
             var ingredientQuantities = mealplan.Recipes
         .SelectMany(r => r.RecipeIngredients)
         .GroupBy(ri => new { ri.IngredientId, ri.UnitOfMeasure })
@@ -183,23 +175,18 @@ namespace CapstoneProject.Controllers {
                 Carbohydrate = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Carbohydrate),
                 Cholesterol = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Cholesterol)
             };
-
-
             ViewData["TotalNutrition"] = totalNutrition;
             ViewData["GroupedIngredients"] = ingredientQuantities;
-
-
-
             return View(mealplan);
         }
 
         [Breadcrumb("Create")]
         public IActionResult Create() {
-            var recipes = _context.Recipes
+            var recipes = _recipeRepository.GetRecipes()
                        .Where(i => i.Status == true)
                        .ToList();
 
-            var categories = _context.RecipeCategories
+            var categories = _recipeCategoryRepository.GetRecipeCategories()
                 .ToList();
 
             ViewData["categories"] = categories;
@@ -212,7 +199,7 @@ namespace CapstoneProject.Controllers {
         public async Task<IActionResult> Create(MealPlan mealplan, string[] RecipeNames, DateTime startDate, string[] selectedDays, int weeklast) {
             if (ModelState.IsValid) {
                 var currentUser = await _userManager.GetUserAsync(User);
-                var allRecipes = _context.Recipes
+                var allRecipes = _recipeRepository.GetRecipes()
                     .Where(i => i.Status == true)
                     .ToList();
 
@@ -227,7 +214,7 @@ namespace CapstoneProject.Controllers {
                                 mealplan.Recipes.Add(recipe);
                             }
                         }
-                        _context.MealPlans.Add(mealplan);
+                        _mealPlanRepository.InsertMealPlan(mealplan);
                     } else if (mealplan.Date == null) {  //Weekly planning
 
                         // Process selected days and week last
@@ -267,12 +254,11 @@ namespace CapstoneProject.Controllers {
                                             newMealPlan.Recipes.Add(recipe);
                                         }
                                     }
-                                    _context.MealPlans.Add(newMealPlan);
+                                    _mealPlanRepository.InsertMealPlan(newMealPlan);
                                 }
                             }
                         }
                     }
-                    _context.SaveChanges();
                     TempData["success"] = "Meal planning created successfully!";
                     return RedirectToAction(nameof(Index));
                 }
@@ -283,13 +269,12 @@ namespace CapstoneProject.Controllers {
 
         [HttpPost]
         public IActionResult DeletePOST(int? id) {
-            var obj = _context.MealPlans.Find(id);
+            var obj = _mealPlanRepository.GetMealPlanById(id);
             if (obj == null) {
                 return NotFound();
             }
 
-            _context.MealPlans.Remove(obj);
-            _context.SaveChanges();
+            _mealPlanRepository.DeleteMealPlan(obj);
             TempData["success"] = "Meal plan deleted successfully";
             return RedirectToAction(nameof(Index));
         }

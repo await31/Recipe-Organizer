@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using CapstoneProject.Models;
 using Microsoft.AspNetCore.Authorization;
 using Firebase.Auth;
 using Firebase.Storage;
@@ -19,34 +18,35 @@ using System.Text.RegularExpressions;
 using NuGet.Packaging;
 using SmartBreadcrumbs.Attributes;
 using Microsoft.AspNetCore.Identity;
+using BusinessObjects.Models;
+using Repositories;
 
 namespace CapstoneProject.Controllers {
 
 
     [Authorize(Roles = "Admin")]
     public class RecipesController : Controller {
-        private readonly RecipeOrganizerContext _context;
         private readonly UserManager<Account> _userManager;
+
+        private readonly IRecipeRepository _recipeRepository;
+        private readonly IRecipeCategoryRepository _recipeCategoryRepository;
 
         public static string ApiKey = "AIzaSyDIXdDdvo8NguMgxLvn4DWMNS-vXkUxoag";
         public static string Bucket = "cookez-cloud.appspot.com";
         public static string AuthEmail = "cookez.mail@gmail.com";
         public static string AuthPassword = "cookez";
 
-        public RecipesController(RecipeOrganizerContext context, UserManager<Account> userManager) {
-            _context = context;
+        public RecipesController(UserManager<Account> userManager, IRecipeRepository recipeRepository, IRecipeCategoryRepository recipeCategoryRepository) {
             _userManager = userManager;
+            _recipeRepository = recipeRepository;
+            _recipeCategoryRepository = recipeCategoryRepository;
         }
 
         // GET/POST: Recipes
         [Breadcrumb("Recipes Management")]
 
         public IActionResult Index(int pg = 1) {
-            var recipes = _context.Recipes
-                .Where(a => a.Status == true)
-                .Include(x => x.FkRecipeCategory)
-                .Include(x => x.FkUser)
-                .ToList();
+            var recipes = _recipeRepository.GetRecipes();
 
             const int pageSize = 10; 
 
@@ -69,18 +69,11 @@ namespace CapstoneProject.Controllers {
         // GET: Recipes/Details/5
         public IActionResult Details(int? id) {
 
-            if (id == null || _context.Recipes == null) {
+            if (id == null || _recipeRepository.GetRecipes() == null) {
                 return NotFound();
             }
 
-            var recipe = _context.Recipes
-                .Include(x => x.FkUser)
-                .Include(y => y.FkRecipeCategory)
-                .Include(t => t.Nutrition)
-                .Include(a => a.RecipeIngredients)
-                .ThenInclude(a => a.Ingredient)
-                .FirstOrDefault(m => m.Id == id);
-
+            var recipe = _recipeRepository.GetRecipeById(id);
             if (recipe == null) {
                 return NotFound();
             }
@@ -90,15 +83,12 @@ namespace CapstoneProject.Controllers {
 
         [Authorize]
         // GET: Recipes/Delete/5
-        public async Task<IActionResult> Delete(int? id) {
-            if (id == null || _context.Recipes == null) {
+        public IActionResult Delete(int? id) {
+            if (id == null || _recipeRepository.GetRecipes() == null) {
                 return NotFound();
             }
 
-            var recipe = await _context.Recipes
-                .Include(r => r.FkRecipe)
-                .Include(r => r.FkRecipeCategory)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var recipe = _recipeRepository.GetRecipeById(id);
             if (recipe == null) {
                 return NotFound();
             }
@@ -110,123 +100,49 @@ namespace CapstoneProject.Controllers {
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id) {
-            if (_context.Recipes == null) {
+            if (_recipeRepository.GetRecipes() == null) {
                 return Problem("Entity set 'RecipeOrganizerContext.Recipes'  is null.");
             }
 
-            var recipeIngredient = _context.RecipeIngredient
-                .Where(r => r.RecipeId == id)
-                .ToList();
-            _context.RecipeIngredient.RemoveRange(recipeIngredient);
-
-            var recipeFeedbacks = _context.RecipeFeedbacks
-                .Where(r => r.RecipeId == id)
-                .ToList();
-            _context.RecipeFeedbacks.RemoveRange(recipeFeedbacks);
-
-            var recipe = await _context.Recipes.FindAsync(id);
+            var recipe = _recipeRepository.GetRecipeById(id);
             if (recipe != null) {
                 if (recipe.ImgPath != null) {
                     await DeleteFromFirebaseStorage(recipe.ImgPath);
                 }
-                _context.Recipes.Remove(recipe);
+                _recipeRepository.DeleteRecipe(recipe);
             }
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool RecipeExists(int id) {
-            return (_context.Recipes?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_recipeRepository.GetRecipes()?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
         [Authorize]
         // POST: Recipes/Approve
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Approve(int id) {
-            var recipe = await _context.Recipes.FindAsync(id);
+        public IActionResult Approve(int id) {
+            var recipe = _recipeRepository.GetRecipeById(id);
             if (recipe == null) {
                 return NotFound();
             }
-
-            recipe.Status = true; // Set the status to approved
-            await _context.SaveChangesAsync();
-
+            _recipeRepository.Approve(recipe);
             return RedirectToAction(nameof(Index));
         }
+
         [Authorize]
         // POST: Recipes/Deny
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Deny(int id) {
-            var recipe = await _context.Recipes.FindAsync(id);
+            var recipe = _recipeRepository.GetRecipeById(id);
             if (recipe == null) {
                 return NotFound();
             }
-
-            var recipeIngredient = _context.RecipeIngredient
-               .Where(r => r.RecipeId == id)
-               .ToList();
-            _context.RecipeIngredient.RemoveRange(recipeIngredient);
-
             await DeleteFromFirebaseStorage(recipe.ImgPath);
-            _context.Recipes.Remove(recipe);
-            await _context.SaveChangesAsync();
-
+            _recipeRepository.Deny(recipe);
             return RedirectToAction(nameof(Index));
-        }
-
-
-        //firebase
-        public static async Task<string> UploadFirebase(Stream stream, string fileName) {
-            string imageFromFirebaseStorage = "";
-
-            using (Image image = Image.Load(stream)) {
-
-                // Resize the image to a smaller size if needed
-                int maxWidth = 1000; // Set your desired maximum width here
-                int maxHeight = 1000; // Set your desired maximum height here
-                if (image.Width > maxWidth || image.Height > maxHeight) {
-                    image.Mutate(x => x.Resize(new ResizeOptions {
-                        Size = new Size(maxWidth, maxHeight),
-                        Mode = ResizeMode.Max
-                    }));
-                }
-
-                using (MemoryStream webpStream = new()) {
-
-                    await image.SaveAsync(webpStream, new WebpEncoder());
-
-                    webpStream.Position = 0;
-
-                    FirebaseAuthProvider firebaseConfiguration = new(new FirebaseConfig(ApiKey));
-
-                    FirebaseAuthLink authConfiguration = await firebaseConfiguration
-                        .SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
-
-                    CancellationTokenSource cancellationToken = new();
-
-                    FirebaseStorageTask storageManager = new FirebaseStorage(
-                        Bucket,
-                        new FirebaseStorageOptions {
-                            AuthTokenAsyncFactory = () => Task.FromResult(authConfiguration.FirebaseToken),
-                            ThrowOnCancel = true
-                        })
-                        .Child("images")
-                        .Child("recipes")
-                        .Child(fileName)
-                        .PutAsync(webpStream, cancellationToken.Token);
-
-                    try {
-                        imageFromFirebaseStorage = await storageManager;
-                        firebaseConfiguration.Dispose();
-                        return imageFromFirebaseStorage;
-                    } catch (Exception ex) {
-                        Console.WriteLine("Exception was thrown: {0}", ex);
-                        return null;
-                    }
-                }
-            }
         }
 
         private async Task DeleteFromFirebaseStorage(string fileName) {

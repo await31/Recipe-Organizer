@@ -1,21 +1,23 @@
-﻿using CapstoneProject.Models;
+﻿using BusinessObjects.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Repositories;
 using SmartBreadcrumbs.Attributes;
+using System.Collections.Generic;
 
 namespace CapstoneProject.Controllers {
     [Authorize(Roles = "Admin")]
     public class RecipeCategoryController : Controller {
 
-        private readonly RecipeOrganizerContext _context;
+        private readonly IRecipeCategoryRepository _recipeCategoryRepository;
 
-        public RecipeCategoryController(RecipeOrganizerContext context) {
-            _context = context;
+        public RecipeCategoryController(IRecipeCategoryRepository recipeCategoryRepository) {
+            _recipeCategoryRepository = recipeCategoryRepository;
         }
 
         [Breadcrumb("Recipe Categories Management")]
         public IActionResult Index() {
-            IEnumerable<RecipeCategory> objRecipeCategoryList = _context.RecipeCategories.ToList();
+            IEnumerable<RecipeCategory> objRecipeCategoryList = _recipeCategoryRepository.GetRecipeCategories();
             return View(objRecipeCategoryList);
         }
 
@@ -31,8 +33,7 @@ namespace CapstoneProject.Controllers {
         [ValidateAntiForgeryToken]
         public IActionResult Create(RecipeCategory obj) {
             if (ModelState.IsValid) {
-                _context.RecipeCategories.Add(obj);
-                _context.SaveChanges();
+                _recipeCategoryRepository.InsertRecipeCategory(obj);
                 TempData["success"] = "Category created successfully";
                 return RedirectToAction("Index");
             }
@@ -45,7 +46,7 @@ namespace CapstoneProject.Controllers {
             if (id == null || id == 0) {
                 return NotFound();
             }
-            var categoryFromDb = _context.RecipeCategories.Find(id);
+            var categoryFromDb = _recipeCategoryRepository.GetRecipeCategoryById(id);
             if (categoryFromDb == null) {
                 return NotFound();
             }
@@ -57,8 +58,7 @@ namespace CapstoneProject.Controllers {
         [ValidateAntiForgeryToken]
         public IActionResult Edit(RecipeCategory obj) {
             if (ModelState.IsValid) {
-                _context.RecipeCategories.Update(obj);
-                _context.SaveChanges();
+                _recipeCategoryRepository.UpdateRecipeCategory(obj);
                 TempData["success"] = "Category updated successfully";
                 return RedirectToAction("Index");
             }
@@ -71,7 +71,8 @@ namespace CapstoneProject.Controllers {
             if (id == null || id == 0) {
                 return NotFound();
             }
-            var categoryFromDb = _context.RecipeCategories.Find(id);
+            var categoryFromDb = _recipeCategoryRepository.GetRecipeCategoryById(id);
+
             if (categoryFromDb == null) {
                 return NotFound();
             }
@@ -82,13 +83,11 @@ namespace CapstoneProject.Controllers {
         [HttpPost,ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeletePOST(int? id) {
-
-            var obj = _context.RecipeCategories.Find(id);
+            var obj = _recipeCategoryRepository.GetRecipeCategoryById(id);
             if (obj == null) {
                 return NotFound();
             }
-            _context.RecipeCategories.Remove(obj);
-            _context.SaveChanges();
+            _recipeCategoryRepository.DeleteRecipeCategory(obj);
             TempData["success"] = "Category deleted successfully";
             return RedirectToAction("Index");
         }
