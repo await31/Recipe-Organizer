@@ -4,21 +4,21 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv='Content-Type' content='Type=text/html; charset=utf-8'>
-    <meta property="og:url" content="https://cookez.azurewebsites.net/"/>
-    <meta property="og:title" content="Place of foods and recipes"/>
+    <meta property="og:url" content="https://cookez.azurewebsites.net/" />
+    <meta property="og:title" content="Place of foods and recipes" />
     <meta property="og:site_name" content="Cookez" />
     <meta property="og:description" content="A place to store and create delicious, nutritious recipes for everyone's!" />
-    <meta property="og:type" content="website"/>
+    <meta property="og:type" content="website" />
     <meta property="og:image" content="https://www.howtocook.recipes/wp-content/uploads/2021/05/Ratatouille-recipe-500x500.jpg" />
-    <meta property="og:locale" content="vi"/>
+    <meta property="og:locale" content="vi" />
     <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/lib/bootstrap-5.3.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/lib/bootstrap-5.3.0/css/bootstrap.min.css" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <link rel="stylesheet" href="~/css/recipedetail.css" />
-    <link rel="stylesheet" href="~/css/togglestyle.css"/>
+    <link rel="stylesheet" href="~/css/togglestyle.css" />
     <link rel="icon" type="image/x-icon" href="\images\logo.png">
     <script src="https://kit.fontawesome.com/08194921a9.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css"/>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css" />
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <!-- Google Fonts -->
@@ -31,11 +31,11 @@
 </head>
 <style>
 
-    ::-webkit-scrollbar{
+    ::-webkit-scrollbar {
         width: 10px;
     }
 
-    ::-webkit-scrollbar-thumb{
+    ::-webkit-scrollbar-thumb {
         background: grey;
         border-radius: 100rem;
     }
@@ -53,9 +53,11 @@
         color: gray !important;
         opacity: 0.5 !important;
     }
-    .form-outline .form-control{
+
+    .form-outline .form-control {
         background-color: white;
     }
+
     .breadcrumb a {
         text-decoration: none;
         font-weight: bold;
@@ -102,21 +104,40 @@
         defer>
 </script>
 <body class="dark">
-    <header class="pb-2 bg-light shadow-sm">
-        <div class="container-fluid header-color-change">
-            <div class="d-flex flex-wrap align-items-center justify-content-between">
-                <div>
-                    <a class="navbar-brand mb-xs-2 mb-sm-2" asp-area="" asp-controller="Home" asp-action="Index">
-                        <img src="\images\logo.png" alt="Logo" width="80" height="80" class="d-inline-block align-text-top">
-                    </a>
-                </div>
-                <div class="d-flex col-12 col-lg-auto mb-md-0 justify-content-center mt-1">
-                    <form class="d-flex" asp-controller="UserRecipes" asp-action="Filter">
-                        <input style="width: 400px;" class="form-control" id="SearchString" name="SearchString" type="text" placeholder="What's your food choice for today?" aria-label="Search" value="@ViewData["FilterSearch"]" />
-                        <button class="btn btn-dark my-2 my-sm-0 ms-2" type="submit" value="Find"><i class="fa-solid fa-magnifying-glass"></i></button>
-                    </form>
-                </div>
+     <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <!-- Container wrapper -->
+        <div class="container-fluid">
+            <!-- Navbar brand -->
+            <a class="navbar-brand mt-2 mt-lg-0" asp-area="" asp-controller="Home" asp-action="Index">
+                <img src="\images\logo.png"
+                     height="80"
+                     alt="Cookez Logo"
+                     loading="lazy" />
+            </a>
 
+            <!-- Toggle button -->
+            <button class="navbar-toggler"
+                    type="button"
+                    data-mdb-toggle="collapse"
+                    data-mdb-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Collapsible wrapper -->
+            <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+                <form class="d-flex input-group w-auto" asp-controller="UserRecipes" asp-action="Filter">
+                    <input type="search"
+                           class="form-control rounded"
+                           id="SearchString"
+                           name="SearchString"
+                           placeholder="What's your choice?"
+                           aria-label="Search"
+                           aria-describedby="search-addon" value="@ViewData["FilterSearch"]" />
+                    <button class="btn btn-dark ms-2 rounded" type="submit" value="Find"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </form>
                 <div class="load-flash"></div>
                 <div class="mode-toggle noselect">
                     <h6 class="label-dark">Dark</h6>
@@ -129,7 +150,8 @@
                 </div>
             </div>
         </div>
-    </header>
+        <!-- Container wrapper -->
+    </nav>
     <div class="container">
         <main role="main" class="pb-3 pt-3" style="min-height: 100vh;">
             <partial name="_Notification" />
@@ -143,7 +165,7 @@
             <p class="col-md-4 mb-0 text-color-change" style="padding-left:50px">&copy; 2023 Cookez, Inc</p>
 
             <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-                <img class="img-fluid" style="width: 60px; height: 60px;" src="~/images/logo.png"/>
+                <img class="img-fluid" style="width: 60px; height: 60px;" src="~/images/logo.png" />
             </a>
 
             <ul class="nav col-md-4 justify-content-end text-color-change" style="padding-right:50px">
