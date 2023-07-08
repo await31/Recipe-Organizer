@@ -247,7 +247,7 @@
                     <button type="button" class="btn rounded-5" style="background-color: #dbedf1;">
                         <i class="fa-solid fa-utensils"></i> <span class="text-dark">@hotRecipe.FkRecipeCategory.Name</span>
                     </button>
-                    <div class="row me-5" style="margin-top: 14%;">
+                    <div class="row me-5 justify-content-center" style="margin-top: 14%;">
                         <div class="d-flex col-8">
                             @if (@hotRecipe.FkUser != null) {
                                 if (SignInManager.IsSignedIn(User)) {
