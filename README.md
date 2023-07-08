@@ -1,4 +1,4 @@
-# Cookez Platform
+# https://cookez.azurewebsites.net
 
 
 ## In-use technologies
