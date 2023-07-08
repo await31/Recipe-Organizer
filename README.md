@@ -1,5 +1,6 @@
-# Live demo: https://cookez.azurewebsites.net
+# Cookez Platform
 
+## Live demo: https://cookez.azurewebsites.net
 
 ## In-use technologies
 [![My Skills](https://skills.thijs.gg/icons?i=html,css,js,bootstrap,cs,dotnet,firebase,github,jquery,visualstudio,azure,figma)](https://skills.thijs.gg)
