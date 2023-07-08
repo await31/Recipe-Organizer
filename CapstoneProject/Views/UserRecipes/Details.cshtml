@@ -86,15 +86,15 @@
                                 if (SignInManager.IsSignedIn(User)) {
                                     <div class="col-md excludePrint"
                                          style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
-                                    <a asp-controller="Home" asp-action="UserProfile" asp-route-userId="@Model.FkUserId" class="text-decoration-none text-dark d-flex">
-                                         <div class="row">
-                                            <div class="col-lg-4 col-2 px-0" style="align-self: center;">
+                                    <a asp-controller="Home" asp-action="UserProfile" asp-route-userId="@Model.FkUserId" class="text-decoration-none text-dark row">
+                                         <div class="d-flex">
+                                            <div class="align-seft-center">
                                                 <div>
                                                     <img class="img-fluid rounded-circle"
                                                          src="@Model?.FkUser?.ImgPath" style="height: 60px; width: 60px;">
                                                 </div>
                                             </div>
-                                            <div class="col-lg-8 col-10 text-color-change">
+                                            <div class="ext-color-change ps-3">
                                                 <div>
                                                     <h5 class="text-color-change" style="font-size: 1rem;">@Model?.FkUser.UserName</h5>
                                                     @Model.CreatedDate?.ToShortDateString()
@@ -108,10 +108,10 @@
                                      style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
                                     <a asp-area="Identity" asp-page="/Account/Login" class="text-decoration-none text-dark d-flex">
                                         <div class="row">
-                                            <div class="col-lg-4 col-2 px-0" style="align-self: center;">
+                                            <div class="d-flex align-self-center">
                                                 <div>
                                                     <img class="img-fluid rounded-circle"
-                                                         src="@Model?.FkUser?.ImgPath" style="height: 60px; width: 60px;">
+                                                         src="@Model?.FkUser?.ImgPath">
                                                 </div>
                                             </div>
                                             <div class="col-lg-8 col-10">
@@ -178,7 +178,7 @@
                         <div class="col-12 p-0 d-flex flex-row">
                             @if (SignInManager.IsSignedIn(User))
                             {
-                                <button class="btn btn-sm add-favourite-button mx-1" style="background-color: #e7f9fd; border-radius: 50%;" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@Model?.Id"
+                                <button class="btn btn-sm add-favourite-button mx-1" style="background-color: #e7f9fd; height: 66px; width: 66px; border-radius: 50%;" data-bs-toggle="modal" data-bs-target="#favouriteModal" data-recipe-id="@Model?.Id"
                                         data-recipe-imgpath="@Model?.ImgPath" data-recipe-name="@Model?.Name">
                                     <i id="favourite-icon-@Model?.Id" class="fa fa-heart-o fa-3x" style="color:red"></i>
                                 </button>
