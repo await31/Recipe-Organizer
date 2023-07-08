@@ -1,4 +1,4 @@
-# https://cookez.azurewebsites.net
+# Live demo: https://cookez.azurewebsites.net
 
 
 ## In-use technologies
