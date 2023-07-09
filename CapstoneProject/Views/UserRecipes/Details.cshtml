@@ -371,10 +371,7 @@
             }
             @if (SignInManager.IsSignedIn(User))
             {
-                <div class="card-body mt-3 d-flex flex-row align-items-center row ms-2">
-                    <div class="col-md-1 mb-5 ms-2 me-2">
-                        <img src="@UserManager.GetUserAsync(User).Result.ImgPath" width="50" height="50" class="rounded-circle">
-                    </div>
+                <div class="card-body d-flex flex-row align-items-center row">
                     <div class="col-md-9">
                         <input id="sendId" type="hidden" name="recipeId" value="@Model?.Id">
                         <input id="sendText" type="text" class="form-control" placeholder="Enter your feedback..." name="feedbackText" maxlength="200">
