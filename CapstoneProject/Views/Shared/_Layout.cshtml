@@ -115,16 +115,7 @@
                      loading="lazy" />
             </a>
 
-            <form class="d-flex input-group w-auto" asp-controller="UserRecipes" asp-action="Filter">
-                <input type="search"
-                       class="form-control rounded"
-                       id="SearchString"
-                       name="SearchString"
-                       placeholder="What's your choice?"
-                       aria-label="Search"
-                       aria-describedby="search-addon" value="@ViewData["FilterSearch"]" />
-                <button class="btn btn-dark ms-2 rounded" type="submit" value="Find"><i class="fa-solid fa-magnifying-glass"></i></button>
-            </form>
+
 
             <!-- Toggle button -->
             <button class="navbar-toggler"
@@ -138,17 +129,29 @@
             </button>
 
             <!-- Collapsible wrapper -->
-            <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
-                <div class="d-flex pt-2">
+            <div class="collapse navbar-collapse container-fluid" id="navbarSupportedContent">
+                <!-- Search -->
+                <form class="d-flex form-outline pb-2" asp-controller="UserRecipes" asp-action="Filter">
+                    <input type="search"
+                           class="form-control rounded border"
+                           id="SearchString"
+                           name="SearchString"
+                           placeholder="What's your choice?"
+                           aria-label="Search"
+                           aria-describedby="search-addon" value="@ViewData["FilterSearch"]" />
+                    <button class="btn btn-dark ms-2 rounded" type="submit" value="Find"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </form>
+
+                <div class="d-flex justify-content-between">
                     <div class="load-flash"></div>
-                    <div class="mode-toggle noselect col-6">
+                    <div class="mode-toggle noselect">
                         <h6 class="label-dark m-0">Dark</h6>
                         <div class="toggle-switch"></div>
                         <h6 class="label-light m-0">Light</h6>
                     </div>
 
 
-                    <div class="text-end d-flex col-6">
+                    <div class="d-flex">
                         <partial name="_LoginPartial" />
                     </div>
                 </div>

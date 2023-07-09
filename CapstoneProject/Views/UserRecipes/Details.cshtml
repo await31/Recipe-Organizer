@@ -88,7 +88,7 @@
                                          style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
                                     <a asp-controller="Home" asp-action="UserProfile" asp-route-userId="@Model.FkUserId" class="text-decoration-none text-dark row">
                                          <div class="d-flex">
-                                            <div class="align-seft-center">
+                                            <div class="d-flex align-seft-center">
                                                 <div>
                                                     <img class="img-fluid rounded-circle"
                                                          src="@Model?.FkUser?.ImgPath" style="height: 60px; width: 60px;">
@@ -107,14 +107,14 @@
                                 <div class="col-md excludePrint"
                                      style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
                                     <a asp-area="Identity" asp-page="/Account/Login" class="text-decoration-none text-dark d-flex">
-                                        <div class="row">
+                                        <div class="d-flex">
                                             <div class="d-flex align-self-center">
                                                 <div>
                                                     <img class="img-fluid rounded-circle"
-                                                         src="@Model?.FkUser?.ImgPath">
+                                                         src="@Model?.FkUser?.ImgPath" style="height: 60px; width: 60px;">
                                                 </div>
                                             </div>
-                                            <div class="col-lg-8 col-10">
+                                            <div class="ext-color-change ps-3">
                                                 <div>
                                                     <h5 class="text-color-change" style="font-size: 1rem;">@Model?.FkUser.UserName</h5>
                                                     @Model?.CreatedDate?.ToShortDateString()
@@ -183,12 +183,12 @@
                                     <i id="favourite-icon-@Model?.Id" class="fa fa-heart-o fa-3x" style="color:red"></i>
                                 </button>
                             }
-                            <button class="btn btn-sm mx-1 printer" style="background: #E7FAFE; border-radius: 50%;" onclick="printDiv('printableArea')" value="Print">
+                            <button class="btn btn-sm mx-1 printer" style="background: #E7FAFE; height: 66px; width: 66px; border-radius: 50%;" onclick="printDiv('printableArea')" value="Print">
                                 <i class="fa fa-print fa-3x" aria-hidden="true"></i>
                             </button>
 
                             @*Share via Fb*@
-                            <button class="btn btn-sm mx-1 facebook" style="background: #E7FAFE; border-radius: 50%;" onclick="window.open('http://www.facebook.com/share.php?u=' + encodeURIComponent(window.location.href))">
+                            <button class="btn btn-sm mx-1 facebook" style="background: #E7FAFE; height: 66px; width: 66px; border-radius: 50%;" onclick="window.open('http://www.facebook.com/share.php?u=' + encodeURIComponent(window.location.href))">
                                 <i class="fa-brands fa-facebook fa-3x" aria-hidden="true"></i>
                             </button>
 
