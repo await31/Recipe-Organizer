@@ -17,6 +17,7 @@ using BusinessObjects.Models;
 using Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
+using Microsoft.CodeAnalysis.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
@@ -46,13 +47,11 @@ builder.Services.AddAuthentication()
             ctx.Properties.StoreTokens(tokens);
             return Task.CompletedTask;
         };
-
     })
     .AddFacebook(facebookOptions => {
         facebookOptions.AppId = facebookAuthNSection["AppId"];
         facebookOptions.AppSecret = facebookAuthNSection["AppSecret"];
         facebookOptions.Scope.Remove("email");
-        facebookOptions.CallbackPath = "/signin-facebook";
     });
 
 // Add services to the container.
@@ -65,6 +64,9 @@ builder.Services.AddDbContext<RecipeOrganizerContext>(options => options.UseSqlS
 builder.Services.AddIdentity<Account, IdentityRole>(options => {
     options.SignIn.RequireConfirmedAccount = true;
     options.User.RequireUniqueEmail = true;
+    options.Lockout.AllowedForNewUsers = true;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(2);
+    options.Lockout.MaxFailedAccessAttempts = 3;
 })
     .AddDefaultUI()
     .AddDefaultTokenProviders()
