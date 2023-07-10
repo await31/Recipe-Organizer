@@ -32,6 +32,7 @@ namespace DataAccessObjects {
                 .Where(a => a.Status == true)
                 .Include(x => x.FkRecipeCategory)
                 .Include(x => x.FkUser)
+                .Include(x => x.Nutrition)
                 .ToList();
                 }
             } catch (Exception ex) {

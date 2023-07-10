@@ -25,11 +25,8 @@
     }
 </style>
 <hr />
-<div class="row d-flex mb-5">
-    <div class="col-2">
-    </div>
-
-    <div class="col-8 rounded-3 bg-white border border-dark border-2" style="background-color: #e7f9fd;">
+<div class="container-fluid b-5">
+    <div class="rounded-3 bg-white border border-dark border-2" style="background-color: #e7f9fd;">
         <form asp-action="Create" id="recipe-form" class="p-5">
             <h1 class="text-center mb-5 text-dark label-font">New Planning</h1>
             <div asp-validation-summary="ModelOnly" class="text-danger text-color-change-red"></div>
@@ -143,10 +140,10 @@
                 <div class="form-group row mt-4">
                     <div class="col-md-10">
                         <label for="RecipeName" class="mb-2 label-font">(#ID)Name</label>
-                        <input type="text" class="form-control recipes" id="RecipeName" name="RecipeNames[]" onchange="updateSpan(this.value,this)" required />
+                        <input type="text" class="form-control recipes" onchange="updateSpan(this.value,this)" required />
                         <span id="recipe-span-1" class="text-danger" style="display: none;">This recipe doesn't exist!</span>
                     </div>
-                    <div class="col-md-2" style="margin-top: 4%;">
+                    <div class="col-md-2" style="margin-top: 3%;">
                         <a onclick="removeRecipe(this)" class="text-decoration-none text-danger ms-3 fw-bolder fs-4"><i class="fa-solid fa-trash-can"></i></a>
                     </div>
                 </div>
@@ -175,22 +172,27 @@
         var dietary = this.value; // Get the selected dietary value
 
         // Make an AJAX request to the server
+        console.log("AJAX FFS");
         $.ajax({
-            url: '/mealplan/GetDietaryRecipes',
+            url: '/MealPlan/GetDietaryRecipes',
             type: 'POST',
             data: { dietary: dietary },
             success: function (data) {
+                console.log("EMPTY");
+                console.log(data);
                 $('#recipeList').empty();
-                if (data && data.length > 0) {
-
+                console.log(data.length);
+                if (data.length > 0) {
+                    console.log("WORKING");
                     $('#recipeList').append('<div class="row">');
                     data.forEach(function (recipe) {
-                        var recipeUrl = '@Url.Action("Details", "UserRecipes")' + '?id=' + recipe.id;
+                        console.log(recipe.Name);
+                        var recipeUrl = '@Url.Action("Details", "UserRecipes")' + '?id=' + recipe.Id;
                         var recipeHtml =
                             '<a href="' + recipeUrl + '" target="_blank" class="text-dark"><div style="height: 200px;" class="border border-1 rounded rounded-1 border-dark mt-1 mx-1">'
-                            + '<img class="img-fluid" style="height: 70%; width: 150px;" src="' + recipe.imgPath + '">'
-                            + '<p class="card-title text-center" style="max-width: 150px;">' + recipe.name + '</p>'
-                            + '<a onclick="addSuggestRecipe(\'' + recipe.id + '\', \'' + recipe.name + '\')" class="btn btn-success w-100" style="font-size: 10px;"> Add</a>'
+                            + '<img class="img-fluid" style="height: 70%; width: 150px;" src="' + recipe.ImgPath + '">'
+                            + '<p class="card-title text-center" style="max-width: 150px;">' + recipe.Name + '</p>'
+                            + '<a onclick="addSuggestRecipe(\'' + recipe.Id + '\', \'' + recipe.Name + '\')" class="btn btn-success w-100" style="font-size: 10px;"> Add</a>'
                             + '</div></a>';
 
                         $('#recipeList').append(recipeHtml);
@@ -201,6 +203,8 @@
                 }
             },
             error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+                console.log("ERR");
                 console.log(error); // Handle the error, if any
             }
         });
@@ -311,6 +315,7 @@
 
         // Get all the select elements within the container
         var inputElements = document.querySelectorAll('#recipe-container input[type="text"]');
+        console.log(inputElements);
 
         // Create a hidden input for each ingredient ID
         var hiddenInputsContainer = document.getElementById('hidden-inputs-container');
@@ -326,6 +331,7 @@
             };
 
             if (inputValue !== '') {
+                console.log(inputValue);
                 var hiddenInputId = document.createElement('input');
                 hiddenInputId.type = 'hidden';
                 hiddenInputId.name = 'RecipeNames[]';

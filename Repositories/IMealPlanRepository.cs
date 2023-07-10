@@ -13,7 +13,7 @@ namespace Repositories {
         MealPlan GetMealPlanById(int? id);
         MealPlan GetMealPlanDetails(int? id);
         MealPlan GetMealPlanWithNutrition(int? id);
-        void InsertMealPlan(MealPlan mp);
+        void InsertMealPlan(MealPlan mp, string userId, List<int> recipeIds);
         void DeleteMealPlan(MealPlan mp);
     }
 }

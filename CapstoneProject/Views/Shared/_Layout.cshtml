@@ -129,9 +129,9 @@
             </button>
 
             <!-- Collapsible wrapper -->
-            <div class="collapse navbar-collapse container-fluid" id="navbarSupportedContent">
+            <div class="collapse navbar-collapse container-fluid d-flex justify-content-around" id="navbarSupportedContent" style="text-align: -webkit-center">
                 <!-- Search -->
-                <form class="d-flex form-outline pb-2" asp-controller="UserRecipes" asp-action="Filter">
+                <form class="d-flex form-outline pb-2" style="width: 70%" asp-controller="UserRecipes" asp-action="Filter">
                     <input type="search"
                            class="form-control rounded border"
                            id="SearchString"
@@ -167,19 +167,18 @@
     <!-- Footer -->
     <div class="container-fluid shadow-sm">
         <footer class="d-flex flex-wrap justify-content-between align-items-center pt-3 pb-2 my-1 border-top">
-            <p class="col-md-4 mb-0 text-color-change" style="padding-left:50px">&copy; 2023 Cookez, Inc</p>
+            <p class="col-4 mb-0 ps-2 text-color-change">&copy; 2023 Cookez, Inc</p>
 
-            <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+            <a href="/" class="col-4 text-center">
                 <img class="img-fluid" style="width: 60px; height: 60px;" src="~/images/logo.png" />
             </a>
 
-            <ul class="nav col-md-4 justify-content-end text-color-change" style="padding-right:50px">
+            <ul class="nav col-4 justify-content-end text-color-change">
                 <li class="nav-item"><a asp-action="Privacy" asp-controller="Home" class="nav-link px-2 text-color-change" target="_blank">Privacy</a></li>
                 <li class="nav-item"><a asp-action="Contact" asp-controller="Home" class="nav-link px-2 text-color-change" target="_blank">Contact us</a></li>
             </ul>
         </footer>
     </div>
-
     <!-- Footer -->
     <script src="~/lib/jquery-3.7.0.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>

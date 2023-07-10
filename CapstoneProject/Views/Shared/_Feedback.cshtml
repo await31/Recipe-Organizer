@@ -16,10 +16,10 @@
 {
     @foreach (var feedback in Model)
     {
-        <div class="mt-2">
-            <div class="d-flex flex-row p-2">
-                <div class="row w-100">
-                    <div class="col-1 me-2 ms-5">
+        <div class="mt-2 px-4">
+            <div class="d-flex flex-row py-4">
+                <div class="d-flex w-100 justify-content-around">
+                    <div class="">
                         <img src="@feedback.User?.ImgPath" width="50" height="50" class="rounded-circle">
                     </div>
                     <div class="col-8 rounded-4" style="background-color: #e7f9fd;">
@@ -28,20 +28,24 @@
                     </div>
                     @if (UserManager.GetUserId(User) == feedback.UserId)
                     {
-                        <div class="dropdown col-1">
-                            <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="">
+                            <button class="btn btn-link dropdown-toggle"
+                                    type="button"
+                                    id="dropdownMenuButton"
+                                    data-mdb-toggle="dropdown"
+                                    aria-expanded="false">
                             </button>
                             <ul class="dropdown-menu p-0">
                                 <li>
-                                    <button onclick="deleteFeedback(this)" data-recipe-id="@ViewData["RecipeId"]" data-feedback-id="@feedback.Id" class="btn mt-2 h-100 w-100">Delete</button>
+                                    <button onclick="deleteFeedback(this)" data-recipe-id="@ViewData["RecipeId"]" data-feedback-id="@feedback.Id" class="btn h-100 w-100">Delete</button>
                                 </li>
                             </ul>
                         </div>
                     }
                     else
                     {
-                        <div class="d-flex flex-row user-feed col-1">
-                            <span class="wish"><i class="fa fa-heartbeat ms-2"></i>@feedback.Rating</span>
+                        <div class="d-flex flex-row user-feed">
+                            <span class="wish"><i class="fa fa-heartbeat"></i>@feedback.Rating</span>
                         </div>
                     }
                 </div>

@@ -28,7 +28,6 @@ namespace CapstoneProject.Controllers {
         }
 
         //Can't handle JsonResult task with data call from Repository, temporary use RecipeOrganizerContext inject
-
         [HttpPost]
         public async Task<JsonResult> AddToFavourite(int favouriteId, int recipeId) {
             var favouriteList = _context.Favourites.Include(f => f.Recipes).FirstOrDefault(f => f.Id == favouriteId);
@@ -57,11 +56,9 @@ namespace CapstoneProject.Controllers {
 
                     if ((favouriteIds.Contains(favouriteId)) && (!favourite.Recipes.Contains(entity))) {
                         favourite.Recipes.Add(entity);
-                        //TempData["success"] = "Add to favourites successfully";
                     } else
                     if (!(favouriteIds.Contains(favouriteId)) && (favourite.Recipes.Contains(entity))) {
                         favourite.Recipes.Remove(entity);
-                        //TempData["success"] = "Removed from favourites successfully";
                     }
                 }
                 await _context.SaveChangesAsync();
