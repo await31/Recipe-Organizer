@@ -34,12 +34,14 @@ namespace CapstoneProject.Controllers {
         private readonly IMealPlanRepository _mealPlanRepository;
         private readonly IRecipeRepository _recipeRepository;
         private readonly IRecipeCategoryRepository _recipeCategoryRepository;
+        private readonly RecipeOrganizerContext _context;
 
-        public MealPlanController(IRecipeCategoryRepository recipeCategoryRepository, IMealPlanRepository mealPlanRepository, IRecipeRepository recipeRepository, UserManager<Account> userManager) {
+        public MealPlanController(RecipeOrganizerContext context, IRecipeCategoryRepository recipeCategoryRepository, IMealPlanRepository mealPlanRepository, IRecipeRepository recipeRepository, UserManager<Account> userManager) {
             _mealPlanRepository = mealPlanRepository;
             _recipeRepository = recipeRepository;
             _recipeCategoryRepository = recipeCategoryRepository;
             _userManager = userManager;
+            _context = context;
         }
 
 
@@ -61,12 +63,12 @@ namespace CapstoneProject.Controllers {
         [HttpPost]
         public JsonResult GetDietaryRecipes(string dietary) {
             // Generate data based on the selected dietary
-            var allRecipes = _recipeRepository.GetRecipes().Where(a=>a.Status ==true);
+            var allRecipes = _recipeRepository.GetRecipes();
 
             IEnumerable<Recipe> recipes = new List<Recipe>();
-            switch(dietary) {
+            switch (dietary) {
                 case "highcalorie":
-                    recipes = allRecipes.Where(a=>a.Nutrition.Calories!= null).OrderByDescending(a=>a.Nutrition.Calories).Take(6).ToList();
+                    recipes = allRecipes.Where(a => a.Nutrition.Calories != null).OrderByDescending(a => a.Nutrition.Calories).Take(6).ToList();
                     break;
                 case "lowcalorie":
                     recipes = allRecipes.Where(a => a.Nutrition.Calories != null).OrderBy(a => a.Nutrition.Calories).Take(6).ToList();
