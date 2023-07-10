@@ -96,7 +96,7 @@ namespace DataAccessObjects {
             return mp;
         }
 
-        public void InsertMealPlanNonWeekly(MealPlan mp, string userId, List<int> recipeIds) {
+        public void InsertMealPlan(MealPlan mp, string userId, List<int> recipeIds) {
             try {
                 using (var context = new RecipeOrganizerContext()) {
                     mp.FkUserId = context.Accounts.SingleOrDefault(a => a.Id == userId).Id;
@@ -112,28 +112,7 @@ namespace DataAccessObjects {
                 throw new Exception(ex.Message);
             }
         }
-        public void InsertMealPlanWeekly(MealPlan mp, string userId, List<int> recipeIds)
-        {
-            try
-            {
-                using (var context = new RecipeOrganizerContext())
-                {
-                    mp.FkUserId = context.Accounts.SingleOrDefault(a => a.Id == userId).Id;
-                    mp.IsFullDay = false;
-                    foreach (var id in recipeIds)
-                    {
-                        var recipe = context.Recipes.FirstOrDefault(r => r.Id == id);
-                        mp.Recipes.Add(recipe);
-                    }
-                    context.MealPlans.Add(mp);
-                    context.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+    
         public void DeleteMealPlan(MealPlan mp) {
             try {
                 using (var context = new RecipeOrganizerContext()) {

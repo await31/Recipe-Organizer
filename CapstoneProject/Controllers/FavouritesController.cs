@@ -18,30 +18,28 @@ namespace CapstoneProject.Controllers {
         private readonly IFavouriteRepository _favouriteRepository;
         private readonly IRecipeRepository _recipeRepository;
         private readonly UserManager<Account> _userManager;
-        private readonly RecipeOrganizerContext _context;
 
-        public FavouritesController(RecipeOrganizerContext context, IFavouriteRepository favouriteRepository, IRecipeRepository recipeRepository, UserManager<Account> userManager) {
+        public FavouritesController(IFavouriteRepository favouriteRepository, IRecipeRepository recipeRepository, UserManager<Account> userManager) {
             _favouriteRepository = favouriteRepository;
             _recipeRepository = recipeRepository;
             _userManager = userManager;
-            _context = context;
         }
 
         //Can't handle JsonResult task with data call from Repository, temporary use RecipeOrganizerContext inject
+
+        //These codes are used in Favourites/Details
         [HttpPost]
         public async Task<JsonResult> AddToFavourite(int favouriteId, int recipeId) {
-            var favouriteList = _context.Favourites.Include(f => f.Recipes).FirstOrDefault(f => f.Id == favouriteId);
-            var recipe = _context.Recipes.FirstOrDefault(f => f.Id == recipeId);
-            favouriteList.Recipes.Add(recipe);
-            await _context.SaveChangesAsync();
+            var favouriteList = _favouriteRepository.GetFavouriteById(favouriteId);
+            var recipe = _recipeRepository.GetRecipeById(recipeId);
+            _favouriteRepository.InsertRecipeToFavourite(favouriteList, recipe);
             return Json(true);
         }
         [HttpPost]
         public async Task<JsonResult> RemoveFromFavourite(int favouriteId, int recipeId) {
-            var favouriteList = _context.Favourites.Include(f => f.Recipes).FirstOrDefault(f => f.Id == favouriteId);
-            var recipe = _context.Recipes.FirstOrDefault(f => f.Id == recipeId);
-            favouriteList.Recipes.Remove(recipe);
-            await _context.SaveChangesAsync();
+            var favouriteList = _favouriteRepository.GetFavouriteById(favouriteId);
+            var recipe = _recipeRepository.GetRecipeById(recipeId);
+            _favouriteRepository.DeleteRecipeFromFavourite(favouriteList, recipe);
             return Json(true);
         }
 
@@ -49,19 +47,18 @@ namespace CapstoneProject.Controllers {
         [HttpPost]
         [Authorize]
         public async Task<JsonResult> AddRecipe(int recipeId, int[] favouriteIds, int[] allfavouriteIds) {
-            var entity = _context.Recipes.FirstOrDefault(item => item.Id == recipeId);
+            var entity = _recipeRepository.GetRecipeById(recipeId);
             if (entity != null) {
                 foreach (var favouriteId in allfavouriteIds) {
-                    var favourite = _context.Favourites.Include(a => a.Recipes).FirstOrDefault(a => a.Id == favouriteId);
+                    var favourite = _favouriteRepository.GetFavouriteById(favouriteId);
 
-                    if ((favouriteIds.Contains(favouriteId)) && (!favourite.Recipes.Contains(entity))) {
-                        favourite.Recipes.Add(entity);
+                    if ((favouriteIds.Contains(favouriteId)) && (!favourite.Recipes.Select(r => r.Id).Contains(entity.Id))) {
+                        _favouriteRepository.InsertRecipeToFavourite(favourite, entity);
                     } else
-                    if (!(favouriteIds.Contains(favouriteId)) && (favourite.Recipes.Contains(entity))) {
-                        favourite.Recipes.Remove(entity);
+                    if (!(favouriteIds.Contains(favouriteId)) && (favourite.Recipes.Select(r => r.Id).Contains(entity.Id))) {
+                        _favouriteRepository.DeleteRecipeFromFavourite(favourite, entity);
                     }
                 }
-                await _context.SaveChangesAsync();
             }
 
             return Json(new { success = true });
@@ -72,9 +69,9 @@ namespace CapstoneProject.Controllers {
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,isPrivate")] Favourite favourite) {
             if (ModelState.IsValid) {
-                    favourite.Account = await _userManager.GetUserAsync(User);
-                    _favouriteRepository.InsertFavourite(favourite);
-                    return RedirectToAction(nameof(Index));
+                favourite.Account = await _userManager.GetUserAsync(User);
+                _favouriteRepository.InsertFavourite(favourite);
+                return RedirectToAction(nameof(Index));
             }
             return View(favourite);
         }
@@ -170,20 +167,20 @@ namespace CapstoneProject.Controllers {
 
         [HttpPost]
         public async Task<JsonResult> Edit(int id, string name, string description, bool isPrivate) {
-            var favourite = _context.Favourites.FirstOrDefault(f => f.Id == id);
-            try {
-                favourite.Name = name;
-                favourite.Description = description;
-                favourite.isPrivate = isPrivate;
-                _context.Update(favourite);
-                await _context.SaveChangesAsync();
-            } catch (DbUpdateConcurrencyException) {
-                if (!FavouriteExists(favourite.Id)) {
-                    return null;
-                } else {
-                    throw;
-                }
-            }
+            //var favourite = _context.Favourites.FirstOrDefault(f => f.Id == id);
+            //try {
+            //    favourite.Name = name;
+            //    favourite.Description = description;
+            //    favourite.isPrivate = isPrivate;
+            //    _context.Update(favourite);
+            //    await _context.SaveChangesAsync();
+            //} catch (DbUpdateConcurrencyException) {
+            //    if (!FavouriteExists(favourite.Id)) {
+            //        return null;
+            //    } else {
+            //        throw;
+            //    }
+            //}
             return Json(new { name = name, description = description, isPrivate = isPrivate });
         }
 
