@@ -24,6 +24,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using Repositories;
 using BusinessObjects.Models;
+using System.Text.Json.Serialization;
 
 namespace CapstoneProject.Controllers {
 
@@ -34,11 +35,13 @@ namespace CapstoneProject.Controllers {
         private readonly IMealPlanRepository _mealPlanRepository;
         private readonly IRecipeRepository _recipeRepository;
         private readonly IRecipeCategoryRepository _recipeCategoryRepository;
+        private readonly IAccountRepository _accountRepository;
 
-        public MealPlanController(IRecipeCategoryRepository recipeCategoryRepository, IMealPlanRepository mealPlanRepository, IRecipeRepository recipeRepository, UserManager<Account> userManager) {
+        public MealPlanController(IRecipeCategoryRepository recipeCategoryRepository, IMealPlanRepository mealPlanRepository, IRecipeRepository recipeRepository,IAccountRepository accountRepository, UserManager<Account> userManager) {
             _mealPlanRepository = mealPlanRepository;
             _recipeRepository = recipeRepository;
             _recipeCategoryRepository = recipeCategoryRepository;
+            _accountRepository = accountRepository;
             _userManager = userManager;
         }
 
@@ -61,12 +64,11 @@ namespace CapstoneProject.Controllers {
         [HttpPost]
         public JsonResult GetDietaryRecipes(string dietary) {
             // Generate data based on the selected dietary
-            var allRecipes = _recipeRepository.GetRecipes().Where(a=>a.Status ==true);
-
+            var allRecipes = _recipeRepository.GetRecipes();
             IEnumerable<Recipe> recipes = new List<Recipe>();
             switch(dietary) {
                 case "highcalorie":
-                    recipes = allRecipes.Where(a=>a.Nutrition.Calories!= null).OrderByDescending(a=>a.Nutrition.Calories).Take(6).ToList();
+                    recipes = allRecipes.Where(a => a.Nutrition.Calories!= null).OrderByDescending(a=>a.Nutrition.Calories).Take(6).ToList();
                     break;
                 case "lowcalorie":
                     recipes = allRecipes.Where(a => a.Nutrition.Calories != null).OrderBy(a => a.Nutrition.Calories).Take(6).ToList();
@@ -96,7 +98,12 @@ namespace CapstoneProject.Controllers {
                     recipes = allRecipes.Where(a => a.Nutrition.Fat != null).OrderByDescending(a => a.Nutrition.Fat).Take(6).ToList();
                     break;
             }
-            return Json(recipes);
+            var options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                WriteIndented = true
+            };
+            return Json(recipes, options);
         }
 
         public static void ExtractIntegerAndString(string inputString, out int integer, out string stringValue) {
@@ -200,21 +207,16 @@ namespace CapstoneProject.Controllers {
             if (ModelState.IsValid) {
                 var currentUser = await _userManager.GetUserAsync(User);
                 var allRecipes = _recipeRepository.GetRecipes()
-                    .Where(i => i.Status == true)
                     .ToList();
 
                 if (currentUser != null && RecipeNames != null) {
                     if (mealplan.Date != null) {  //Non Weekly Planning
-                        mealplan.FkUserId = await _userManager.GetUserIdAsync(currentUser);
-                        mealplan.IsFullDay = false;
+                        List<int> recipeIds = new List<int>();
                         foreach (var recipeName in RecipeNames) {
                             ExtractIntegerAndString(recipeName, out int id, out string name);
-                            var recipe = allRecipes.FirstOrDefault(r => r.Id == id && r.Name == name);
-                            if (recipe != null) {
-                                mealplan.Recipes.Add(recipe);
-                            }
+                            recipeIds.Add(id);
                         }
-                        _mealPlanRepository.InsertMealPlan(mealplan);
+                        _mealPlanRepository.InsertMealPlan(mealplan,currentUser.Id,recipeIds);
                     } else if (mealplan.Date == null) {  //Weekly planning
 
                         // Process selected days and week last
@@ -239,22 +241,17 @@ namespace CapstoneProject.Controllers {
                                     var targetDate = GetNextOccurrenceOfDay(startDate, (DayOfWeek)selectedDayIndex, weekOffset);
 
                                     var newMealPlan = new MealPlan {
-                                        FkUserId = await _userManager.GetUserIdAsync(currentUser),
-                                        IsFullDay = false,
                                         Date = targetDate,
                                         Title = mealplan.Title,
                                         Description = mealplan.Description,
                                         Color = mealplan.Color
                                     };
-
+                                    var recipeIds = new List<int>();
                                     foreach (var recipeName in RecipeNames) {
                                         ExtractIntegerAndString(recipeName, out int id, out string name);
-                                        var recipe = allRecipes.FirstOrDefault(r => r.Id == id && r.Name == name);
-                                        if (recipe != null) {
-                                            newMealPlan.Recipes.Add(recipe);
-                                        }
+                                        recipeIds.Add(id);
                                     }
-                                    _mealPlanRepository.InsertMealPlan(newMealPlan);
+                                    _mealPlanRepository.InsertMealPlan(newMealPlan,currentUser.Id,recipeIds);
                                 }
                             }
                         }

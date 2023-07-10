@@ -1,9 +1,11 @@
 ﻿using BusinessObjects.Models;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DataAccessObjects {
@@ -94,9 +96,15 @@ namespace DataAccessObjects {
             return mp;
         }
 
-        public void InsertMealPlan(MealPlan mp) {
+        public void InsertMealPlanNonWeekly(MealPlan mp, string userId, List<int> recipeIds) {
             try {
                 using (var context = new RecipeOrganizerContext()) {
+                    mp.FkUserId = context.Accounts.SingleOrDefault(a => a.Id == userId).Id;
+                    mp.IsFullDay = false;
+                    foreach(var id in recipeIds) {
+                        var recipe = context.Recipes.FirstOrDefault(r => r.Id == id);
+                        mp.Recipes.Add(recipe);
+                    }
                     context.MealPlans.Add(mp);
                     context.SaveChanges();
                 }
@@ -104,7 +112,28 @@ namespace DataAccessObjects {
                 throw new Exception(ex.Message);
             }
         }
-
+        public void InsertMealPlanWeekly(MealPlan mp, string userId, List<int> recipeIds)
+        {
+            try
+            {
+                using (var context = new RecipeOrganizerContext())
+                {
+                    mp.FkUserId = context.Accounts.SingleOrDefault(a => a.Id == userId).Id;
+                    mp.IsFullDay = false;
+                    foreach (var id in recipeIds)
+                    {
+                        var recipe = context.Recipes.FirstOrDefault(r => r.Id == id);
+                        mp.Recipes.Add(recipe);
+                    }
+                    context.MealPlans.Add(mp);
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
         public void DeleteMealPlan(MealPlan mp) {
             try {
                 using (var context = new RecipeOrganizerContext()) {

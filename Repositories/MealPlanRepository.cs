@@ -13,7 +13,7 @@ namespace Repositories {
         public MealPlan GetMealPlanById(int? id) => MealPlanDAO.Instance.GetMealPlanById(id);
         public MealPlan GetMealPlanDetails(int? id) => MealPlanDAO.Instance.GetMealPlanDetails(id);
         public MealPlan GetMealPlanWithNutrition(int? id) => MealPlanDAO.Instance.GetMealPlanWithNutrition(id);
-        public void InsertMealPlan(MealPlan mp) => MealPlanDAO.Instance.InsertMealPlan(mp);
+        public void InsertMealPlan(MealPlan mp, string userId, List<int> recipeIds) => MealPlanDAO.Instance.InsertMealPlanNonWeekly(mp,userId,recipeIds);
         public void DeleteMealPlan(MealPlan mp) => MealPlanDAO.Instance.DeleteMealPlan(mp);
 
     }
