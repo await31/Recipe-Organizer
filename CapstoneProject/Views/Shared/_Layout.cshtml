@@ -129,18 +129,18 @@
             </button>
 
             <!-- Collapsible wrapper -->
-            <div class="collapse navbar-collapse container-fluid d-flex justify-content-around" id="navbarSupportedContent" style="text-align: -webkit-center">
+            <div class="collapse navbar-collapse container-fluid justify-content-between text-center" id="navbarSupportedContent">
                 <!-- Search -->
-                <form class="d-flex form-outline pb-2" style="width: 70%" asp-controller="UserRecipes" asp-action="Filter">
-                    <input type="search"
-                           class="form-control rounded border"
-                           id="SearchString"
-                           name="SearchString"
-                           placeholder="What do you want to eat today?"
-                           aria-label="Search"
-                           aria-describedby="search-addon" value="@ViewData["FilterSearch"]" />
-                    <button class="btn btn-dark ms-2 rounded" type="submit" value="Find"><i class="fa-solid fa-magnifying-glass"></i></button>
-                </form>
+                    <form class="d-flex form-outline pb-2" asp-controller="UserRecipes" asp-action="Filter">
+                        <input type="search"
+                               class="form-control rounded border"
+                               id="SearchString"
+                               name="SearchString"
+                               placeholder="What do you want to eat today?"
+                               aria-label="Search"
+                               aria-describedby="search-addon" value="@ViewData["FilterSearch"]" />
+                        <button class="btn btn-dark ms-2 rounded" type="submit" value="Find"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </form>
 
                 <div class="d-flex justify-content-between">
                     <div class="load-flash"></div>
@@ -149,6 +149,8 @@
                         <div class="toggle-switch"></div>
                         <h6 class="label-light m-0">Light</h6>
                     </div>
+
+
                     <div class="d-flex">
                         <partial name="_LoginPartial" />
                     </div>

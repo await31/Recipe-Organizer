@@ -13,7 +13,7 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <div class="align-self-center">
-        <a class="text-decoration-none btn btn-success text-light btn-sm me-1" asp-controller="UserRecipes" asp-action="Create"><i class="fa-solid fa-plus"></i> New recipe</a>
+        <a class="text-decoration-none btn btn-success text-light btn-sm me-1 p-2" style="min-width: max-content" asp-controller="UserRecipes" asp-action="Create"><i class="fa-solid fa-plus"></i> New recipe</a>
     </div>
     <div class="btn-group"></div>
     <div class="dropdown align-self-center">
@@ -58,7 +58,9 @@
 }
 else
 {
-    <a class="btn btn-outline-dark me-2" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    <a class="btn btn-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+    <div class="container-fluid text-center d-flex">
+        <a class="btn btn-outline-dark px-2 mb-1 me-2" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        <a class="btn btn-dark px-2 mb-1" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+    </div>
 }
 
