@@ -12,7 +12,6 @@ using Repositories;
 
 namespace CapstoneProject.Controllers {
 
-    [Authorize(Roles = "Admin")]
     public class ContactsController : Controller {
         private readonly IContactRepository _contactRepository;
 
@@ -21,11 +20,13 @@ namespace CapstoneProject.Controllers {
         }
 
         // GET: Contacts
+        [Authorize(Roles = "Admin")]
         public IActionResult Index() {
             var contacts = _contactRepository.GetContacts();
             return View(contacts);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Details(int? id) {
             if (id == null) {
                 return NotFound();
@@ -50,12 +51,12 @@ namespace CapstoneProject.Controllers {
                 _contactRepository.InsertContact(contact);
                 return RedirectToAction(nameof(Index));
             }
-
+            
             return View(contact);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAjax([Bind("UserName,Email,Message,UserId")] Contact model) {
+        public async Task<IActionResult> CreateAjax([Bind("Id,UserName,Email,Message,UserId")] Contact model) {
             if (ModelState.IsValid) {
                 _contactRepository.InsertContact(model);
                 return Json(new { success = true });
@@ -63,6 +64,7 @@ namespace CapstoneProject.Controllers {
             return Json(new { success = false });
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(int? id) {
             if (id == null) {
                 return NotFound();
@@ -74,6 +76,7 @@ namespace CapstoneProject.Controllers {
             return View(contact);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, [Bind("Id,UserName,Email,Message,UserId")] Contact contact) {
@@ -88,6 +91,7 @@ namespace CapstoneProject.Controllers {
             return View(contact);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int? id) {
             if (id == null) {
                 return NotFound();
@@ -99,6 +103,7 @@ namespace CapstoneProject.Controllers {
             return View(contact);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id) {
