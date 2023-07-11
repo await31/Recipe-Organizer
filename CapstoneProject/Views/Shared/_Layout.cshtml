@@ -129,7 +129,7 @@
             </button>
 
             <!-- Collapsible wrapper -->
-            <div class="collapse navbar-collapse container-fluid justify-content-between text-center" id="navbarSupportedContent">
+            <div class="collapse navbar-collapse container-fluid d-flex justify-content-between text-center" id="navbarSupportedContent">
                 <!-- Search -->
                     <form class="d-flex form-outline pb-2" asp-controller="UserRecipes" asp-action="Filter">
                         <input type="search"
@@ -175,9 +175,9 @@
                 <img class="img-fluid" style="width: 60px; height: 60px;" src="~/images/logo.png" />
             </a>
 
-            <ul class="nav col-4 justify-content-end text-color-change">
-                <li class="nav-item"><a asp-action="Privacy" asp-controller="Home" class="nav-link px-2 text-color-change" target="_blank">Privacy</a></li>
-                <li class="nav-item"><a asp-action="Contact" asp-controller="Home" class="nav-link px-2 text-color-change" target="_blank">Contact us</a></li>
+            <ul class="nav col-4 justify-content-end text-color-change pe-5">
+                <li class="nav-item"><a asp-action="Privacy" asp-controller="Home" class="nav-dark px-2 text-color-change" target="_blank">Privacy</a></li>
+                <li class="nav-item"><a asp-action="Contact" asp-controller="Home" class="nav-dark px-2 text-color-change" target="_blank">Contact us</a></li>
             </ul>
         </footer>
     </div>
