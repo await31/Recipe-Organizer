@@ -1,6 +1,6 @@
 ﻿var darkmodeactive = localStorage.getItem("darkmode");
 
-window.addEventListener('load', function () {
+window.addEventListener('DOMContentLoaded', function () {
     if (!darkmodeactive || darkmodeactive === "") {
         localStorage.setItem('darkmode', false);
     }
@@ -55,32 +55,33 @@ $(".label-dark").click(function () {
         stayDark();
     }
 });
-window.onload = function () {
+$(document).ready(function () {
     if (localStorage.darkmode == "true") {
         goDark();
     } else if (localStorage.darkmode == "false") {
         goLight();
     } else {
         if ($("body").hasClass("dark")) {
-           labelDark();
+            labelDark();
         } else {
-           labelLight();
+            labelLight();
         }
     }
-};
+});
+
 // disAnime sau 15s
 function tempDisableAnim() {
     $("*").addClass("disableEasingTemporarily");
     setTimeout(function () {
         $("*").removeClass("disableEasingTemporarily");
-    }, 1500);
+    }, 2000);
 }
 // disLoadFlash sau 15s
 setTimeout(function () {
     $(".load-flash").css("display", "none");
     $(".load-flash").css("visibility", "hidden");
     tempDisableAnim();
-}, 1500);
+}, 2000);
 // resize window thi disAnime sau 15s lien tuc
 $(window).resize(function () {
     tempDisableAnim();
