@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'cookez'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EEE4A292E22D4350B25EE8F753D7D927 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7B2EAEEBD7394539AFCAE9D32113206E }}
           package: .
