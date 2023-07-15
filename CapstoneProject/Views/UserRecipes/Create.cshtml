@@ -7,7 +7,15 @@
 
 <link rel="stylesheet" href="~/css/asyncbutton.css" />
 <style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
 
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
     a:hover {
         cursor: pointer;
     }
@@ -201,6 +209,32 @@
                                 }
                             </select>
                         </div>
+
+                        <!-- Nutrition Fields -->
+                        <div class="mb-3">
+                            <label>Calories</label>
+                            <input class="form-control" type="number" id="calories" name="calories" value="" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Fibre</label>
+                            <input class="form-control" type="number" id="fibre" name="fibre" value="" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Carbohydrate</label>
+                            <input class="form-control" type="number" id="carbohydrate" name="carbohydrate" value="" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Protein</label>
+                            <input class="form-control" type="number" id="protein" name="protein" value="" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Fat</label>
+                            <input class="form-control" type="number" id="fat" name="fat" value="" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Cholesterol</label>
+                            <input class="form-control" type="number" id="cholesterol" name="cholesterol" value="" />
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -209,6 +243,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 
     <div class="col-2">
@@ -374,14 +409,36 @@
             var file = $("#fileInput").prop('files')[0];
             var ingdescription = $("#description").val();
             var categoryId = $("#fkcategoryid").val();
+            var calories = $("#calories").val();
+            var fibre = $("#fibre").val();
+            var carbohydrate = $("#carbohydrate").val();
+            var protein = $("#protein").val();
+            var fat = $("#fat").val();
+            var cholesterol = $("#cholesterol").val();
+
             console.log(file);
-            console.log(categoryId); console.log("Name: " + ingname);
+            console.log(categoryId);
+            console.log("Name: " + ingname);
             console.log("Description: " + ingdescription);
+            console.log("Calories: " + calories);
+            console.log("Fibre: " + fibre);
+            console.log("Carbohydrate: " + carbohydrate);
+            console.log("Protein: " + protein);
+            console.log("Fat: " + fat);
+            console.log("Cholesterol: " + cholesterol);
+
             var formData = new FormData();
             formData.append("Name", ingname);
             formData.append("file", file);
             formData.append("Description", ingdescription);
             formData.append("FkCategoryId", categoryId);
+            formData.append("IngredientNutrition.Calories", calories);
+            formData.append("IngredientNutrition.Fibre", fibre);
+            formData.append("IngredientNutrition.Carbohydrate", carbohydrate);
+            formData.append("IngredientNutrition.Protein", protein);
+            formData.append("IngredientNutrition.Fat", fat);
+            formData.append("IngredientNutrition.Cholesterol", cholesterol);
+
             $('#gifImage').show();
             $.ajax({
                 url: '/Ingredients/CreateAjax',
@@ -393,12 +450,12 @@
                     // Handle success response here
                     if (response.success) {
                         $('#gifImage').hide();
-                        toastr.success('Ingredient created success');
+                        toastr.success('Ingredient created successfully');
 
                         $('.btn-close').trigger('click');
                     } else {
                         $('#gifImage').hide();
-                        toastr.warning('Failed to create the ingredient. Make sure you fill in all field');
+                        toastr.warning('Failed to create the ingredient. Make sure you fill in all fields.');
                     }
                 },
                 error: function (xhr, status, error) {
