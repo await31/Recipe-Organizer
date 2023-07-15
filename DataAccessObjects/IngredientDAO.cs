@@ -29,6 +29,7 @@ namespace DataAccessObjects {
                 using (var context = new RecipeOrganizerContext()) {
                     lists = context.Ingredients
                         .Include(a=>a.FkCategory)
+                        .Include(a => a.IngredientNutrition)
                         .ToList();
                 }
             } catch (Exception ex) {
@@ -43,6 +44,7 @@ namespace DataAccessObjects {
                 using (var context = new RecipeOrganizerContext()) {
                     lists = context.Ingredients
                         .Where(a=>a.Status == true)
+                        .Include(a=>a.IngredientNutrition)
                         .ToList();
                 }
             } catch (Exception ex) {
@@ -57,6 +59,7 @@ namespace DataAccessObjects {
                 using (var context = new RecipeOrganizerContext()) {
                     lists = context.Ingredients
                         .Where(a => a.Status == false)
+                        .Include(a => a.IngredientNutrition)
                         .ToList();
                 }
             } catch (Exception ex) {
@@ -69,7 +72,10 @@ namespace DataAccessObjects {
             Ingredient i = new();
             try {
                 using (var context = new RecipeOrganizerContext()) {
-                    i = context.Ingredients.Include(a=>a.FkCategory).SingleOrDefault(a => a.Id == id);
+                    i = context.Ingredients
+                        .Include(a=>a.FkCategory)
+                        .Include(a => a.IngredientNutrition)
+                        .SingleOrDefault(a => a.Id == id);
                 }
             } catch (Exception ex) {
                 throw new Exception(ex.Message);

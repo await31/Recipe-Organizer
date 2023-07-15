@@ -25,9 +25,6 @@ namespace BusinessObjects.Migrations
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
                 });
 
-            migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) VALUES ('1', 'Admin', 'ADMIN')");
-            migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) VALUES ('2', 'Cooker', 'COOKER')");
-
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
@@ -65,7 +62,7 @@ namespace BusinessObjects.Migrations
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -310,6 +307,29 @@ namespace BusinessObjects.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "IngredientNutrition",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Calories = table.Column<double>(type: "float", nullable: true),
+                    Fat = table.Column<double>(type: "float", nullable: true),
+                    Protein = table.Column<double>(type: "float", nullable: true),
+                    Fibre = table.Column<double>(type: "float", nullable: true),
+                    Carbohydrate = table.Column<double>(type: "float", nullable: true),
+                    Cholesterol = table.Column<double>(type: "float", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IngredientNutrition", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IngredientNutrition_Ingredients_Id",
+                        column: x => x.Id,
+                        principalTable: "Ingredients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FavouriteRecipe",
                 columns: table => new
                 {
@@ -386,16 +406,22 @@ namespace BusinessObjects.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    Calories = table.Column<int>(type: "int", nullable: true),
-                    Fat = table.Column<int>(type: "int", nullable: true),
-                    Protein = table.Column<int>(type: "int", nullable: true),
-                    Fibre = table.Column<int>(type: "int", nullable: true),
-                    Carbohydrate = table.Column<int>(type: "int", nullable: true),
-                    Cholesterol = table.Column<int>(type: "int", nullable: true)
+                    Calories = table.Column<double>(type: "float", nullable: true),
+                    Fat = table.Column<double>(type: "float", nullable: true),
+                    Protein = table.Column<double>(type: "float", nullable: true),
+                    Fibre = table.Column<double>(type: "float", nullable: true),
+                    Carbohydrate = table.Column<double>(type: "float", nullable: true),
+                    Cholesterol = table.Column<double>(type: "float", nullable: true),
+                    IngredientId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Nutrition", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Nutrition_Ingredients_IngredientId",
+                        column: x => x.IngredientId,
+                        principalTable: "Ingredients",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Nutrition_Recipes_Id",
                         column: x => x.Id,
@@ -527,6 +553,11 @@ namespace BusinessObjects.Migrations
                 column: "FkUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Nutrition_IngredientId",
+                table: "Nutrition",
+                column: "IngredientId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RecipeFeedbacks_RecipeId",
                 table: "RecipeFeedbacks",
                 column: "RecipeId");
@@ -585,6 +616,9 @@ namespace BusinessObjects.Migrations
 
             migrationBuilder.DropTable(
                 name: "FavouriteRecipe");
+
+            migrationBuilder.DropTable(
+                name: "IngredientNutrition");
 
             migrationBuilder.DropTable(
                 name: "IngredientRecipe");

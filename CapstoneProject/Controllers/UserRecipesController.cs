@@ -24,6 +24,7 @@ using Microsoft.AspNetCore;
 using System.Globalization;
 using Repositories;
 using BusinessObjects.Models;
+using Org.BouncyCastle.Utilities;
 
 namespace CapstoneProject.Controllers {
 
@@ -415,6 +416,15 @@ namespace CapstoneProject.Controllers {
 
                             var IngredientIds = ingredients.Select(i => i.Id).ToArray();
                             List<RecipeIngredient> recipeIngredients = new();
+                            Nutrition recipeNutrition = new Nutrition{
+                                Calories = 0,
+                                Fat = 0,
+                                Protein = 0,
+                                Fibre = 0,
+                                Carbohydrate = 0,
+                                Cholesterol = 0
+                            };
+
                             for (int i = 0; i < IngredientNames.Length; i++) {
 
                                 var list = _ingredientRepository.GetStatusTrueIngredients();
@@ -428,10 +438,37 @@ namespace CapstoneProject.Controllers {
                                         Quantity = Quantities[i],
                                         UnitOfMeasure = UnitOfMeasures[i]
                                     });
+
+                                    var ingredientNutritionCalories = _ingredientRepository.GetIngredientById(id).IngredientNutrition.Calories;
+                                    var ingredientNutritionFat = _ingredientRepository.GetIngredientById(id).IngredientNutrition.Fat;
+                                    var ingredientNutritionProtein = _ingredientRepository.GetIngredientById(id).IngredientNutrition.Protein;
+                                    var ingredientNutritionFibre = _ingredientRepository.GetIngredientById(id).IngredientNutrition.Fibre;
+                                    var ingredientNutritionCarbohydrate = _ingredientRepository.GetIngredientById(id).IngredientNutrition.Carbohydrate;
+                                    var ingredientNutritionCholesterol = _ingredientRepository.GetIngredientById(id).IngredientNutrition.Cholesterol;
+
+                                        if (ingredientNutritionCalories != 0) {
+                                            recipeNutrition.Calories += (int)(ingredientNutritionCalories*Quantities[i]/2);
+                                        }       
+                                        if (ingredientNutritionFat != 0) {
+                                            recipeNutrition.Fat += (int)(ingredientNutritionFat*Quantities[i]/2);
+                                        }
+                                        if (ingredientNutritionProtein != 0) {
+                                            recipeNutrition.Protein += (int)(ingredientNutritionProtein*Quantities[i]/2);
+                                        }
+                                        if (ingredientNutritionFibre != 0) {
+                                            recipeNutrition.Fibre += (int)(ingredientNutritionFibre*Quantities[i]/2);
+                                        }
+                                        if (ingredientNutritionCarbohydrate != 0) {
+                                            recipeNutrition.Carbohydrate += (int)(ingredientNutritionCarbohydrate*Quantities[i]/2);
+                                        }
+                                        if (ingredientNutritionCholesterol != 0) {
+                                            recipeNutrition.Cholesterol += (int)(ingredientNutritionCholesterol*Quantities[i]/2);
+                                        }
                                 } else {
                                     return NotFound();
                                 }
                             }
+                            recipe.Nutrition = recipeNutrition;
                             RemoveDuplicateRecipeIngredients(recipeIngredients);
                             _recipeRepository.InsertRecipe(recipe, ingredients, recipeIngredients);
                             TempData["success"] = "The recipe has been submitted for review!";
@@ -482,7 +519,7 @@ namespace CapstoneProject.Controllers {
         }
 
 
-         [HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Recipe recipe, string[] IngredientNames, double[] Quantities, string[] UnitOfMeasures) {
             if (ModelState.IsValid) {
