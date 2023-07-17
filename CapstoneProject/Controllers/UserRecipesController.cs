@@ -426,7 +426,6 @@ namespace CapstoneProject.Controllers {
                             };
 
                             for (int i = 0; i < IngredientNames.Length; i++) {
-
                                 var list = _ingredientRepository.GetStatusTrueIngredients();
                                 bool exists = list.Any(ingredient => ingredient.Name
                                                   .Contains(IngredientNames[i]));
@@ -484,6 +483,110 @@ namespace CapstoneProject.Controllers {
             return View(recipe);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Recipe recipe, string[] IngredientNames, double[] Quantities, string[] UnitOfMeasures) {
+            if (ModelState.IsValid) {
+                if (id != recipe.Id) {
+                    return NotFound();
+                }
+                var existingRecipe = _recipeRepository.GetRecipeForEdit(id);
+                _recipeRepository.SetValueForEdit(existingRecipe, recipe);
+                if (recipe.file != null && recipe.file.Length > 0) {
+                    IFormFile file = recipe.file;
+                    // Generate a unique file name
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                    var currentUser = await _userManager.GetUserAsync(User);
+                    if (currentUser != null) {
+                        // Upload the file to Firebase Storage
+                        string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
+                        Uri imageUrlUri = new(imageUrl);
+                        string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
+                        existingRecipe.ImgPath = baseUrl;
+                    }
+                }
+                if (IngredientNames != null) {
+
+                    existingRecipe.Ingredients.Clear();
+
+
+                    var allIngredients = _ingredientRepository.GetStatusTrueIngredients();
+
+                    var ingredients = allIngredients
+                                      .Where(i => IngredientNames.Any(input => i.Name.Contains(input)))
+                                      .ToList();
+
+                    var recipeIngredients = new List<RecipeIngredient>();
+                    Nutrition recipeNutrition = new Nutrition {
+                        Calories = 0,
+                        Fat = 0,
+                        Protein = 0,
+                        Fibre = 0,
+                        Carbohydrate = 0,
+                        Cholesterol = 0,
+                    };
+
+                    for (int i = 0; i < IngredientNames.Length; i++) {
+                        bool exists = _ingredientRepository.GetStatusTrueIngredients()
+                                              .Any(ingredient => ingredient.Name
+                                              .Contains(IngredientNames[i]));
+                        if (exists) {
+                            getIngredientIdFromName(IngredientNames[i], out int ingredientId);
+                            recipeIngredients.Add(new RecipeIngredient {
+                                IngredientId = ingredientId,
+                                RecipeId = recipe.Id,
+                                Quantity = Quantities[i],
+                                UnitOfMeasure = UnitOfMeasures[i]
+                            });
+
+                            var ingredientNutritionCalories = _ingredientRepository.GetIngredientById(ingredientId).IngredientNutrition.Calories;
+                            var ingredientNutritionFat = _ingredientRepository.GetIngredientById(ingredientId).IngredientNutrition.Fat;
+                            var ingredientNutritionProtein = _ingredientRepository.GetIngredientById(ingredientId).IngredientNutrition.Protein;
+                            var ingredientNutritionFibre = _ingredientRepository.GetIngredientById(ingredientId).IngredientNutrition.Fibre;
+                            var ingredientNutritionCarbohydrate = _ingredientRepository.GetIngredientById(ingredientId).IngredientNutrition.Carbohydrate;
+                            var ingredientNutritionCholesterol = _ingredientRepository.GetIngredientById(ingredientId).IngredientNutrition.Cholesterol;
+
+                            if (ingredientNutritionCalories != 0) {
+                                recipeNutrition.Calories += (int)(ingredientNutritionCalories * Quantities[i] / 2);
+                            }
+                            if (ingredientNutritionFat != 0) {
+                                recipeNutrition.Fat += (int)(ingredientNutritionFat * Quantities[i] / 2);
+                            }
+                            if (ingredientNutritionProtein != 0) {
+                                recipeNutrition.Protein += (int)(ingredientNutritionProtein * Quantities[i] / 2);
+                            }
+                            if (ingredientNutritionFibre != 0) {
+                                recipeNutrition.Fibre += (int)(ingredientNutritionFibre * Quantities[i] / 2);
+                            }
+                            if (ingredientNutritionCarbohydrate != 0) {
+                                recipeNutrition.Carbohydrate += (int)(ingredientNutritionCarbohydrate * Quantities[i] / 2);
+                            }
+                            if (ingredientNutritionCholesterol != 0) {
+                                recipeNutrition.Cholesterol += (int)(ingredientNutritionCholesterol * Quantities[i] / 2);
+                            }
+                        } else {
+                            return NotFound();
+                        }
+                    }
+
+                    RemoveDuplicateRecipeIngredients(recipeIngredients);
+                    _recipeRepository.UpdateRecipe(existingRecipe, ingredients, recipeIngredients, recipeNutrition);
+                }
+                try {
+                    _recipeRepository.SetStatusFalse(existingRecipe);
+                } catch (DbUpdateConcurrencyException) {
+                    if (!RecipeExists(recipe.Id)) {
+                        return NotFound();
+                    } else {
+                        throw;
+                    }
+                }
+                TempData["success"] = "The recipe has been submitted for review!";
+                return RedirectToAction("MyRecipes", "Home");
+            }
+
+            return View(recipe);
+        }
         public void getIngredientIdFromName(string name, out int id) {
             var ingredient = _ingredientRepository.GetIngredients()
                 .FirstOrDefault(x => x.Name.Equals(name));
@@ -519,72 +622,6 @@ namespace CapstoneProject.Controllers {
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Recipe recipe, string[] IngredientNames, double[] Quantities, string[] UnitOfMeasures) {
-            if (ModelState.IsValid) {
-                if (id != recipe.Id) {
-                    return NotFound();
-                }
-                var existingRecipe = _recipeRepository.GetRecipeForEdit(id);
-                _recipeRepository.SetValueForEdit(existingRecipe, recipe);
-                if (recipe.file != null && recipe.file.Length > 0) {
-                    IFormFile file = recipe.file;
-                    // Generate a unique file name
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-                    var currentUser = await _userManager.GetUserAsync(User);
-                    if (currentUser != null) {
-                        // Upload the file to Firebase Storage
-                        string imageUrl = await UploadFirebase(file.OpenReadStream(), uniqueFileName);
-                        Uri imageUrlUri = new(imageUrl);
-                        string baseUrl = $"{imageUrlUri.GetLeftPart(UriPartial.Path)}?alt=media";
-                        existingRecipe.ImgPath = baseUrl;
-                    }
-                }
-                if (IngredientNames != null) {
-
-                    existingRecipe.Ingredients.Clear();
-                    var allIngredients = _ingredientRepository.GetStatusTrueIngredients();
-
-                    var ingredients = allIngredients
-                                      .Where(i => IngredientNames.Any(input => i.Name.Contains(input)))
-                                      .ToList();
-
-                    var recipeIngredients = new List<RecipeIngredient>();
-                    for (int i = 0; i < IngredientNames.Length; i++) {
-                        bool exists = _ingredientRepository.GetStatusTrueIngredients()
-                                              .Any(ingredient => ingredient.Name
-                                              .Contains(IngredientNames[i]));
-                        if (exists) {
-                            getIngredientIdFromName(IngredientNames[i], out int ingredientId);
-                            recipeIngredients.Add(new RecipeIngredient {
-                                IngredientId = ingredientId,
-                                RecipeId = recipe.Id,
-                                Quantity = Quantities[i],
-                                UnitOfMeasure = UnitOfMeasures[i]
-                            });
-                        } else {
-                            return NotFound();
-                        }
-                    }
-                    RemoveDuplicateRecipeIngredients(recipeIngredients);
-                    _recipeRepository.UpdateRecipe(existingRecipe, ingredients, recipeIngredients);
-                }
-                try {
-                    _recipeRepository.SetStatusFalse(existingRecipe);
-                } catch (DbUpdateConcurrencyException) {
-                    if (!RecipeExists(recipe.Id)) {
-                        return NotFound();
-                    } else {
-                        throw;
-                    }
-                }
-                TempData["success"] = "The recipe has been submitted for review!";
-                return RedirectToAction("MyRecipes", "Home");
-            }
-
-            return View(recipe);
-        }
 
         // GET: Recipes/Delete/5
         [Authorize]

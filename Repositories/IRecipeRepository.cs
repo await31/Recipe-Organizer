@@ -25,7 +25,7 @@ namespace Repositories {
         IEnumerable<Recipe> GetSuggestRecipes(int currentRecipeId);
         void InsertRecipe(Recipe r, List<Ingredient> list, List<RecipeIngredient> ris);
         void InsertRecipeIngredient(List<RecipeIngredient> ris);
-        void UpdateRecipe(Recipe existingRecipe, List<Ingredient> list, List<RecipeIngredient> ris);
+        void UpdateRecipe(Recipe existingRecipe, List<Ingredient> list, List<RecipeIngredient> ris, Nutrition recipeNutrition);
         void InsertRecipeIngredientToRecipe(Recipe r, List<RecipeIngredient> ris);
         void DeleteRecipe(Recipe r);
         void Approve(Recipe r);

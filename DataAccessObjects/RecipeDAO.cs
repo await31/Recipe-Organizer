@@ -311,7 +311,7 @@ namespace DataAccessObjects {
             }
         }
 
-        public void UpdateRecipe(Recipe existingRecipe, List<Ingredient> list, List<RecipeIngredient> ris) {
+        public void UpdateRecipe(Recipe existingRecipe, List<Ingredient> list, List<RecipeIngredient> ris, Nutrition recipeNutrition) {
             using (var context = new RecipeOrganizerContext()) {
                 if (existingRecipe != null) {
 
@@ -331,6 +331,13 @@ namespace DataAccessObjects {
                     }
 
                     existingRecipe.RecipeIngredients = ris;
+
+                    existingRecipe.Nutrition.Calories = recipeNutrition.Calories;
+                    existingRecipe.Nutrition.Fat = recipeNutrition.Fat;
+                    existingRecipe.Nutrition.Fibre = recipeNutrition.Fibre;
+                    existingRecipe.Nutrition.Carbohydrate = recipeNutrition.Carbohydrate;
+                    existingRecipe.Nutrition.Cholesterol = recipeNutrition.Cholesterol;
+                    existingRecipe.Nutrition.Protein = recipeNutrition.Protein;
 
                     context.Recipes.Update(existingRecipe);
                     context.SaveChanges();
@@ -422,7 +429,6 @@ namespace DataAccessObjects {
                 }
             }
         }
-
 
         public void SetStatusFalse(Recipe r) {
             using (var context = new RecipeOrganizerContext()) {
