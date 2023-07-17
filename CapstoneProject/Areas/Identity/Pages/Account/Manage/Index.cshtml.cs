@@ -201,7 +201,8 @@ namespace CapstoneProject.Areas.Identity.Pages.Account.Manage
             int startIndex = lastSeparatorIndex + 3; // Start index of the desired string
             int endIndex = url.IndexOf("?alt", startIndex); // End index of the desired string
             string extractedString = url.Substring(startIndex, endIndex - startIndex); // Extract the string between the last "%2F" and before "?alt"
-            return extractedString;
+            string decodedString = System.Web.HttpUtility.UrlDecode(extractedString); // Decode the extracted string
+            return decodedString;
         }
     }
 }
