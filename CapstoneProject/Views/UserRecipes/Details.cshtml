@@ -71,6 +71,12 @@
         font-size: 14px;
         margin-top: 12px;
     }
+
+    @@media (max-width: 992px) {
+        a {
+            font-size: 1rem;
+        }
+    }
 </style>
 
 <!-- Carousel -->
@@ -309,15 +315,15 @@
                                 foreach (var item in Model.RecipeIngredients)
                                 {
                                     <tr>
-                                        <th class="py-2 fs-5 label-font">
+                                        <th class="py-2 fs-5 pe-0 label-font">
                                             <a asp-controller="Home" asp-action="IngredientDetails" asp-route-id="@item?.Ingredient.FkCategoryId" asp-route-ingredientId="@item?.Ingredient.Id" target="_blank" class="text-dark">
-                                                <img style="border-radius: 50%; width: 80px; height: 80px;"
+                                                <img style="border-radius: 50%; width: 64px; height: 64px;"
                                                      src="@item.Ingredient?.ImgPath"
                                                      class="img-fluid" />
                                                 &emsp; @item.Ingredient?.Name
                                             </a>
                                         </th>
-                                        <td class="py-2 fs-6 align-middle">@item.Quantity @item.UnitOfMeasure</td>
+                                        <td class="py-2 fs-6 align-middle text-dark">@item.Quantity @item.UnitOfMeasure</td>
                                     </tr>
                                 }
                             }

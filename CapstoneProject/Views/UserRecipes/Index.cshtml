@@ -25,7 +25,7 @@
             <p> <i class="fa-solid fa-magnifying-glass"></i> @count recipe(s) found</p>
         </div>
         <div class="container-fluid row m-0" style="max-width: 1320px;">
-            <div class="col-sm-2">
+            <div class="col-sm-2 pb-5">
                 <form id="formFilter" name="formFilter" class="form-inline" asp-controller="UserRecipes" asp-action="Filter">
                     <input hidden name="includeIngredientsList" value="@ViewData["FilterIncludeList"]"></input>
                     <input class="form-control mr-sm-2" id="includeIngredients" name="includeIngredients" type="text" placeholder="Include Ingredients" />
