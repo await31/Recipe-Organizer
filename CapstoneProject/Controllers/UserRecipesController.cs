@@ -360,7 +360,7 @@ namespace CapstoneProject.Controllers {
         }
 
         public bool CompareLimitedWords(string text) {
-            List<string> words = new List<string>() { "stupid", "idiot", "disgusting", "shit", "jesus", "ass", "damn", "fuck", "asshole", "bastard", "bullshit", "cunt", "dick", "dyke", "hell", "holy shit", "holyshit", "motherfucker", "mother fucker", "nigga", "nigra", "n1gga", "pussy", "slut", "turd", "wanker" };
+            List<string> words = new List<string>() { "stupid", "idiot", "disgusting", "shit", "jesus", "ass", "damn", "fuck", "asshole", "bastard", "bullshit", "cunt", "dick", "dyke", "hell", "holy shit", "holyshit", "motherfucker", "mother fucker", "nigga", "nigra", "n1gga", "pussy", "slut", "turd", "wanker", "wtf" };
             foreach (string word in words) {
                 if (text.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0) {
                     return true;
