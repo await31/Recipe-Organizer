@@ -90,16 +90,16 @@
                         <div style="margin: 8px">
                             @if ((bool)collection.isPrivate)
                             {
-                                <div style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">PRIVATE</div>
+                                <div style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif" class="text-color-change">PRIVATE</div>
                             }
                             else
                             {
-                                <div style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">PUBLIC</div>
+                                <div style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif" class="text-color-change">PUBLIC</div>
                             }
-                            <a class="card-title card-limit-1 link-info link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                            <a class="card-title card-limit-1 link-info link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover text-color-change"
                                asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id">
 
-                                <h5 style="font-weight: bold;">@collection.Name</h5>
+                                <h5 style="font-weight: bold;" class="text-color-change">@collection.Name</h5>
                             </a>
                             @if (collection.Description == null)
                             {

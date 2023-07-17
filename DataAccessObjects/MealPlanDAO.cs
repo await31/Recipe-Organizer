@@ -112,6 +112,7 @@ namespace DataAccessObjects {
                 throw new Exception(ex.Message);
             }
         }
+    
         public void DeleteMealPlan(MealPlan mp) {
             try {
                 using (var context = new RecipeOrganizerContext()) {

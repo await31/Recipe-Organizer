@@ -29,16 +29,14 @@ namespace CapstoneProject.Controllers {
 
         //These codes are used in Favourites/Details
         [HttpPost]
-        public async Task<JsonResult> AddToFavourite(int favouriteId, int recipeId)
-        {
+        public async Task<JsonResult> AddToFavourite(int favouriteId, int recipeId) {
             var favouriteList = _favouriteRepository.GetFavouriteById(favouriteId);
             var recipe = _recipeRepository.GetRecipeById(recipeId);
             _favouriteRepository.InsertRecipeToFavourite(favouriteList, recipe);
             return Json(true);
         }
         [HttpPost]
-        public async Task<JsonResult> RemoveFromFavourite(int favouriteId, int recipeId)
-        {
+        public async Task<JsonResult> RemoveFromFavourite(int favouriteId, int recipeId) {
             var favouriteList = _favouriteRepository.GetFavouriteById(favouriteId);
             var recipe = _recipeRepository.GetRecipeById(recipeId);
             _favouriteRepository.DeleteRecipeFromFavourite(favouriteList, recipe);
@@ -50,22 +48,15 @@ namespace CapstoneProject.Controllers {
         [Authorize]
         public async Task<JsonResult> AddRecipe(int recipeId, int[] favouriteIds, int[] allfavouriteIds) {
             var entity = _recipeRepository.GetRecipeById(recipeId);
-            if (entity != null)
-            {
-                foreach (var favouriteId in allfavouriteIds)
-                {
+            if (entity != null) {
+                foreach (var favouriteId in allfavouriteIds) {
                     var favourite = _favouriteRepository.GetFavouriteById(favouriteId);
 
-                    if ((favouriteIds.Contains(favouriteId)) && (!favourite.Recipes.Select(r => r.Id).Contains(entity.Id)))
-                    {
+                    if ((favouriteIds.Contains(favouriteId)) && (!favourite.Recipes.Select(r => r.Id).Contains(entity.Id))) {
                         _favouriteRepository.InsertRecipeToFavourite(favourite, entity);
-                        //TempData["success"] = "Add to favourites successfully";
-                    }
-                    else
-                    if (!(favouriteIds.Contains(favouriteId)) && (favourite.Recipes.Select(r => r.Id).Contains(entity.Id)))
-                    {
+                    } else
+                    if (!(favouriteIds.Contains(favouriteId)) && (favourite.Recipes.Select(r => r.Id).Contains(entity.Id))) {
                         _favouriteRepository.DeleteRecipeFromFavourite(favourite, entity);
-                        //TempData["success"] = "Removed from favourites successfully";
                     }
                 }
             }
@@ -78,9 +69,9 @@ namespace CapstoneProject.Controllers {
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,isPrivate")] Favourite favourite) {
             if (ModelState.IsValid) {
-                    favourite.Account = await _userManager.GetUserAsync(User);
-                    _favouriteRepository.InsertFavourite(favourite);
-                    return RedirectToAction(nameof(Index));
+                favourite.Account = await _userManager.GetUserAsync(User);
+                _favouriteRepository.InsertFavourite(favourite);
+                return RedirectToAction(nameof(Index));
             }
             return View(favourite);
         }

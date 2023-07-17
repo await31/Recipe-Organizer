@@ -113,7 +113,6 @@ namespace BusinessObjects.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
@@ -199,6 +198,34 @@ namespace BusinessObjects.Migrations
                     b.ToTable("IngredientCategories");
                 });
 
+            modelBuilder.Entity("BusinessObjects.Models.IngredientNutrition", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("Calories")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Carbohydrate")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Cholesterol")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Fat")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Fibre")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Protein")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IngredientNutrition");
+                });
+
             modelBuilder.Entity("BusinessObjects.Models.MealPlan", b =>
                 {
                     b.Property<int>("Id")
@@ -237,25 +264,30 @@ namespace BusinessObjects.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Calories")
+                    b.Property<double?>("Calories")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Carbohydrate")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Cholesterol")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Fat")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Fibre")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("IngredientId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Carbohydrate")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Cholesterol")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Fat")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Fibre")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Protein")
-                        .HasColumnType("int");
+                    b.Property<double?>("Protein")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IngredientId");
 
                     b.ToTable("Nutrition");
                 });
@@ -590,6 +622,17 @@ namespace BusinessObjects.Migrations
                     b.Navigation("FkCategory");
                 });
 
+            modelBuilder.Entity("BusinessObjects.Models.IngredientNutrition", b =>
+                {
+                    b.HasOne("BusinessObjects.Models.Ingredient", "Ingredient")
+                        .WithOne("IngredientNutrition")
+                        .HasForeignKey("BusinessObjects.Models.IngredientNutrition", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ingredient");
+                });
+
             modelBuilder.Entity("BusinessObjects.Models.MealPlan", b =>
                 {
                     b.HasOne("BusinessObjects.Models.Account", "FkUser")
@@ -606,6 +649,12 @@ namespace BusinessObjects.Migrations
                         .HasForeignKey("BusinessObjects.Models.Nutrition", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("BusinessObjects.Models.Ingredient", "Ingredient")
+                        .WithMany()
+                        .HasForeignKey("IngredientId");
+
+                    b.Navigation("Ingredient");
 
                     b.Navigation("Recipe");
                 });
@@ -766,6 +815,11 @@ namespace BusinessObjects.Migrations
                     b.Navigation("RecipeFeedbacks");
 
                     b.Navigation("Recipes");
+                });
+
+            modelBuilder.Entity("BusinessObjects.Models.Ingredient", b =>
+                {
+                    b.Navigation("IngredientNutrition");
                 });
 
             modelBuilder.Entity("BusinessObjects.Models.IngredientCategory", b =>

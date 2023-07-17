@@ -4,7 +4,8 @@
     ViewBag.Title = "View Ingredient";
     BusinessObjects.Models.Pager pager = new BusinessObjects.Models.Pager();
     int pageNo = 0;
-    if(ViewBag.Pager != null) {
+    if (ViewBag.Pager != null)
+    {
         pager = ViewBag.Pager;
         pageNo = pager.CurrentPage;
     }
@@ -44,10 +45,12 @@
     }
 </style>
 
-<div class="col-md-12">
-    <div class="row">
-        @foreach (var obj in Model) {
-                <div class="card col-md-2 px-0 mx-3 my-4 round-5 overflow-hidden" style="height: 400px;">
+<div class="container">
+    <div class="row row-cols-1 row-cols-lg-5 g-5 g-lg-3">
+        @foreach (var obj in Model)
+        {
+            <div class="col">
+                <div class="card px-0 mx-3 my-4 round-5 overflow-hidden" style="height: 400px;">
                     <img src="@obj.ImgPath" class="card-img-top img-fluid h-50" alt="Ingredient image">
                     <div class="card-body h-50 mb-1">
                         <h5 class="card-title text-color-change">@obj.Name</h5>
@@ -55,8 +58,9 @@
                         <a asp-controller="Home" asp-action="IngredientDetails" asp-route-ingredientId="@obj.Id" asp-route-id="@obj.FkCategoryId" asp-route-pg="pg" class="btn btn-dark text-light float-end"><i class="fa-solid fa-file-lines"></i></a>
                     </div>
                 </div>
+            </div>
         }
         <hr>
-        <partial name="_Pager" model="@pager"/>
     </div>
+    <partial name="_Pager" model="@pager" />
 </div>

@@ -22,11 +22,34 @@ public partial class Ingredient {
 
     [NotMapped]
     public IFormFile? file { get; set; }
+
     public int? FkCategoryId { get; set; }
 
     public virtual IngredientCategory? FkCategory { get; set; }
 
     public virtual ICollection<Recipe> Recipes { get; set; } = new List<Recipe>();
+
+    public virtual IngredientNutrition? IngredientNutrition { get; set; }
+}
+
+public partial class IngredientNutrition {
+
+    [ForeignKey("Ingredient")]
+    public int Id { get; set; }
+
+    public double? Calories { get; set; }
+
+    public double? Fat { get; set; }
+
+    public double? Protein { get; set; }
+
+    public double? Fibre { get; set; }
+
+    public double? Carbohydrate { get; set; }
+
+    public double? Cholesterol { get; set; }
+
+    public virtual Ingredient? Ingredient { get; set; }
 }
 
 

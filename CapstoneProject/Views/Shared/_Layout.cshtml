@@ -13,7 +13,7 @@
     <meta property="og:locale" content="vi" />
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap-5.3.0/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    
     <link rel="stylesheet" href="~/css/recipedetail.css" />
     <link rel="stylesheet" href="~/css/togglestyle.css" />
     <link rel="icon" type="image/x-icon" href="\images\logo.png">
@@ -27,6 +27,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
     <!-- MDB -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     @RenderSection("scripts", required: false)
 </head>
 <style>
@@ -115,8 +116,6 @@
                      loading="lazy" />
             </a>
 
-
-
             <!-- Toggle button -->
             <button class="navbar-toggler"
                     type="button"
@@ -129,9 +128,9 @@
             </button>
 
             <!-- Collapsible wrapper -->
-            <div class="collapse navbar-collapse container-fluid d-flex justify-content-around" id="navbarSupportedContent" style="text-align: -webkit-center">
+            <div class="collapse navbar-collapse container-fluid justify-content-between text-center" id="navbarSupportedContent">
                 <!-- Search -->
-                <form class="d-flex form-outline pb-2" style="width: 70%" asp-controller="UserRecipes" asp-action="Filter">
+                <form class="d-flex form-outline pb-2" asp-controller="UserRecipes" asp-action="Filter">
                     <input type="search"
                            class="form-control rounded border"
                            id="SearchString"
@@ -150,7 +149,6 @@
                         <h6 class="label-light m-0">Light</h6>
                     </div>
 
-
                     <div class="d-flex">
                         <partial name="_LoginPartial" />
                     </div>
@@ -159,10 +157,10 @@
         </div>
         <!-- Container wrapper -->
     </nav>
-    <div class="container">
-        <main role="main" class="pb-3 pt-3" style="min-height: 100vh;">
+    <div class="container min-vh-100">
+        <main role="main" class="h-100">
             <partial name="_Notification" />
-            <breadcrumb></breadcrumb>
+            <breadcrumb class="mt-5"></breadcrumb>
             @RenderBody()
         </main>
     </div>
@@ -175,9 +173,9 @@
                 <img class="img-fluid" style="width: 60px; height: 60px;" src="~/images/logo.png" />
             </a>
 
-            <ul class="nav col-4 justify-content-end text-color-change">
-                <li class="nav-item"><a asp-action="Privacy" asp-controller="Home" class="nav-link px-2 text-color-change" target="_blank">Privacy</a></li>
-                <li class="nav-item"><a asp-action="Contact" asp-controller="Home" class="nav-link px-2 text-color-change" target="_blank">Contact us</a></li>
+            <ul class="nav col-4 justify-content-end text-color-change pe-5">
+                <li class="nav-item"><a asp-action="Privacy" asp-controller="Home" class="nav-dark px-2 text-color-change" target="_blank">Privacy</a></li>
+                <li class="nav-item"><a asp-action="Contact" asp-controller="Home" class="nav-dark px-2 text-color-change" target="_blank">Contact us</a></li>
             </ul>
         </footer>
     </div>

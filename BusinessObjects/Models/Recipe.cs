@@ -56,24 +56,26 @@ public partial class Recipe {
     public virtual ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
 }
 
-
 public partial class Nutrition {
+
     [ForeignKey("Recipe")]
     public int Id { get; set; }
 
-    public int? Calories { get; set; }
+    public double? Calories { get; set; }
 
-    public int? Fat { get; set; }
+    public double? Fat { get; set; }
 
-    public int? Protein { get; set; }
+    public double? Protein { get; set; }
 
-    public int? Fibre { get; set; }
+    public double? Fibre { get; set; }
 
-    public int? Carbohydrate { get; set; }
+    public double? Carbohydrate { get; set; }
 
-    public int? Cholesterol { get; set; }
+    public double? Cholesterol { get; set; }
 
-    public virtual Recipe? Recipe { get; set; }
+    public virtual Recipe? Recipe { get; set; } 
+
+    public virtual Ingredient? Ingredient { get; set; }
 }
 
 public partial class RecipeIngredient {
@@ -93,6 +95,8 @@ public partial class RecipeIngredient {
     public virtual Ingredient? Ingredient { get; set; }
 
     public virtual Recipe? Recipe { get; set; }
+
+
 }
 
 
