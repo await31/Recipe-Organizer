@@ -19,7 +19,7 @@
         border: none;
     }
 
-    .printer{
+    .printer {
         color: black;
     }
 
@@ -76,6 +76,10 @@
         a {
             font-size: 1rem;
         }
+
+        .table > :not(caption) > * > * {
+            padding: 1rem 0.5rem;
+        }
     }
 </style>
 
@@ -89,11 +93,12 @@
                     <div class="row">
                         @if (Model?.FkUser != null)
                         {
-                                if (SignInManager.IsSignedIn(User)) {
-                                    <div class="col-md excludePrint"
-                                         style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
+                            if (SignInManager.IsSignedIn(User))
+                            {
+                                <div class="col-md excludePrint"
+                                     style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
                                     <a asp-controller="Home" asp-action="UserProfile" asp-route-userId="@Model.FkUserId" class="text-decoration-none text-dark row">
-                                         <div class="d-flex">
+                                        <div class="d-flex">
                                             <div class="d-flex align-seft-center">
                                                 <div>
                                                     <img class="img-fluid rounded-circle"
@@ -107,9 +112,11 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        </a>
+                                    </a>
                                 </div>
-                            } else {
+                            }
+                            else
+                            {
                                 <div class="col-md excludePrint"
                                      style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
                                     <a asp-area="Identity" asp-page="/Account/Login" class="text-decoration-none text-dark d-flex">

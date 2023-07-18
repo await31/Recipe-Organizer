@@ -6,22 +6,31 @@
 <style>
 
     .container-confirm {
+        justify-content: space-around;
         width: 100%;
         height: 100vh;
         background-color: aliceblue;
         text-align: center;
+        display: flex;
+        flex-direction: column;
     }
 
         .container-confirm:before {
-            content: "";
+            color: black;
+            content: "We just need to verify your email before you can continue using Cookez. Verifying your email helps secure your account.";
             display: inline-block;
-            height: 100%;
+            height: 10%;
             vertical-align: middle;
             margin-right: -0.25em;
             /* Adjusts for spacing */
         }
 
+    .note {
+        display: block;
+    }
+
     .circle {
+        align-self: center;
         display: inline-block;
         vertical-align: middle;
         *vertical-align: auto;
@@ -239,13 +248,13 @@
     else
     {
         <div class="container-confirm">
-            <div class="note note-primary mb-3 mt-3">
-                <strong>Reminder:</strong> We just need to verify your email before you can continue using Cookez. Verifying your email helps secure your account.
-            </div>
             <div class="circle">
                 <div class="mail-box">
                     <div class="flag"></div>
                 </div>
+            </div>
+            <div class="note note-primary mb-3 mt-3 text-dark align-self-center">
+                <strong>Reminder:</strong>Don't forget check your spam!
             </div>
         </div>
     }
