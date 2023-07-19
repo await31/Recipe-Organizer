@@ -67,7 +67,10 @@
                                                 <button type="submit" style="background-color: #f5f5f5" class="btn btn-light rounded-2 shadow w-100 fw-bold" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><img src="/images/ggicon.png" class="img-fluid me-2" style="width: 30px; height:30px;" /> Connect with Google </button>
                                             }
                                             if (@provider.Name.Equals("Facebook")) {
+                                                <button type="submit" style="background-color: #1877f2" class="btn text-light rounded-2 mt-3 shadow w-100 fw-bold" onclick="alert('This feature is currently under development')" title="Log in using your @provider.DisplayName account"><img src="/images/fbicon.png" class="img-fluid me-2" style="width: 30px; height:30px;" /> Connect with Facebook  </button>
+                                                @*
                                                 <button type="submit" style="background-color: #1877f2" class="btn text-light rounded-2 mt-3 shadow w-100 fw-bold" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><img src="/images/fbicon.png" class="img-fluid me-2" style="width: 30px; height:30px;" /> Connect with Facebook  </button>
+                                                *@
                                             }
                                         }
                                     </div>

@@ -86,7 +86,7 @@
             </div>
             <div class="form-group mt-4">
                 <label asp-for="ServingSize" class="control-label mb-2 label-font">Serving Size (People)</label>
-                <input asp-for="ServingSize" class="form-control" type="number" min="1" />
+                <input asp-for="ServingSize" class="form-control" type="number" step="1" min="1" max="1000" placeholder="The prescribed serving size shall not exceed a value of 1000."/>
             </div>
             @*
             <div class="form-group mt-5">
@@ -139,7 +139,7 @@
                     </div>
                     <div class="col-md-3">
                         <label for="Quantity" class="mb-2 label-font">Quantity</label>
-                        <input type="number" class="form-control" id="Quantity" name="Quantities[]" step="any" min="1" required />
+                        <input type="number" class="form-control" id="Quantity" name="Quantities[]" step="any" min="1" max="10000" placeholder="Acceptable range: 1 to 10000" required />
                     </div>
                     <div class="col-md-4">
                         <label for="UnitOfMeasure" class="mb-2 label-font">Unit of Measure</label>
@@ -162,7 +162,6 @@
                     here
                 </a>
             </div>
-
 
             <div class="form-group mt-5">
                 <p class="text-center text-dark fw-bolder fs-2 mb-4 label-font">Cooking Instruction</p>
