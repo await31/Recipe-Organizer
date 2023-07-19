@@ -67,7 +67,7 @@
                                                 <button type="submit" style="background-color: #f5f5f5" class="btn btn-light rounded-2 shadow w-100 fw-bold" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account"><img src="/images/ggicon.png" class="img-fluid me-2" style="width: 30px; height:30px;" /> Connect with Google </button>
                                             }
                                             if (@provider.Name.Equals("Facebook")) {
-                                                <button type="submit" style="background-color: #1877f2" class="btn text-light rounded-2 mt-3 shadow w-100 fw-bold" onclick="event.preventDefault(); alert('This feature is currently under development')" title="Log in using your @provider.DisplayName account">
+                                                <button type="submit" style="background-color: #1877f2" class="btn text-light rounded-2 mt-3 shadow w-100 fw-bold" onclick="event.preventDefault(); customAlert()" title="Log in using your @provider.DisplayName account">
                                                     <img src="/images/fbicon.png" class="img-fluid me-2" style="width: 30px; height:30px;" /> Connect with Facebook
                                                 </button>
                                                 @*
@@ -104,9 +104,9 @@
     <partial name="_ValidationScriptsPartial" />
 }
 <script>
-    window.alert = function () {
+    function customAlert() {
         var alertBox = document.createElement("div");
-        alertBox.innerHTML = "<div style='position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999;'><div style='position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 100px; background-color: white; border-radius: 10px; text-align: center; padding-top: 30px;'>This feature is currently under development</div></div>";
+        alertBox.innerHTML = "<div style='position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999;'><div style='position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 150px; background-color: white; border-radius: 10px; text-align: center; padding-top: 10px;'><img src='https://adderra.com/wp-content/uploads/2020/09/under-construction.png' style='width: 80px; height:80px;'><br>This feature is currently under development</div></div>";
         document.body.appendChild(alertBox);
         setTimeout(function () {
             alertBox.remove();
