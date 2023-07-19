@@ -30,7 +30,7 @@
                                 <p class="text-justify comment-text mb-0 ms-2">@feedback.Description</p>
                         </div>
                             @if (UserManager.GetUserId(User) == feedback.UserId) {
-                            <div class="">
+                            <div>
                                 <button class="btn btn-link dropdown-toggle"
                                         type="button"
                                         id="dropdownMenuButton"
@@ -44,9 +44,19 @@
                                 </ul>
                             </div>
                             } else {
-                            <div class="d-flex flex-row user-feed">
-                                <span class="wish"><i class="fa fa-heartbeat"></i>@feedback.Rating</span>
-                            </div>
+                        <div>
+                            <button class="btn btn-link dropdown-toggle"
+                                    type="button"
+                                    id="dropdownMenuButton"
+                                    data-mdb-toggle="dropdown"
+                                    disabled
+                                    aria-expanded="false">
+                            </button>
+                            <ul class="dropdown-menu p-0">
+                                <li>
+                                </li>
+                            </ul>
+                        </div>
                             }
                     </div>
                 </div>
