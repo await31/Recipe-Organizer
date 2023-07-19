@@ -53,6 +53,8 @@ public partial class RecipeOrganizerContext : IdentityDbContext<Account> {
         .Property(i => i.Id)
         .UseIdentityColumn()
         .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
+
         base.OnModelCreating(modelBuilder);
     }
 

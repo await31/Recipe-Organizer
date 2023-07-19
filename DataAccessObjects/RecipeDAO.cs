@@ -315,23 +315,35 @@ namespace DataAccessObjects {
             using (var context = new RecipeOrganizerContext()) {
                 if (existingRecipe != null) {
 
-                    existingRecipe.Ingredients.Clear();
-                    context.RecipeIngredient.RemoveRange(existingRecipe.RecipeIngredients);
-                    context.SaveChanges();
+                    // Attach existingRecipe to the context
+                    context.Recipes.Attach(existingRecipe);
 
+                    // Remove existing RecipeIngredients associated with the existingRecipe
+                    var existingRecipeIngredients = context.RecipeIngredient
+                        .Where(a => a.RecipeId == existingRecipe.Id)
+                        .ToList();
+
+                    context.RecipeIngredient.RemoveRange(existingRecipeIngredients);
 
                     var existingIngredients = context.Ingredients
-                    .Where(i => list.Select(x => x.Id).Contains(i.Id))
-                    .ToList();
+                        .Where(i => list.Select(x => x.Id).Contains(i.Id))
+                        .ToList();
+
+                    existingRecipe.Ingredients.Clear();
+                    context.SaveChanges();
 
                     existingRecipe.Ingredients = existingIngredients;
+                    context.SaveChanges();
 
+                    // Set the RecipeId for the RecipeIngredients
                     foreach (var ri in ris) {
                         ri.RecipeId = existingRecipe.Id;
                     }
 
+                    // Update RecipeIngredients
                     existingRecipe.RecipeIngredients = ris;
 
+                    // Update Nutrition
                     existingRecipe.Nutrition.Calories = recipeNutrition.Calories;
                     existingRecipe.Nutrition.Fat = recipeNutrition.Fat;
                     existingRecipe.Nutrition.Fibre = recipeNutrition.Fibre;
@@ -344,6 +356,8 @@ namespace DataAccessObjects {
                 }
             }
         }
+
+
 
         public void InsertRecipeIngredientToRecipe(Recipe r, List<RecipeIngredient> ris) {
             try {

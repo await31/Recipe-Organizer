@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjects.Migrations
 {
     [DbContext(typeof(RecipeOrganizerContext))]
-    [Migration("20230717034448_InitDB2")]
-    partial class InitDB2
+    [Migration("20230719074230_InitDB")]
+    partial class InitDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -292,7 +292,7 @@ namespace BusinessObjects.Migrations
 
                     b.HasIndex("IngredientId");
 
-                    b.ToTable("Nutritions");
+                    b.ToTable("Nutrition");
                 });
 
             modelBuilder.Entity("BusinessObjects.Models.Recipe", b =>

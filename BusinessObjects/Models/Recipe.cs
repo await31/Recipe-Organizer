@@ -96,8 +96,8 @@ public partial class RecipeIngredient {
 
     public virtual Recipe? Recipe { get; set; }
 
-
 }
+
 
 
 

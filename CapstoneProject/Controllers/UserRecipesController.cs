@@ -411,12 +411,12 @@ namespace CapstoneProject.Controllers {
                             var allIngredients = _ingredientRepository.GetStatusTrueIngredients();
 
                             var ingredients = allIngredients
-                                              .Where(i => IngredientNames.Any(input => i.Name.Contains(input)))
+                                              .Where(i => IngredientNames.Any(input => i.Name.Equals(input)))
                                               .ToList();
 
                             var IngredientIds = ingredients.Select(i => i.Id).ToArray();
                             List<RecipeIngredient> recipeIngredients = new();
-                            Nutrition recipeNutrition = new Nutrition{
+                            Nutrition recipeNutrition = new Nutrition {
                                 Calories = 0,
                                 Fat = 0,
                                 Protein = 0,
@@ -427,8 +427,9 @@ namespace CapstoneProject.Controllers {
 
                             for (int i = 0; i < IngredientNames.Length; i++) {
                                 var list = _ingredientRepository.GetStatusTrueIngredients();
-                                bool exists = list.Any(ingredient => ingredient.Name
-                                                  .Contains(IngredientNames[i]));
+                                bool exists = list.Any(ingredient =>
+                                                    ingredient.Name.Equals(IngredientNames[i], StringComparison.OrdinalIgnoreCase));
+                                                                                                
                                 if (exists) {
                                     getIngredientIdFromName(IngredientNames[i], out int id);
                                     recipeIngredients.Add(new RecipeIngredient {
@@ -445,29 +446,30 @@ namespace CapstoneProject.Controllers {
                                     var ingredientNutritionCarbohydrate = _ingredientRepository.GetIngredientById(id).IngredientNutrition.Carbohydrate;
                                     var ingredientNutritionCholesterol = _ingredientRepository.GetIngredientById(id).IngredientNutrition.Cholesterol;
 
-                                        if (ingredientNutritionCalories != 0) {
-                                            recipeNutrition.Calories += (int)(ingredientNutritionCalories*Quantities[i]/2);
-                                        }       
-                                        if (ingredientNutritionFat != 0) {
-                                            recipeNutrition.Fat += (int)(ingredientNutritionFat*Quantities[i]/2);
-                                        }
-                                        if (ingredientNutritionProtein != 0) {
-                                            recipeNutrition.Protein += (int)(ingredientNutritionProtein*Quantities[i]/2);
-                                        }
-                                        if (ingredientNutritionFibre != 0) {
-                                            recipeNutrition.Fibre += (int)(ingredientNutritionFibre*Quantities[i]/2);
-                                        }
-                                        if (ingredientNutritionCarbohydrate != 0) {
-                                            recipeNutrition.Carbohydrate += (int)(ingredientNutritionCarbohydrate*Quantities[i]/2);
-                                        }
-                                        if (ingredientNutritionCholesterol != 0) {
-                                            recipeNutrition.Cholesterol += (int)(ingredientNutritionCholesterol*Quantities[i]/2);
-                                        }
+                                    if (ingredientNutritionCalories != 0) {
+                                        recipeNutrition.Calories += (int)(ingredientNutritionCalories * Quantities[i] / 2);
+                                    }
+                                    if (ingredientNutritionFat != 0) {
+                                        recipeNutrition.Fat += (int)(ingredientNutritionFat * Quantities[i] / 2);
+                                    }
+                                    if (ingredientNutritionProtein != 0) {
+                                        recipeNutrition.Protein += (int)(ingredientNutritionProtein * Quantities[i] / 2);
+                                    }
+                                    if (ingredientNutritionFibre != 0) {
+                                        recipeNutrition.Fibre += (int)(ingredientNutritionFibre * Quantities[i] / 2);
+                                    }
+                                    if (ingredientNutritionCarbohydrate != 0) {
+                                        recipeNutrition.Carbohydrate += (int)(ingredientNutritionCarbohydrate * Quantities[i] / 2);
+                                    }
+                                    if (ingredientNutritionCholesterol != 0) {
+                                        recipeNutrition.Cholesterol += (int)(ingredientNutritionCholesterol * Quantities[i] / 2);
+                                    }
                                 } else {
                                     return NotFound();
                                 }
                             }
                             recipe.Nutrition = recipeNutrition;
+                            RemoveDuplicateIngredientsRecipe(ingredients);
                             RemoveDuplicateRecipeIngredients(recipeIngredients);
                             _recipeRepository.InsertRecipe(recipe, ingredients, recipeIngredients);
                             TempData["success"] = "The recipe has been submitted for review!";
@@ -507,13 +509,10 @@ namespace CapstoneProject.Controllers {
                 }
                 if (IngredientNames != null) {
 
-                    existingRecipe.Ingredients.Clear();
-
-
                     var allIngredients = _ingredientRepository.GetStatusTrueIngredients();
 
                     var ingredients = allIngredients
-                                      .Where(i => IngredientNames.Any(input => i.Name.Contains(input)))
+                                      .Where(i => IngredientNames.Any(input => i.Name.Equals(input)))
                                       .ToList();
 
                     var recipeIngredients = new List<RecipeIngredient>();
@@ -528,8 +527,8 @@ namespace CapstoneProject.Controllers {
 
                     for (int i = 0; i < IngredientNames.Length; i++) {
                         bool exists = _ingredientRepository.GetStatusTrueIngredients()
-                                              .Any(ingredient => ingredient.Name
-                                              .Contains(IngredientNames[i]));
+                            .Any(ingredient => ingredient.Name.Equals(IngredientNames[i], StringComparison.OrdinalIgnoreCase));
+
                         if (exists) {
                             getIngredientIdFromName(IngredientNames[i], out int ingredientId);
                             recipeIngredients.Add(new RecipeIngredient {
@@ -569,6 +568,7 @@ namespace CapstoneProject.Controllers {
                         }
                     }
 
+                    RemoveDuplicateIngredientsRecipe(ingredients);
                     RemoveDuplicateRecipeIngredients(recipeIngredients);
                     _recipeRepository.UpdateRecipe(existingRecipe, ingredients, recipeIngredients, recipeNutrition);
                 }
@@ -596,6 +596,11 @@ namespace CapstoneProject.Controllers {
         public void RemoveDuplicateRecipeIngredients(List<RecipeIngredient> recipeIngredients) {
             var distinctIngredients = new HashSet<int>();
             recipeIngredients.RemoveAll(ri => !distinctIngredients.Add((int)ri.IngredientId));
+        }
+
+        public void RemoveDuplicateIngredientsRecipe(List<Ingredient> ingredientsRecipe) {
+            var distinctIngredients = new HashSet<int>();
+            ingredientsRecipe.RemoveAll(ri => !distinctIngredients.Add((int)ri.Id));
         }
 
         // GET: Recipes/Edit/5

@@ -289,7 +289,7 @@ namespace BusinessObjects.Migrations
 
                     b.HasIndex("IngredientId");
 
-                    b.ToTable("Nutritions");
+                    b.ToTable("Nutrition");
                 });
 
             modelBuilder.Entity("BusinessObjects.Models.Recipe", b =>
