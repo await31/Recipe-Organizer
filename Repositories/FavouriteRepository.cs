@@ -17,7 +17,7 @@ namespace Repositories {
         public Favourite GetFavouriteById(int? id) => FavouriteDAO.Instance.GetFavouriteById(id);
         public void InsertFavourite(Favourite f) => FavouriteDAO.Instance.InsertFavourite(f);
         public void DeleteFavourite(Favourite f) => FavouriteDAO.Instance.DeleteFavourite(f);
-        public void UpdateFavourite(Favourite f) => FavouriteDAO.Instance.UpdateFavourite(f);
+        public void UpdateFavourite(Favourite f, string name, string description, bool isPrivate) => FavouriteDAO.Instance.UpdateFavourite(f,name,description,isPrivate);
         public void InsertRecipeToFavourite(Favourite f, Recipe r) => FavouriteDAO.Instance.InsertRecipeToFavourite(f,r);
         public void DeleteRecipeFromFavourite(Favourite f, Recipe r) => FavouriteDAO.Instance.DeleteRecipeFromFavourite(f,r);
     }

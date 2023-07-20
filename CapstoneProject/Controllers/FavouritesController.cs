@@ -25,8 +25,6 @@ namespace CapstoneProject.Controllers {
             _userManager = userManager;
         }
 
-        //Can't handle JsonResult task with data call from Repository, temporary use RecipeOrganizerContext inject
-
         //These codes are used in Favourites/Details
         [HttpPost]
         public async Task<JsonResult> AddToFavourite(int favouriteId, int recipeId) {
@@ -167,20 +165,16 @@ namespace CapstoneProject.Controllers {
 
         [HttpPost]
         public async Task<JsonResult> Edit(int id, string name, string description, bool isPrivate) {
-            //var favourite = _context.Favourites.FirstOrDefault(f => f.Id == id);
-            //try {
-            //    favourite.Name = name;
-            //    favourite.Description = description;
-            //    favourite.isPrivate = isPrivate;
-            //    _context.Update(favourite);
-            //    await _context.SaveChangesAsync();
-            //} catch (DbUpdateConcurrencyException) {
-            //    if (!FavouriteExists(favourite.Id)) {
-            //        return null;
-            //    } else {
-            //        throw;
-            //    }
-            //}
+            var favourite = _favouriteRepository.GetFavouriteById(id);
+            try {
+                _favouriteRepository.UpdateFavourite(favourite, name, description, isPrivate);
+            } catch (DbUpdateConcurrencyException) {
+                if (!FavouriteExists(favourite.Id)) {
+                    return null;
+                } else {
+                    throw;
+                }
+            }
             return Json(new { name = name, description = description, isPrivate = isPrivate });
         }
 

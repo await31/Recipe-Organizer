@@ -138,12 +138,15 @@ namespace DataAccessObjects {
             }
         }
 
-        public void UpdateFavourite(Favourite f) {
+        public void UpdateFavourite(Favourite f, string name, string description, bool isPrivate) {
             try {
                 using (var context = new RecipeOrganizerContext()) {
                     var cus = GetFavouriteById(f.Id);
                     if (cus != null) {
-                        context.Favourites.Update(f);
+                        cus.Name = name;
+                        cus.Description = description;
+                        cus.isPrivate = isPrivate;
+                        context.Favourites.Update(cus);
                         context.SaveChanges();
                     } else {
                         throw new Exception("Favourite is not existed.");
