@@ -23,7 +23,7 @@ namespace Repositories {
         public Recipe GetRecipeForHomeRecipeDetails(int? id) => RecipeDAO.Instance.GetRecipeForHomeRecipeDetails(id);
         public Recipe GetRecipeForDelete(int? recipeId) => RecipeDAO.Instance.GetRecipeForDelete(recipeId);
         public IEnumerable<Recipe> GetSuggestRecipes(int currentRecipeId) => RecipeDAO.Instance.GetSuggestRecipes(currentRecipeId);
-        public void UpdateRecipe(Recipe existingRecipe, List<Ingredient> list, List<RecipeIngredient> ris) => RecipeDAO.Instance.UpdateRecipe(existingRecipe, list, ris);
+        public void UpdateRecipe(Recipe existingRecipe, List<Ingredient> list, List<RecipeIngredient> ris, Nutrition recipeNutrition) => RecipeDAO.Instance.UpdateRecipe(existingRecipe, list, ris, recipeNutrition);
         public void InsertRecipe(Recipe r, List<Ingredient> list, List<RecipeIngredient> ris) => RecipeDAO.Instance.InsertRecipe(r, list, ris);
         public void InsertRecipeIngredient(List<RecipeIngredient> ris) => RecipeDAO.Instance.InsertRecipeIngredient(ris);
         public void InsertRecipeIngredientToRecipe(Recipe r, List<RecipeIngredient> ris) => RecipeDAO.Instance.InsertRecipeIngredientToRecipe(r, ris);

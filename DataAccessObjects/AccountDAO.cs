@@ -27,6 +27,7 @@ namespace DataAccessObjects {
             try {
                 using (var context = new RecipeOrganizerContext()) {
                     lists = context.Accounts
+                        .Include(a=>a.Recipes)
                         .Include(u=>u.Favourites)
                         .ToList();
                 }

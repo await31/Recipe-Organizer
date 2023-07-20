@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjects.Migrations
 {
     [DbContext(typeof(RecipeOrganizerContext))]
-    [Migration("20230715084339_InitDB")]
+    [Migration("20230719074230_InitDB")]
     partial class InitDB
     {
         /// <inheritdoc />

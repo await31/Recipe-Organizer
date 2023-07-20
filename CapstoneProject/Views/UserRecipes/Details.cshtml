@@ -19,7 +19,7 @@
         border: none;
     }
 
-    .printer{
+    .printer {
         color: black;
     }
 
@@ -71,6 +71,16 @@
         font-size: 14px;
         margin-top: 12px;
     }
+
+    @@media (max-width: 992px) {
+        a {
+            font-size: 1rem;
+        }
+
+        .table > :not(caption) > * > * {
+            padding: 1rem 0.5rem;
+        }
+    }
 </style>
 
 <!-- Carousel -->
@@ -83,11 +93,12 @@
                     <div class="row">
                         @if (Model?.FkUser != null)
                         {
-                                if (SignInManager.IsSignedIn(User)) {
-                                    <div class="col-md excludePrint"
-                                         style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
+                            if (SignInManager.IsSignedIn(User))
+                            {
+                                <div class="col-md excludePrint"
+                                     style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
                                     <a asp-controller="Home" asp-action="UserProfile" asp-route-userId="@Model.FkUserId" class="text-decoration-none text-dark row">
-                                         <div class="d-flex">
+                                        <div class="d-flex">
                                             <div class="d-flex align-seft-center">
                                                 <div>
                                                     <img class="img-fluid rounded-circle"
@@ -101,9 +112,11 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        </a>
+                                    </a>
                                 </div>
-                            } else {
+                            }
+                            else
+                            {
                                 <div class="col-md excludePrint"
                                      style="align-self: center; padding-left: 0; margin-right: 20px; border-right: rgba(0, 0, 0, 0.15) solid 1px;">
                                     <a asp-area="Identity" asp-page="/Account/Login" class="text-decoration-none text-dark d-flex">
@@ -235,7 +248,7 @@
             }
             @if (Model?.Nutrition.Fibre != null)
             {
-                <div class="nutrition row justify-content-between">
+                <div class="nutrition row justify-content-between text-color-change-black">
                     <div class="col-4" style="text-align: left; padding: 20px 0 20px 0;">Fibre</div>
                     <div style="text-align: right; padding: 20px 0 20px 0;" class="col-4">@Model.Nutrition?.Fibre gam</div>
                 </div>
@@ -309,15 +322,15 @@
                                 foreach (var item in Model.RecipeIngredients)
                                 {
                                     <tr>
-                                        <th class="py-2 fs-5 label-font">
+                                        <th class="py-2 fs-5 pe-0 label-font">
                                             <a asp-controller="Home" asp-action="IngredientDetails" asp-route-id="@item?.Ingredient.FkCategoryId" asp-route-ingredientId="@item?.Ingredient.Id" target="_blank" class="text-dark">
-                                                <img style="border-radius: 50%; width: 80px; height: 80px;"
+                                                <img style="border-radius: 50%; width: 64px; height: 64px;"
                                                      src="@item.Ingredient?.ImgPath"
                                                      class="img-fluid" />
                                                 &emsp; @item.Ingredient?.Name
                                             </a>
                                         </th>
-                                        <td class="py-2 fs-6 align-middle">@item.Quantity @item.UnitOfMeasure</td>
+                                        <td class="py-2 fs-6 align-middle text-dark">@item.Quantity @item.UnitOfMeasure</td>
                                     </tr>
                                 }
                             }
@@ -390,6 +403,7 @@
 <partial name="_FavouriteModalPartial" />
 
 <script src="~/lib/jquery-3.7.0.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script type="text/javascript">
     //This function when simulate a button press when press the enter key
     document.getElementById("sendText").addEventListener("keyup", function (event) {
