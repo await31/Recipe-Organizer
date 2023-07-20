@@ -44,3 +44,5 @@
 -> The ability for users to create and manage their own accounts, which might include features like the ability to save favourite recipes, create custom recipe collections.
 
 ## License
+###Screenshots
+[Home Screen](https://github.com/bankhoagiauten/Recipe-Organizer/blob/master/screenshots/HomeScreen.jpg)
