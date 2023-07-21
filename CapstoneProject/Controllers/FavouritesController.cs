@@ -165,11 +165,10 @@ namespace CapstoneProject.Controllers {
 
         [HttpPost]
         public async Task<JsonResult> Edit(int id, string name, string description, bool isPrivate) {
-            var favourite = _favouriteRepository.GetFavouriteById(id);
             try {
-                _favouriteRepository.UpdateFavourite(favourite, name, description, isPrivate);
+                _favouriteRepository.UpdateFavourite(id, name, description, isPrivate);
             } catch (DbUpdateConcurrencyException) {
-                if (!FavouriteExists(favourite.Id)) {
+                if (!FavouriteExists(id)) {
                     return null;
                 } else {
                     throw;

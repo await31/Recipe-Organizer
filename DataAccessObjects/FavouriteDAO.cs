@@ -138,10 +138,10 @@ namespace DataAccessObjects {
             }
         }
 
-        public void UpdateFavourite(Favourite f, string name, string description, bool isPrivate) {
+        public void UpdateFavourite(int id, string name, string description, bool isPrivate) {
             try {
                 using (var context = new RecipeOrganizerContext()) {
-                    var cus = GetFavouriteById(f.Id);
+                    var cus = context.Favourites.FirstOrDefault(a=> a.Id == id);
                     if (cus != null) {
                         cus.Name = name;
                         cus.Description = description;
