@@ -1,7 +1,7 @@
+*.html linguist-detectable=false
 *.csharp linguist-detectable=true  
 *.php linguist-detectable=false  
 *.js linguist-detectable=false  
-*.html linguist-detectable=false  
 *.css linguist-detectable=false  
 *.xml linguist-detectable=false 
 *.asm linguist-detectable=false 
