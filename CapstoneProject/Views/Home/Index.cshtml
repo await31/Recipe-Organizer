@@ -424,9 +424,12 @@
                 url: '/Favourites/AddRecipe',
                 type: 'POST',
                 data: { recipeId: recipeId, favouriteIds: favouriteIds, allfavouriteIds: allfavouriteIds },
-                success: UpdateIcon,
+                success: function () {
+                    UpdateIcon();
+                    toastr.success("Save collections successfully!");
+                },
                 error: function () {
-                    alert('Error adding recipes to favorites.');
+                    toastr.error("Fail to add recipe to collections!");
                 }
             });
         });

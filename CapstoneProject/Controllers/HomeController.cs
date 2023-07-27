@@ -53,10 +53,9 @@ namespace CapstoneProject.Controllers {
             //Favourite list
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser != null)
-                ViewBag.FavouriteList = _accountRepository.GetAccounts().FirstOrDefault(u => u.Id == currentUser.Id).Favourites.Select(f => new { f.Id, f.Name }).ToList();
+                ViewData["FavouriteList"] = _favouriteRepository.GetFavouritesUserProfile(currentUser);
             else
-                ViewBag.FavouriteList = null;
-
+                ViewData["FavouriteList"] = null;
             return View(recipes);
         }
 

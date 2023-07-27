@@ -47,6 +47,12 @@
 <div class="mt-5 mb-5">
     <h2 id="collectionName" class="text-center">My Recipes</h2>
 </div>
+@if (Model.Count() == 0)
+{
+    <h2 class="text-center my-3">You haven't created any recipes yet. <a asp-controller="UserRecipes" asp-action="Create">Start creating today!</a></h2>
+}
+else
+{
 <div class="row row-cols-1 row-cols-lg-3 g-2 g-lg-3">
     @foreach (var recipe in Model)
     {
@@ -87,3 +93,4 @@
     } @*End of foreach*@
 
 </div>
+}@*End of else*@
