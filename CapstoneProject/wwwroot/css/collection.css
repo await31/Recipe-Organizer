@@ -38,11 +38,11 @@
 
         .recipe-card .card-head, .collection-card .card-head {
             height: 100%;
-            width: 100%;
+            width: 50%;
         }
 
         .recipe-card .card-body, .collection-card .card-body {
             height: 100%;
-            width: 100%;
+            width: 50%;
         }
 }

@@ -17,7 +17,7 @@ namespace Repositories {
         Favourite GetFavouriteById(int? id);
         void InsertFavourite(Favourite f);
         void DeleteFavourite(Favourite f);
-        void UpdateFavourite(Favourite f, string name, string description, bool isPrivate);
+        void UpdateFavourite(int id, string name, string description, bool isPrivate);
         void InsertRecipeToFavourite(Favourite f, Recipe r);
         void DeleteRecipeFromFavourite(Favourite f, Recipe r);
     }
