@@ -8,5 +8,6 @@ using DataAccessObjects;
 namespace Repositories {
     public class AccountRepository : IAccountRepository {
         public IEnumerable<Account> GetAccounts() => AccountDAO.Instance.GetAccounts();
+        public Account GetAccountById(string accountId) => AccountDAO.Instance.GetAccountById(accountId);
     }
 }

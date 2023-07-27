@@ -8,5 +8,6 @@ using System.Threading.Tasks;
 namespace Repositories {
     public interface IAccountRepository {
         IEnumerable<Account> GetAccounts();
+        Account GetAccountById(string accountId);
     }
 }

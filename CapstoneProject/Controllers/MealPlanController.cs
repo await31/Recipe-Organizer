@@ -1,30 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using System.Collections;
-using Microsoft.IdentityModel.Tokens;
 using SmartBreadcrumbs.Attributes;
-using NuGet.Packaging;
-using Firebase.Auth;
-using Firebase.Storage;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.Formats;
 using System.Text.Json;
-using System.Drawing.Printing;
-using System.Globalization;
 using System.Text.RegularExpressions;
 using Repositories;
 using BusinessObjects.Models;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Hangfire;
 
 namespace CapstoneProject.Controllers {
 
@@ -32,19 +18,50 @@ namespace CapstoneProject.Controllers {
     public class MealPlanController : Controller {
 
         private readonly UserManager<Account> _userManager;
+        private readonly SignInManager<Account> _signInManager;
         private readonly IMealPlanRepository _mealPlanRepository;
         private readonly IRecipeRepository _recipeRepository;
         private readonly IRecipeCategoryRepository _recipeCategoryRepository;
         private readonly IAccountRepository _accountRepository;
+        //private readonly IUserEmailStore<MealPlan> _emailStore;
+        private readonly IEmailSender _emailSender;
 
-        public MealPlanController(IAccountRepository accountRepository, IRecipeCategoryRepository recipeCategoryRepository, IMealPlanRepository mealPlanRepository, IRecipeRepository recipeRepository, UserManager<Account> userManager) {
+        public MealPlanController(SignInManager<Account> signInManager, IEmailSender emailSender, IAccountRepository accountRepository, IRecipeCategoryRepository recipeCategoryRepository, IMealPlanRepository mealPlanRepository, IRecipeRepository recipeRepository, UserManager<Account> userManager) {
             _mealPlanRepository = mealPlanRepository;
             _recipeRepository = recipeRepository;
             _recipeCategoryRepository = recipeCategoryRepository;
             _accountRepository = accountRepository;
             _userManager = userManager;
+            _emailSender = emailSender;
+            _signInManager = signInManager;
         }
 
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> HandleJob(int id, DateTimeOffset executionDateTime, string timezone) {
+            if (ModelState.IsValid) {
+                var mealPlan = _mealPlanRepository.GetMealPlanById(id);
+                var currentUser = await _userManager.GetUserAsync(User);
+
+                var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(timezone);
+                var executionTimeInTimeZone = TimeZoneInfo.ConvertTime(executionDateTime, timeZoneInfo);
+                var now = DateTimeOffset.Now;
+                var delay = executionTimeInTimeZone - now;
+
+                var job = BackgroundJob.Schedule(
+                            () => SendMailTask(mealPlan, currentUser.Id),
+                            delay);
+                return Json(new { success = true });
+            }   
+            return Json(new { success = false });
+        }
+
+        public async Task SendMailTask(MealPlan mealPlan, string userId) {
+            var user = _accountRepository.GetAccountById(userId);
+            var subject = "Meal plan reminder";
+            string body = @"<html> <head> <style> body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; } .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; } .header { background-color: #f5f5f5; padding: 10px; text-align: center; } .content { padding: 10px; text-align: center; } .footer { background-color: #f5f5f5; padding: 10px; text-align: center; } ul { list-style: none; } </style> </head> <body> <div class='container'> <div class='header'> <h1>Meal Plan Reminder</h1> </div> <div class='content' style='margin-bottom: 3%; margin-top: 1%'> <h2>Dear " + user.UserName + @", you have a plan on "+ mealPlan.Date?.ToShortDateString() + @"</h2> <h3>Title: " + mealPlan.Title + @"</h3> <a href='https://cookez.azurewebsites.net/MealPlan/Details/" + mealPlan.Id+ @"' target='_blank' style='margin-top: 4%; border: solid 1px #3498db; border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize; background-color: #3498db; border-color: #3498db; color: #ffffff;'>View detail</a> </div> <div class='footer'> <p>We hope you enjoy your meal!</p> <p>Best regards,</p> <p>Cookez Team</p> </div> </div> </body> </html>";
+            await _emailSender.SendEmailAsync(user.Email, subject, body);
+        }
 
         public JsonResult GetEvents() {
             var currentUser = _userManager.GetUserId(User);
@@ -64,12 +81,12 @@ namespace CapstoneProject.Controllers {
         [HttpPost]
         public JsonResult GetDietaryRecipes(string dietary) {
             // Generate data based on the selected dietary
-            var allRecipes = _recipeRepository.GetRecipes().Where(a=>a.Status ==true);
+            var allRecipes = _recipeRepository.GetRecipes().Where(a => a.Status == true);
 
             IEnumerable<Recipe> recipes = new List<Recipe>();
             switch (dietary) {
                 case "highcalorie":
-                    recipes = allRecipes.Where(a=>a.Nutrition.Calories!= null).OrderByDescending(a=>a.Nutrition.Calories).Take(8).ToList();
+                    recipes = allRecipes.Where(a => a.Nutrition.Calories != null).OrderByDescending(a => a.Nutrition.Calories).Take(8).ToList();
                     break;
                 case "lowcalorie":
                     recipes = allRecipes.Where(a => a.Nutrition.Calories != null).OrderBy(a => a.Nutrition.Calories).Take(8).ToList();
@@ -99,8 +116,7 @@ namespace CapstoneProject.Controllers {
                     recipes = allRecipes.Where(a => a.Nutrition.Fat != null).OrderByDescending(a => a.Nutrition.Fat).Take(8).ToList();
                     break;
             }
-            var options = new JsonSerializerOptions
-            {
+            var options = new JsonSerializerOptions {
                 ReferenceHandler = ReferenceHandler.IgnoreCycles,
                 WriteIndented = true
             };
@@ -179,7 +195,7 @@ namespace CapstoneProject.Controllers {
                 Calories = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Calories),
                 Fat = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Fat),
                 Protein = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Protein),
-                Fibre = mealPlanWithNutrition.Recipes.Sum(r=> r.Nutrition.Fibre),
+                Fibre = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Fibre),
                 Carbohydrate = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Carbohydrate),
                 Cholesterol = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Cholesterol)
             };
@@ -217,7 +233,7 @@ namespace CapstoneProject.Controllers {
                             ExtractIntegerAndString(recipeName, out int id, out string name);
                             recipeIds.Add(id);
                         }
-                        _mealPlanRepository.InsertMealPlan(mealplan,currentUser.Id,recipeIds);
+                        _mealPlanRepository.InsertMealPlan(mealplan, currentUser.Id, recipeIds);
                     } else if (mealplan.Date == null) {  //Weekly planning
 
                         // Process selected days and week last
@@ -252,7 +268,7 @@ namespace CapstoneProject.Controllers {
                                         ExtractIntegerAndString(recipeName, out int id, out string name);
                                         recipeIds.Add(id);
                                     }
-                                    _mealPlanRepository.InsertMealPlan(newMealPlan,currentUser.Id,recipeIds);
+                                    _mealPlanRepository.InsertMealPlan(newMealPlan, currentUser.Id, recipeIds);
                                 }
                             }
                         }
