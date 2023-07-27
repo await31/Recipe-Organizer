@@ -55,14 +55,8 @@
             <input hidden type="checkbox" checked="@ViewData["IsPrivate"]" id="collectionPrivate" />
             @if (isOwner)
             {
-                if (!(bool)ViewData["IsPrivate"])
-                {
-                    <h6 class="text-center text-secondary"><i class='fa fa-user mx-2'></i>Public collection</h6>
-                }
-                else
-                {
-                    <h6 class="text-center text-secondary"><i class='fa fa-lock mx-2'></i>Private collection</h6>
-                }
+                <h6 class="text-center text-secondary" id="showPublic"><i class='fa fa-user mx-2'></i>Public collection</h6>
+                <h6 class="text-center text-secondary" id="showPrivate"><i class='fa fa-lock mx-2'></i>Private collection</h6>
             }
         </div>
         <div class="row">
@@ -266,7 +260,18 @@
             }
         });
     }
+    function updatePrivate() {
+        if (document.getElementById("collectionPrivate").checked) {
+            $('#showPublic').css("display", "none");
+            $('#showPrivate').css("display", "block");
+        }
+        else {
+            $('#showPublic').css("display", "block");
+            $('#showPrivate').css("display", "none");
+        }
+    }
     $(document).ready(function () {
+        updatePrivate();
         $('#share-email').click(function () {
             var currentUrl = window.location.href;
             var emailBody = 'This collection of recipes is amazing ' + currentUrl;
@@ -292,6 +297,7 @@
                     $('#collectionName').html(data.name);
                     $('#collectionDescription').html(data.description);
                     $('#collectionPrivate').prop('checked', data.isPrivate);
+                    updatePrivate();
                 },
                 error: function () {
                     alert('Error adding recipes to favorites.');
