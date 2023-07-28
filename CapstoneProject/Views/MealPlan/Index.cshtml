@@ -93,7 +93,7 @@
             <div class="modal-body">
                 <div class="container">
                     <label for="executionDateTime" class="form-label">Select date and time:</label>
-                    <input type="datetime-local" name="executionDateTime" id="executionDateTime" value="@dateNow.ToString("yyyy-MM-dd HH:mm:ss")" min="@dateNow.ToString("yyyy-MM-dd HH:mm:ss")" class="form-control" required>
+                    <input type="datetime-local" name="executionDateTime" id="executionDateTime" min="@dateNow.ToString("yyyy-MM-dd HH:mm:ss")" class="form-control" required>
                     <div class="mb-3 form-group">
                         <label for="timezone" class="mt-2 form-label">Select timezone:</label>
                         <select id="timezone" name="timezone" class="form-control" required>
