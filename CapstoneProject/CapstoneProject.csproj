@@ -11,15 +11,13 @@
 	<ItemGroup>
 		<PackageReference Include="FirebaseAuthentication.net" Version="3.7.1" />
 		<PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
-		<PackageReference Include="Hangfire.AspNetCore" Version="1.8.3" />
-		<PackageReference Include="Hangfire.Core" Version="1.8.3" />
-		<PackageReference Include="Hangfire.SqlServer" Version="1.8.3" />
 		<PackageReference Include="MailKit" Version="4.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.16" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.16" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.18" />
+		<PackageReference Include="Microsoft.Azure.ServiceBus" Version="5.2.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -31,9 +29,8 @@
 		</PackageReference>	
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.14" />
+		<PackageReference Include="Microsoft.WindowsAzure.ConfigurationManager" Version="3.2.3" />
 		<PackageReference Include="NuGet.Packaging" Version="6.6.0" />
-		<PackageReference Include="Quartz" Version="3.6.3" />
-		<PackageReference Include="Quartz.AspNetCore" Version="3.6.3" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
 		<PackageReference Include="SmartBreadcrumbs" Version="3.6.1" />
 	</ItemGroup>

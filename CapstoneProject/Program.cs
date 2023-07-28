@@ -18,8 +18,6 @@ using Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using Microsoft.CodeAnalysis.Options;
-using Hangfire.AspNetCore;
-using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
 IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
@@ -32,7 +30,6 @@ builder.Services.AddBreadcrumbs(Assembly.GetExecutingAssembly(), options => {
     options.LiClasses = "breadcrumb-item";
     options.ActiveLiClasses = "breadcrumb-item active";
 });
-
 builder.Services.AddAuthentication()
     .AddGoogle(googleOptions => {
         googleOptions.ClientId = googleAuthNSection["ClientId"];
@@ -56,19 +53,11 @@ builder.Services.AddAuthentication()
         facebookOptions.Scope.Remove("email");
     });
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<RecipeOrganizerContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")
     )
 );
-
-builder.Services.AddHangfire(config =>
-{
-    config.UseSimpleAssemblyNameTypeSerializer();
-    config.UseRecommendedSerializerSettings();
-    config.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
 
 builder.Services.AddIdentity<Account, IdentityRole>(options => {
     options.SignIn.RequireConfirmedAccount = true;
@@ -92,6 +81,8 @@ builder.Services.Configure<IdentityOptions>(options => {
     options.Password.RequiredUniqueChars = 1;
 });
 
+
+
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IIngredientCategoryRepository, IngredientCategoryRepository>();
 builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
@@ -105,10 +96,8 @@ builder.Services.AddScoped<IRecipeFeedbackRepository, RecipeFeedbackRepository>(
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment()) {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -122,10 +111,6 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseHangfireServer();
-app.UseHangfireDashboard();
-app.MapHangfireDashboard();
 
 app.MapRazorPages();
 app.MapControllerRoute(
