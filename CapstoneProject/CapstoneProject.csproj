@@ -17,7 +17,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.16" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.16" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.18" />
-		<PackageReference Include="Microsoft.Azure.ServiceBus" Version="5.2.0" />
+		<PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.18.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

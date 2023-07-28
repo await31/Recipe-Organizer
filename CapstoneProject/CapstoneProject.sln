@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repositories", "..\Reposito
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessObjects", "..\DataAccessObjects\DataAccessObjects.csproj", "{617755A6-8313-4133-B327-0DF85E5EE9AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendMailFunction", "..\SendMailFunction\SendMailFunction.csproj", "{EEDBBE53-F90D-4CFC-B9B7-5538582B6C40}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{617755A6-8313-4133-B327-0DF85E5EE9AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{617755A6-8313-4133-B327-0DF85E5EE9AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{617755A6-8313-4133-B327-0DF85E5EE9AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEDBBE53-F90D-4CFC-B9B7-5538582B6C40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEDBBE53-F90D-4CFC-B9B7-5538582B6C40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEDBBE53-F90D-4CFC-B9B7-5538582B6C40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEDBBE53-F90D-4CFC-B9B7-5538582B6C40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

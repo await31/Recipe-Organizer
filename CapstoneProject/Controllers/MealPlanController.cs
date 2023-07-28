@@ -10,6 +10,8 @@ using Repositories;
 using BusinessObjects.Models;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace CapstoneProject.Controllers {
 
@@ -22,7 +24,6 @@ namespace CapstoneProject.Controllers {
         private readonly IRecipeRepository _recipeRepository;
         private readonly IRecipeCategoryRepository _recipeCategoryRepository;
         private readonly IAccountRepository _accountRepository;
-        //private readonly IUserEmailStore<MealPlan> _emailStore;
         private readonly IEmailSender _emailSender;
 
         public MealPlanController(SignInManager<Account> signInManager, IEmailSender emailSender, IAccountRepository accountRepository, IRecipeCategoryRepository recipeCategoryRepository, IMealPlanRepository mealPlanRepository, IRecipeRepository recipeRepository, UserManager<Account> userManager) {
@@ -38,25 +39,31 @@ namespace CapstoneProject.Controllers {
         [HttpPost]
         [Authorize]
         public async Task<JsonResult> HandleJob(int id, DateTimeOffset executionDateTime, string timezone) {
+            var currentUserId = _userManager.GetUserId(User);
             var mealPlan = _mealPlanRepository.GetMealPlanById(id);
-            var currentUser = await _userManager.GetUserAsync(User);
-            var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(timezone);
-            var executionTimeInTimeZone = TimeZoneInfo.ConvertTime(executionDateTime, timeZoneInfo);
-            var now = DateTimeOffset.Now;
-            var delay = executionTimeInTimeZone - now;
-            Task task = Task.Run(async () =>
-            {
-                await Task.Delay(delay);
-                await SendMailTask(mealPlan, currentUser.Id);
-            });
-            return Json(new { success = true });
-        }
-
-        public async Task SendMailTask(MealPlan mealPlan, string userId) {
-            var user = _accountRepository.GetAccountById(userId);
-            var subject = "Meal plan reminder";
-            string body = @"<html> <head> <style> body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; } .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; } .header { background-color: #f5f5f5; padding: 10px; text-align: center; } .content { padding: 10px; text-align: center; } .footer { background-color: #f5f5f5; padding: 10px; text-align: center; } ul { list-style: none; } </style> </head> <body> <div class='container'> <div class='header'> <h1>Meal Plan Reminder</h1> </div> <div class='content' style='margin-bottom: 3%; margin-top: 1%'> <h2>Dear " + user.UserName + @", you have a plan on " + mealPlan.Date?.ToShortDateString() + @"</h2> <h3>Title: " + mealPlan.Title + @"</h3> <a href='https://cookez.azurewebsites.net/MealPlan/Details/" + mealPlan.Id + @"' target='_blank' style='margin-top: 4%; border: solid 1px #3498db; border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize; background-color: #3498db; border-color: #3498db; color: #ffffff;'>View detail</a> </div> <div class='footer'> <p>We hope you enjoy your meal!</p> <p>Best regards,</p> <p>Cookez Team</p> </div> </div> </body> </html>";
-            await _emailSender.SendEmailAsync(user.Email, subject, body);
+            string mealPlanTitle = mealPlan.Title;
+            string mealPlanDate = mealPlan.Date?.ToShortDateString();
+            var user = _accountRepository.GetAccountById(currentUserId);
+            var username = user.UserName;
+            var email = user.Email;
+            var client = new HttpClient();
+            var content = new StringContent(JsonConvert.SerializeObject(new {
+                timezone = timezone,
+                email = email,
+                mealPlanId = id,
+                username = username,
+                mealPlanDate = mealPlanDate,
+                mealPlanTitle = mealPlanTitle,
+                executionDateTime = executionDateTime,
+            }), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(
+                "https://cookez-fa.azurewebsites.net/api/EmailSenderFunction?code=hKCxoYtG8h_A-klC1duie7eyZ62dU8xi5bvJ4uestjbwAzFusY20Kg=="
+                , content);
+            if (response.IsSuccessStatusCode) {
+                return Json(new { success = true });
+            } else {
+                return Json(new { success = false });
+            }
         }
 
         public JsonResult GetEvents() {

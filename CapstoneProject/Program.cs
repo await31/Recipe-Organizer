@@ -81,8 +81,6 @@ builder.Services.Configure<IdentityOptions>(options => {
     options.Password.RequiredUniqueChars = 1;
 });
 
-
-
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IIngredientCategoryRepository, IngredientCategoryRepository>();
 builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
