@@ -60,10 +60,10 @@ public class AzureFunction {
             DueTime = executionDateTime.DateTime.AddHours(-14)
         };
 
-        //var cronExpression = $"{localExecutionDateTimeUtc.Minute} {localExecutionDateTimeUtc.Hour} {localExecutionDateTimeUtc.Day} {localExecutionDateTimeUtc.Month} * {localExecutionDateTimeUtc.Year}";
+        var uniqueInstance = $"{mealPlanId} {executionDateTime.Minute} {executionDateTime.Hour} {executionDateTime.Day} {executionDateTime.Month} * {executionDateTime.Year}";
         //log.Info(cronExpression);
         log.Info("Email will be sent at: "+executionDateTime.DateTime.AddHours(-14).ToString());
-        await starter.StartNewAsync("SendMailOrchestrator", input);
+        await starter.StartNewAsync("SendMailOrchestrator", uniqueInstance, input);
         return new OkObjectResult("Email will be sent successfully.");
     }   
 

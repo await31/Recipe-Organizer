@@ -1,6 +1,7 @@
 ﻿@model BusinessObjects.Models.MealPlan
 @{
     ViewBag.Title = "Planing Details";
+    DateTime today = DateTime.Now;
 }
 
 <hr />
@@ -211,7 +212,7 @@
             <div class="modal-body">
                 <div class="container">
                     <label for="executionDateTime" class="form-label">Select date and time:</label>
-                    <input type="datetime-local" name="executionDateTime" id="executionDateTime" class="form-control" required>
+                    <input type="datetime-local" name="executionDateTime" id="executionDateTime" value="@today.ToString("yyyy-MM-dd HH:mm:ss")" min="@today.ToString("yyyy-MM-dd HH:mm:ss")" class="form-control" required>
                     <div class="mb-3 form-group">
                         <label for="timezone" class="mt-2 form-label">Select timezone:</label>
                         <select id="timezone" name="timezone" class="form-control" required>
