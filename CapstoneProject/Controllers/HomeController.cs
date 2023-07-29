@@ -129,8 +129,11 @@ namespace CapstoneProject.Controllers {
         [Authorize]
         public async Task<IActionResult> MyRecipes() {
             var currentUser = await _userManager.GetUserAsync(User);
-
+            var denyRecipes = _recipeRepository.GetRecipesMyRecipesStatusFalse(currentUser);
             var recipes = _recipeRepository.GetRecipesMyRecipes(currentUser);
+
+            ViewBag.DenyRecipes = denyRecipes; // Add denyRecipes to the ViewBag
+
             return View(recipes);
         }
 

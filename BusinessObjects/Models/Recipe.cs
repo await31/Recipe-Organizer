@@ -33,6 +33,8 @@ public partial class Recipe {
 
     public Boolean? Status { get; set; }
 
+    public string? ResponseMessage { get; set; }
+
     public DateTime? CreatedDate { get; set; }
 
     public virtual Nutrition? Nutrition { get; set; }

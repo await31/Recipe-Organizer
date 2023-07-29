@@ -328,6 +328,9 @@ namespace BusinessObjects.Migrations
                     b.Property<int?>("PrepTime")
                         .HasColumnType("int");
 
+                    b.Property<string>("ResponseMessage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("ServingSize")
                         .HasColumnType("int");
 

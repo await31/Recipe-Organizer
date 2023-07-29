@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjects.Migrations
 {
     [DbContext(typeof(RecipeOrganizerContext))]
-    [Migration("20230719074230_InitDB")]
-    partial class InitDB
+    [Migration("20230729014544_AddResponseMessageToRecipe")]
+    partial class AddResponseMessageToRecipe
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -330,6 +330,9 @@ namespace BusinessObjects.Migrations
 
                     b.Property<int?>("PrepTime")
                         .HasColumnType("int");
+
+                    b.Property<string>("ResponseMessage")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ServingSize")
                         .HasColumnType("int");

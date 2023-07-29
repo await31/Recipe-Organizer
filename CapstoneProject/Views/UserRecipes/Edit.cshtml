@@ -27,6 +27,7 @@
             <div class="col-2">
             </div>
 
+
             <div class="col-8 rounded-3 bg-white border border-dark border-2" style="background-color: #e7f9fd;">
                 <form id="recipe-form" asp-action="Edit" enctype="multipart/form-data" class="p-5">
                     <input asp-for="Id" hidden />
@@ -37,6 +38,14 @@
                     <input asp-for="ViewCount" hidden />
                     <input asp-for="ImgPath" hidden />
                     <h1 class="text-center mb-5 text-dark label-font">Information</h1>
+                    @if(Model.ResponseMessage != null)
+                    {
+                        <div>
+                            <h3>Message from admin</h3>
+                            <h5 style="color: red">"@Model.ResponseMessage"</h5>
+                        </div>
+                    }
+
                     <div asp-validation-summary="ModelOnly" class="text-danger text-color-change-red"></div>
                     <div class="form-group">
                         <label asp-for="Name" class="control-label mb-2 label-font">Recipe Name</label>
@@ -66,43 +75,7 @@
                         <input asp-for="ServingSize" class="form-control" type="number" min="1" />
                     </div>
                     @*
-                        <div class="form-group mt-5">
-                        <p class="text-center text-dark fw-bolder fs-2 label-font mb-4">Nutrition &nbsp;Facts</p>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <label asp-for="Nutrition.Calories" class="control-label label-font">Calories (kcal)</label>
-                                <input asp-for="Nutrition.Calories" class="form-control" min="1" max="10000" placeholder="Optional" />
-                                <span asp-validation-for="Nutrition" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-4">
-                                <label asp-for="Nutrition.Fat" class="control-label label-font">Fat (g)</label>
-                                <input asp-for="Nutrition.Fat" class="form-control" min="1" max="10000" placeholder="Optional" />
-                                <span asp-validation-for="Nutrition" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-4">
-                                <label asp-for="Nutrition.Protein" class="control-label label-font">Protein (g)</label>
-                                <input asp-for="Nutrition.Protein" class="form-control" min="1" max="10000" placeholder="Optional" />
-                                <span asp-validation-for="Nutrition" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md-4">
-                                <label asp-for="Nutrition.Fibre" class="control-label label-font">Fibre (g)</label>
-                                <input asp-for="Nutrition.Fibre" class="form-control" min="1" max="10000" placeholder="Optional" />
-                                <span asp-validation-for="Nutrition" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-4">
-                                <label asp-for="Nutrition.Cholesterol" class="control-label label-font">Cholesterol (g)</label>
-                                <input asp-for="Nutrition.Cholesterol" class="form-control" min="1" max="10000" placeholder="Optional" />
-                                <span asp-validation-for="Nutrition" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-4">
-                                <label asp-for="Nutrition.Carbohydrate" class="control-label label-font">Carbohydrate (g)</label>
-                                <input asp-for="Nutrition.Carbohydrate" class="form-control" min="1" max="10000" placeholder="Optional" />
-                                <span asp-validation-for="Nutrition" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
+   
                     *@
                     <!-- Ingredient -->
                     <div id="ingredient-container" class="mt-5">

@@ -16,6 +16,7 @@ namespace Repositories {
         IEnumerable<Recipe> GetStatusTrueRecipes();
         IEnumerable<Recipe> GetRecipesUserProfile(string? userId);
         IEnumerable<Recipe> GetRecipesMyRecipes(Account acc);
+        IEnumerable<Recipe> GetRecipesMyRecipesStatusFalse(Account acc);
         Recipe GetHotRecipe();
         Recipe GetRecipeForEdit(int? id);
         Recipe GetRecipeByIdForFavourite(int? id);
@@ -29,7 +30,7 @@ namespace Repositories {
         void InsertRecipeIngredientToRecipe(Recipe r, List<RecipeIngredient> ris);
         void DeleteRecipe(Recipe r);
         void Approve(Recipe r);
-        void Deny(Recipe r);
+        void Deny(Recipe r, string responseMessage);
         void SetValueForEdit(Recipe existingRecipe, Recipe recipe);
         void SetStatusFalse(Recipe r);
     }
