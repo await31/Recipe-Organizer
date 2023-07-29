@@ -457,6 +457,7 @@ namespace DataAccessObjects {
                 var recipe = context.Recipes.FirstOrDefault(recipe => recipe.Id == r.Id);
                 if (recipe != null) {
                     recipe.Status = true; // Set the status to approved
+                    recipe.ResponseMessage = null;
                     context.SaveChanges();
                 } else {
                     throw new Exception("Recipe does not exist.");
