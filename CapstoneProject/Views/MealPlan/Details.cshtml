@@ -206,13 +206,13 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLongTitle">Create Reminder</h5>
+                <h5 class="modal-title text-center" id="exampleModalLongTitle">Create reminder for this plan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="container">
                     <label for="executionDateTime" class="form-label">Select date and time:</label>
-                    <input type="datetime-local" name="executionDateTime" id="executionDateTime" min="@today.ToString("yyyy-MM-dd HH:mm:ss")" class="form-control" required>
+                    <input type="datetime-local" name="executionDateTime" id="executionDateTime" min="@today.ToString("yyyy-MM-dd HH:mm")" class="form-control" required>
                     <div class="mb-3 form-group">
                         <label for="timezone" class="mt-2 form-label">Select timezone:</label>
                         <select id="timezone" name="timezone" class="form-control" required>
@@ -364,10 +364,6 @@
             formData.append("executionDateTime", executionDateTime);
             formData.append("timezone", timezone);
 
-            console.log("id: " + mealPlanId);
-            console.log("time: " + executionDateTime);
-            console.log("timezone: " + timezone);
-
             $.ajax({
                 url: '/MealPlan/HandleJob',
                 type: 'POST',
@@ -379,7 +375,7 @@
                         toastr.success('Reminder created successfully');
                         $('.btn-close').trigger('click');
                     } else {
-                        toastr.warning('Failed to create the reminder. Make sure you fill in all fields.');
+                        toastr.warning('Failed to create the reminder. The reminder is already exist.');
                     }
                 },
                 error: function (xhr, status, error) {

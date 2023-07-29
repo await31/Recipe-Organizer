@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using Microsoft.AspNetCore.Identity;
@@ -25,6 +24,7 @@ namespace CapstoneProject.Controllers {
         private readonly IRecipeCategoryRepository _recipeCategoryRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly IEmailSender _emailSender;
+        private readonly string EmailSenderFunctionString = "https://cookez-fa.azurewebsites.net/api/EmailSenderFunction?code=hKCxoYtG8h_A-klC1duie7eyZ62dU8xi5bvJ4uestjbwAzFusY20Kg==";
 
         public MealPlanController(SignInManager<Account> signInManager, IEmailSender emailSender, IAccountRepository accountRepository, IRecipeCategoryRepository recipeCategoryRepository, IMealPlanRepository mealPlanRepository, IRecipeRepository recipeRepository, UserManager<Account> userManager) {
             _mealPlanRepository = mealPlanRepository;
@@ -56,9 +56,7 @@ namespace CapstoneProject.Controllers {
                 mealPlanTitle = mealPlanTitle,
                 executionDateTime = executionDateTime,
             }), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(
-                "https://cookez-fa.azurewebsites.net/api/EmailSenderFunction?code=hKCxoYtG8h_A-klC1duie7eyZ62dU8xi5bvJ4uestjbwAzFusY20Kg=="
-                , content);
+            var response = await client.PostAsync(EmailSenderFunctionString, content);
             if (response.IsSuccessStatusCode) {
                 return Json(new { success = true });
             } else {

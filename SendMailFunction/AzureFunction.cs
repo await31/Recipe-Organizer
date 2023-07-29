@@ -1,29 +1,19 @@
-using BusinessObjects.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.Logging;
-using Repositories;
 using System;
 using System.Threading.Tasks;
-using Microsoft.Azure.Functions.Worker;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Ocsp;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using System.Threading;
-using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Azure.WebJobs.Host;
-using static Microsoft.AspNetCore.Razor.Language.TagHelperMetadata;
 
 public class AzureFunction {
 
     private readonly IEmailSender _emailSender;
     public class OrchestratorInput {
-        public DateTimeOffset ExecutionDateTime { get; set; }
         public string Email { get; set; }
         public string Username { get; set; }
         public int MealPlanId { get; set; }
@@ -39,7 +29,7 @@ public class AzureFunction {
     [FunctionName("EmailSenderFunction")]
     public static async Task<IActionResult> Run(
     [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
-    [DurableClient] IDurableOrchestrationClient starter, TraceWriter log) {
+    [DurableClient] IDurableOrchestrationClient starter) {
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         dynamic data = JsonConvert.DeserializeObject(requestBody);
 
@@ -57,12 +47,10 @@ public class AzureFunction {
             MealPlanId = mealPlanId,
             MealPlanTitle = mealPlanTitle,
             MealPlanDate = mealPlanDate,
-            DueTime = executionDateTime.DateTime.AddHours(-14)
+            DueTime = executionDateTime.DateTime.AddHours(-14) //Convert Function Application time to UTC time
         };
 
         var uniqueInstance = $"{mealPlanId} {executionDateTime.Minute} {executionDateTime.Hour} {executionDateTime.Day} {executionDateTime.Month} * {executionDateTime.Year}";
-        //log.Info(cronExpression);
-        log.Info("Email will be sent at: "+executionDateTime.DateTime.AddHours(-14).ToString());
         await starter.StartNewAsync("SendMailOrchestrator", uniqueInstance, input);
         return new OkObjectResult("Email will be sent successfully.");
     }   
@@ -70,11 +58,9 @@ public class AzureFunction {
     [FunctionName("SendMailOrchestrator")]
     public async Task SendMailOrchestrator(
     [OrchestrationTrigger] IDurableOrchestrationContext context) {
-
         var input = context.GetInput<OrchestratorInput>();
         var dueTime = input.DueTime;
         await context.CreateTimer(dueTime, CancellationToken.None);
-        //await context.CreateTimer(dueTime, CancellationToken.None);
         await SendMailTask(input.Email, input.Username, input.MealPlanId, input.MealPlanTitle, input.MealPlanDate);
     }
 

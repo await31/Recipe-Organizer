@@ -10,10 +10,7 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BusinessObjects\BusinessObjects.csproj" />
     <ProjectReference Include="..\CapstoneProject\CapstoneProject.csproj" />
-    <ProjectReference Include="..\DataAccessObjects\DataAccessObjects.csproj" />
-    <ProjectReference Include="..\Repositories\Repositories.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
