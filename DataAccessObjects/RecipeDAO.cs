@@ -55,7 +55,26 @@ namespace DataAccessObjects {
             }
             return lists;
         }
-
+        public List<Recipe> GetRecipesMyRecipesStatusFalse(Account acc)
+        {
+            List<Recipe> lists = new List<Recipe>();
+            try
+            {
+                using (var context = new RecipeOrganizerContext())
+                {
+                    lists = context.Recipes
+                .Where(a => a.Status == false && a.FkUser == acc)
+                .Include(r => r.FkRecipe)
+                .Include(r => r.FkRecipeCategory)
+                .Include(r => r.FkUser).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return lists;
+        }
         public List<Recipe> GetStatusTrueRecipes() {
             List<Recipe> lists = new List<Recipe>();
             try {
@@ -412,16 +431,17 @@ namespace DataAccessObjects {
             }
         }
 
-        public void Deny(Recipe r) {
+        public void Deny(Recipe r, string responseMessage) {
             try {
                 using (var context = new RecipeOrganizerContext()) {
-                    var cus = GetRecipeById(r.Id);
-                    if (cus != null) {
-                        var recipeIngredient = context.RecipeIngredient
+                    var recipe = context.Recipes.FirstOrDefault(recipe => recipe.Id == r.Id);
+                    if (recipe != null) {
+                        /*var recipeIngredient = context.RecipeIngredient
                             .Where(r => r.RecipeId == r.Id)
                             .ToList();
                         context.RecipeIngredient.RemoveRange(recipeIngredient);
-                        context.Recipes.Remove(r);
+                        context.Recipes.Remove(r);*/
+                        recipe.ResponseMessage = responseMessage;
                         context.SaveChanges();
                     } else {
                         throw new Exception("Recipe is not existed.");
@@ -437,6 +457,7 @@ namespace DataAccessObjects {
                 var recipe = context.Recipes.FirstOrDefault(recipe => recipe.Id == r.Id);
                 if (recipe != null) {
                     recipe.Status = true; // Set the status to approved
+                    recipe.ResponseMessage = null;
                     context.SaveChanges();
                 } else {
                     throw new Exception("Recipe does not exist.");

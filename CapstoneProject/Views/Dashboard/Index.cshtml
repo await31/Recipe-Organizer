@@ -129,10 +129,29 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <form method="post" asp-controller="Recipes" asp-action="Deny">
-                                                <input type="hidden" name="id" value="@item.Id" />
-                                                <button type="submit" class="btn btn-danger">Deny</button>
-                                            </form>
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#denyModal-@item.Id">Deny</button>
+                                            <div class="modal fade" id="denyModal-@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLongTitle">Deny Reason</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form id="denyForm-@item.Id" method="post" asp-controller="Recipes" asp-action="Deny">
+                                                                <p>@item.Id</p>
+                                                                <input type="hidden" name="id" value="@item.Id" />
+                                                                <textarea class="form-control" type="text" name="message" placeholder="Please write down your deny reason" required></textarea>
+                                                                <span class="error-message" style="color: red;"></span>
+                                                            </form>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            <button class="btn btn-primary submitDenyFormBtn" data-modal-id="denyModal-@item.Id">Confirm</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 }
@@ -143,6 +162,7 @@
             </div>
 
         </div>
+       
 
         <div class="col-lg-6 mb-4">
 
@@ -156,7 +176,6 @@
                         <thead class="table-dark">
                             <tr>
                                 <th>Name</th>
-                                <th>Category</th>
                                 <th colspan="3">Action</th>
                             </tr>
                         </thead>
@@ -169,9 +188,6 @@
                                     <tr>
                                         <td>
                                             @item.Name
-                                        </td>
-                                        <td>
-                                            @item.FkCategory
                                         </td>
                                         <td>
                                             <a asp-controller="Ingredients" asp-action="Detail" asp-route-id="@item.Id" class="btn btn-info">Details</a>
@@ -314,6 +330,9 @@
     </div>
 </div>
 <!-- /.container-fluid -->
+<!--Deny confirm modal-->
+
+</div>
 <!-- End of Main Content -->
 <script src="~/lib/jquery-3.7.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
@@ -411,8 +430,46 @@
     });
 </script>
 <script>
+    $('textarea').each(function () {
+        this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
+    }).on('input', function () {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
     $("#submitDeleteFormBtn").click(function () {
         $("#deleteConfirmForm").submit(); // Submit the form
     });
 
+</script>
+<script>
+    $(document).ready(function () {
+        // Click event for "Deny" buttons with class "btn-danger"
+        $(".btn-danger").click(function () {
+            // Get the ID of the modal associated with this button
+            var modalId = $(this).data("modal-target");
+
+            // Show the modal using the Bootstrap modal method
+            $("#" + modalId).modal("show");
+        });
+
+        // Click event for "Confirm" buttons with class "submitDenyFormBtn"
+        $(".submitDenyFormBtn").click(function () {
+            // Get the ID of the modal associated with this button
+            var modalId = $(this).data("modal-id");
+
+            // Find the form inside the current modal
+            var form = $("#" + modalId + " form");
+            var textareaValue = form.find("textarea[name='message']").val();
+            if (!textareaValue.trim()) {
+                // Display the error message
+                form.find(".error-message").text("Please write down your deny reason before submitting.");
+                return false; // Prevent form submission
+            } else {
+                // Clear the error message if textarea is not empty
+                form.find(".error-message").text("");
+            }
+            // Submit the form
+            form.submit();
+        });
+    });
 </script>

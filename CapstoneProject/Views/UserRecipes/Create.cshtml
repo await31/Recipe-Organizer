@@ -376,18 +376,35 @@
             var protein = $("#protein").val();
             var fat = $("#fat").val();
             var cholesterol = $("#cholesterol").val();
+            if (!ingname) {
+                return alert("Please enter a valid ingredient name.");
+            }
 
-            console.log(file);
-            console.log(categoryId);
-            console.log("Name: " + ingname);
-            console.log("Description: " + ingdescription);
-            console.log("Calories: " + calories);
-            console.log("Fibre: " + fibre);
-            console.log("Carbohydrate: " + carbohydrate);
-            console.log("Protein: " + protein);
-            console.log("Fat: " + fat);
-            console.log("Cholesterol: " + cholesterol);
+            if (!file) {
+                return alert("Please select a file.");
+            }
 
+            if (!ingdescription) {
+                return alert("Please enter a valid ingredient description.");
+            }
+            if (!calories) {
+                return alert("Please enter a valid calories.");
+            }
+            if (!fibre) {
+                return alert("Please enter a valid fibre.");
+            }
+            if (!carbohydrate) {
+                return alert("Please enter a valid carbohydrate.");
+            }
+            if (!protein) {
+                return alert("Please enter a valid protein.");
+            }
+            if (!fat) {
+                return alert("Please enter a valid fat.");
+            }
+            if (!cholesterol) {
+                return alert("Please enter a valid cholesterol.");
+            }
             var formData = new FormData();
             formData.append("Name", ingname);
             formData.append("file", file);
@@ -412,7 +429,7 @@
                     if (response.success) {
                         $('#gifImage').hide();
                         toastr.success('Ingredient created successfully');
-
+                        $("#ingName, #fileInput, #description, #calories, #fibre, #carbohydrate, #protein, #fat, #cholesterol").val('');
                         $('.btn-close').trigger('click');
                     } else {
                         $('#gifImage').hide();

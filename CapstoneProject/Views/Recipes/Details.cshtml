@@ -199,7 +199,7 @@
     </div>
 
     <!-- Directions -->
-    <div class="container" style="margin-bottom: 120px;">
+    <div class="container" style="margin-bottom: 30px;">
         <div class="row">
             <div class="col-12" style="border-bottom: rgba(0, 0, 0, 0.15) solid 1px; margin-bottom: 40px;">
                 <h1 class="text-center mt-5 mb-5 label-font">Cooking Instruction</h1>
@@ -209,17 +209,68 @@
         </div>
     </div>
     <div>
-        <form method="post" asp-controller="Recipes" asp-action="Approve">
-            <input type="hidden" name="id" value="@Model.Id" />
-            <button type="submit" class="btn btn-success">Approve</button>
-        </form>
-        <form method="post" asp-controller="Recipes" asp-action="Deny">
-            <input type="hidden" name="id" value="@Model.Id" />
-            <button type="submit" class="btn btn-danger">Deny</button>
-        </form>
+        <div class="btn-group">
+            <div>
+                <form method="post" asp-controller="Recipes" asp-action="Approve">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-success">Approve</button>
+                </form>
+            </div>
+            <div>
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#denyModal">Deny</button>
+            </div>
+        </div>
+        <div>
+            <div class="modal fade" id="denyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle">Deny Reason</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="denyForm" method="post" asp-controller="Recipes" asp-action="Deny">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <textarea class="form-control" type="text" name="message" placeholder="Please write down your deny reason" required></textarea>
+                                <span id="errorMessage" class="text-danger" style="display: none;">Please provide a valid deny reason.</span>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button id="submitDenyFormBtn" type="button" class="btn btn-primary" onclick="submitDenyForm()">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <div class="row" style="margin-top: 10px">
+                <div class="col-md-12">
+                    <a asp-controller="Dashboard" asp-action="Index" class="btn btn-warning">Back to Dashboard</a>
+                </div>
+        </div>
     </div>
 
-    <div>
-        <a asp-controller="Dashboard" asp-action="Index" class="btn btn-warning">Back to Dashboard</a>
-    </div>
+
 </div>
+    <script src="~/lib/jquery-3.7.0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<script>
+    $('textarea').each(function () {
+        this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
+    }).on('input', function () {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
+    $("#submitDeleteFormBtn").click(function () {
+        $("#deleteConfirmForm").submit(); // Submit the form
+    });
+    $("#submitDenyFormBtn").click(function () {
+        var messageInput = document.querySelector('#denyForm textarea[name="message"]');
+        var errorMessage = document.getElementById('errorMessage');
+        if (messageInput.checkValidity()) {
+            errorMessage.style.display = 'none'; // Hide the error message if it was shown before
+            $("#denyForm").submit(); // Submit the form if the message is valid
+        } else {
+            errorMessage.style.display = 'block'; // Show the error message
+        }
+    });
+</script>
