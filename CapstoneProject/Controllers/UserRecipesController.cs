@@ -302,14 +302,9 @@ namespace CapstoneProject.Controllers {
         // GET: Recipes/Details/5
         public async Task<IActionResult> Details(int id, int pg = 1) {
             var recipe = _recipeRepository.GetRecipeForDetails(id);
-<<<<<<< HEAD
-            if(recipe == null) {
-                return NotFound();
-=======
             if (recipe == null)
             {
                 return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
->>>>>>> e2ca961434c9d1f2ffd8a7f5795bf254d113a4b8
             }
             var feedbacks = GetRecipeFeedbacks(id);
             var data = GetRecipeFeedbackPage(feedbacks, pg);
