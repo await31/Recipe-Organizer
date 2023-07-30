@@ -140,13 +140,68 @@
                         <a asp-controller="UserRecipes" asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
                     </td>
                     <td>
-                        <a asp-controller="Recipes" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirm-@item.Id">Delete</button>
+                        <!-- Modal -->
+                        <div class="modal fade" id="deleteConfirm-@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">Delete</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="deleteConfirmForm-@item.Id" asp-action="Delete">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <h6>@item.Name</h6>
+                                            <p>Are you sure you want to delete this recipe?</p>
+                                        </form>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button class="btn btn-danger submitDeleteFormBtn" data-modal-id="deleteConfirm-@item.Id">Confirm</button>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </td>
+                    
                 </tr>
             }
         </tbody>
     </table>
 <partial name="_Pager" model="@pager" />
 </div>
+<script src="~/lib/jquery-3.7.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Click event for "Delete" buttons with class deleteConfirmModalBtn
+        $(".deleteConfirmModalBtn").click(function () {
+            // Get the ID of the modal associated with this button
+            var modalId = $(this).data("modal-id");
+
+            // Show the modal using the Bootstrap modal method
+            $("#" + modalId).modal("show");
+        });
+
+        // Click event for "Confirm" buttons inside the modals
+        $(".modal").on("click", ".submitDeleteFormBtn", function () {
+            // Find the form inside the current modal
+            var form = $(this).closest(".modal-content").find("form");
+
+            // Submit the form
+            form.submit();
+        });
+    });
+</script>
+
+
+
+
+
 
 

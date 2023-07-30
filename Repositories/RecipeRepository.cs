@@ -15,6 +15,7 @@ namespace Repositories {
         public IEnumerable<Recipe> GetRecipesMyRecipes(Account acc) => RecipeDAO.Instance.GetRecipesMyRecipes(acc);
         public IEnumerable<Recipe> GetStatusFalseRecipes() => RecipeDAO.Instance.GetStatusFalseRecipes();
         public IEnumerable<Recipe> GetStatusTrueRecipes() => RecipeDAO.Instance.GetStatusTrueRecipes();
+        public IEnumerable<Recipe> GetRecipesMyRecipesStatusFalse(Account acc) => RecipeDAO.Instance.GetRecipesMyRecipesStatusFalse(acc);
         public Recipe GetHotRecipe() => RecipeDAO.Instance.GetHotRecipe();
         public Recipe GetRecipeById(int? id) => RecipeDAO.Instance.GetRecipeById(id);
         public Recipe GetRecipeForEdit(int? id) => RecipeDAO.Instance.GetRecipeForEdit(id);
@@ -29,7 +30,7 @@ namespace Repositories {
         public void InsertRecipeIngredientToRecipe(Recipe r, List<RecipeIngredient> ris) => RecipeDAO.Instance.InsertRecipeIngredientToRecipe(r, ris);
         public void DeleteRecipe(Recipe r) => RecipeDAO.Instance.DeleteRecipe(r);
         public void Approve(Recipe r) => RecipeDAO.Instance.Approve(r);
-        public void Deny(Recipe r) => RecipeDAO.Instance.Deny(r);
+        public void Deny(Recipe r, string responseMessage) => RecipeDAO.Instance.Deny(r,responseMessage);
         public void SetValueForEdit(Recipe existingRecipe, Recipe recipe) => RecipeDAO.Instance.SetValueForEdit(existingRecipe, recipe);
         public void SetStatusFalse(Recipe r) => RecipeDAO.Instance.SetStatusFalse(r);
     }
