@@ -18,6 +18,8 @@ using Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using Microsoft.CodeAnalysis.Options;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
@@ -97,8 +99,8 @@ builder.Services.AddScoped<IRecipeFeedbackRepository, RecipeFeedbackRepository>(
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseExceptionHandler("/Home/Error");
 if (!app.Environment.IsDevelopment()) {
-    app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
@@ -113,7 +115,14 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.Use(async (context, next) =>
+{
+    await next();
+    if (context.Response.StatusCode == 404)
+    {
+        context.Response.Redirect("/Home/Error");
+    }
+});
 app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
