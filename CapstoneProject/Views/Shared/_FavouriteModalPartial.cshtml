@@ -61,10 +61,12 @@
             data: { name: name },
             success: function (data) {
                 $('#favourite-list-div').html(data);
+                $("#create-collection-name").val('');
                 UpdateCheckbox(recipeId);
+                toastr.success("Create collection successfully!");
             },
             error: function () {
-                alert('Error creating collection.');
+                toastr.error("Fail to create collection!");
             }
         });
     });
