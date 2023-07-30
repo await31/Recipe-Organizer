@@ -304,6 +304,10 @@ namespace CapstoneProject.Controllers {
             var recipe = _recipeRepository.GetRecipeForDetails(id);
             var feedbacks = GetRecipeFeedbacks(id);
             var data = GetRecipeFeedbackPage(feedbacks, pg);
+            if(recipe == null)
+            {
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
+            }
             ViewData["feedbacks"] = data;
             ViewData["RecipeId"] = id;
 
@@ -465,7 +469,7 @@ namespace CapstoneProject.Controllers {
                                         recipeNutrition.Cholesterol += (int)(ingredientNutritionCholesterol * Quantities[i] / 2);
                                     }
                                 } else {
-                                    return NotFound();
+                                    return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
                                 }
                             }
                             recipe.Nutrition = recipeNutrition;
@@ -490,7 +494,7 @@ namespace CapstoneProject.Controllers {
         public async Task<IActionResult> Edit(int id, Recipe recipe, string[] IngredientNames, double[] Quantities, string[] UnitOfMeasures) {
             if (ModelState.IsValid) {
                 if (id != recipe.Id) {
-                    return NotFound();
+                    return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
                 }
                 var existingRecipe = _recipeRepository.GetRecipeForEdit(id);
                 _recipeRepository.SetValueForEdit(existingRecipe, recipe);
@@ -564,7 +568,7 @@ namespace CapstoneProject.Controllers {
                                 recipeNutrition.Cholesterol += (int)(ingredientNutritionCholesterol * Quantities[i] / 2);
                             }
                         } else {
-                            return NotFound();
+                            return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
                         }
                     }
 
@@ -576,7 +580,7 @@ namespace CapstoneProject.Controllers {
                     _recipeRepository.SetStatusFalse(existingRecipe);
                 } catch (DbUpdateConcurrencyException) {
                     if (!RecipeExists(recipe.Id)) {
-                        return NotFound();
+                        return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
                     } else {
                         throw;
                     }
@@ -607,11 +611,11 @@ namespace CapstoneProject.Controllers {
         [Authorize]
         public IActionResult Edit(int? id) {
             if (id == null || _recipeRepository.GetRecipes() == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
             }
             var recipe = _recipeRepository.GetRecipeForEdit(id);
             if (recipe == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
             }
 
             ViewData["FkRecipeId"] = new SelectList(_recipeRepository.GetRecipes(), "Id", "Id", recipe.FkRecipeId);
@@ -633,12 +637,12 @@ namespace CapstoneProject.Controllers {
         public IActionResult Delete(int? id) {
             ViewBag.Title = "Create recipe";
             if (id == null || _recipeRepository.GetRecipes() == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
             }
 
             var recipe = _recipeRepository.GetRecipeForDelete(id);
             if (recipe == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
             }
 
             return View(recipe);

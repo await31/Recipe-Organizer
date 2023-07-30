@@ -152,12 +152,12 @@ namespace CapstoneProject.Controllers {
         [Authorize]
         public IActionResult Edit(int? id) {
             if (id == null || _favouriteRepository.GetFavourites() == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested Favourite was not found." });
             }
 
             var favourite = _favouriteRepository.GetFavouriteById(id);
             if (favourite == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested Favourite was not found." });
             }
             return View(favourite);
         }
@@ -181,12 +181,12 @@ namespace CapstoneProject.Controllers {
         [Authorize]
         public IActionResult Delete(int? id) {
             if (id == null || _favouriteRepository.GetFavourites() == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested Favourite was not found." });
             }
 
             var favourite = _favouriteRepository.GetFavouriteById(id);
             if (favourite == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested Favourite was not found." });
             }
 
             return View(favourite);

@@ -43,11 +43,11 @@ namespace CapstoneProject.Controllers {
         [Breadcrumb("Edit", FromAction = "Index", FromController = typeof(IngredientCategoryController))]
         public IActionResult Edit(int? id) {
             if (id == null || id == 0) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient category was not found." });
             }
             var categoryFromDb = _ingredientCategoryRepository.GetIngredientCategoryById(id);
             if (categoryFromDb == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient category was not found." });
             }
             return View(categoryFromDb);
         }
@@ -68,11 +68,11 @@ namespace CapstoneProject.Controllers {
         [Breadcrumb("Delete", FromAction = "Index", FromController = typeof(IngredientCategoryController))]
         public IActionResult Delete(int? id) {
             if (id == null || id == 0) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient category was not found." });
             }
             var categoryFromDb = _ingredientCategoryRepository.GetIngredientCategoryById(id);
             if (categoryFromDb == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient category was not found." });
             }
             return View(categoryFromDb);
         }
@@ -83,7 +83,7 @@ namespace CapstoneProject.Controllers {
         public IActionResult DeletePOST(int? id) {
             var obj = _ingredientCategoryRepository.GetIngredientCategoryById(id);
             if (obj == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient category was not found." });
             }
             _ingredientCategoryRepository.DeleteIngredientCategory(obj);
             TempData["success"] = "Category deleted successfully";

@@ -24,7 +24,7 @@ namespace CapstoneProject.Views.UserRecipes
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
             }
 
             Recipe = await _context.Recipes
@@ -33,7 +33,7 @@ namespace CapstoneProject.Views.UserRecipes
 
             if (Recipe == null)
             {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
             }
             return Page();
         }

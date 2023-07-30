@@ -168,12 +168,12 @@ namespace CapstoneProject.Controllers {
             };
 
             if (id == null || _ingredientRepository.GetIngredients() == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient was not found." });
             }
 
             var ingredient = _ingredientRepository.GetIngredientById(ingredientId);
             if (ingredient == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient was not found." });
             }
 
             ViewData["BreadcrumbNode"] = childNode2;
