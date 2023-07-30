@@ -178,7 +178,7 @@ namespace CapstoneProject.Controllers {
             var mealplan = _mealPlanRepository.GetMealPlanDetails(id);
 
             if (mealplan == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested meal plan was not found." });
             }
             var mealPlanWithNutrition = _mealPlanRepository.GetMealPlanWithNutrition(id);
             var ingredientQuantities = mealplan.Recipes
@@ -286,7 +286,7 @@ namespace CapstoneProject.Controllers {
         public IActionResult DeletePOST(int? id) {
             var obj = _mealPlanRepository.GetMealPlanById(id);
             if (obj == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested meal plan was not found." });
             }
 
             _mealPlanRepository.DeleteMealPlan(obj);

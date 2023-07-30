@@ -29,12 +29,12 @@ namespace CapstoneProject.Controllers {
         [Authorize(Roles = "Admin")]
         public IActionResult Details(int? id) {
             if (id == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested contact was not found." });
             }
 
             var contact = _contactRepository.GetContactById(id);
             if (contact == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested contact was not found." });
             }
 
             return View(contact);
@@ -67,11 +67,11 @@ namespace CapstoneProject.Controllers {
         [Authorize(Roles = "Admin")]
         public IActionResult Edit(int? id) {
             if (id == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested contact was not found." });
             }
             var contact = _contactRepository.GetContactById(id);
             if (contact == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested contact was not found." });
             }
             return View(contact);
         }
@@ -81,7 +81,7 @@ namespace CapstoneProject.Controllers {
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, [Bind("Id,UserName,Email,Message,UserId")] Contact contact) {
             if (id != contact.Id) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested contact was not found." });
             }
 
             if (ModelState.IsValid) {
@@ -94,11 +94,11 @@ namespace CapstoneProject.Controllers {
         [Authorize(Roles = "Admin")]
         public IActionResult Delete(int? id) {
             if (id == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested contact was not found." });
             }
             var contact = _contactRepository.GetContactById(id);
             if (contact == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested contact was not found." });
             }
             return View(contact);
         }
