@@ -116,7 +116,7 @@ app.Use(async (context, next) =>
     await next();
     if (context.Response.StatusCode == 404)
     {
-        context.Response.Redirect("/Home/Error");
+        context.Response.Redirect("/Error/404");
     }
 });
 app.MapRazorPages();

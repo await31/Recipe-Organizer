@@ -8,6 +8,10 @@
     <OutputType>WinExe</OutputType>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="Views\Home\MyRecipess.cshtml" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="FirebaseAuthentication.net" Version="3.7.1" />
 		<PackageReference Include="FirebaseStorage.net" Version="1.0.3" />

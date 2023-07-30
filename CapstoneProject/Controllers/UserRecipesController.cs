@@ -304,14 +304,10 @@ namespace CapstoneProject.Controllers {
             var recipe = _recipeRepository.GetRecipeForDetails(id);
             if (recipe == null)
             {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
             }
             var feedbacks = GetRecipeFeedbacks(id);
             var data = GetRecipeFeedbackPage(feedbacks, pg);
-            if(recipe == null)
-            {
-                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
-            }
             ViewData["feedbacks"] = data;
             ViewData["RecipeId"] = id;
             if (recipe != null) {
