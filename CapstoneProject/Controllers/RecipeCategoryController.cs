@@ -44,11 +44,11 @@ namespace CapstoneProject.Controllers {
         [Breadcrumb("Edit", FromAction = "Index", FromController = typeof(RecipeCategoryController))]
         public IActionResult Edit(int? id) {
             if (id == null || id == 0) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe category was not found." });
             }
             var categoryFromDb = _recipeCategoryRepository.GetRecipeCategoryById(id);
             if (categoryFromDb == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe category was not found." });
             }
             return View(categoryFromDb);
         }
@@ -69,12 +69,12 @@ namespace CapstoneProject.Controllers {
         [Breadcrumb("Delete", FromAction = "Index", FromController = typeof(RecipeCategoryController))]
         public IActionResult Delete(int? id) {
             if (id == null || id == 0) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe category was not found." });
             }
             var categoryFromDb = _recipeCategoryRepository.GetRecipeCategoryById(id);
 
             if (categoryFromDb == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe category was not found." });
             }
             return View(categoryFromDb);
         }
@@ -85,7 +85,7 @@ namespace CapstoneProject.Controllers {
         public IActionResult DeletePOST(int? id) {
             var obj = _recipeCategoryRepository.GetRecipeCategoryById(id);
             if (obj == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe category was not found." });
             }
             _recipeCategoryRepository.DeleteRecipeCategory(obj);
             TempData["success"] = "Category deleted successfully";

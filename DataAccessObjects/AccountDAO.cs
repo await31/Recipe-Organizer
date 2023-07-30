@@ -36,5 +36,11 @@ namespace DataAccessObjects {
             }
             return lists;
         }
+
+        public Account GetAccountById(string? accountId) {
+            using (var context = new RecipeOrganizerContext()) {
+                return context.Accounts.FirstOrDefault(acc => acc.Id.Equals(accountId));
+            }
+        }
     }
 }

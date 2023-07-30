@@ -70,12 +70,12 @@ namespace CapstoneProject.Controllers {
         public IActionResult Details(int? id) {
 
             if (id == null || _recipeRepository.GetRecipes() == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
             }
 
             var recipe = _recipeRepository.GetRecipeById(id);
             if (recipe == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
             }
 
             return View(recipe);
@@ -85,12 +85,12 @@ namespace CapstoneProject.Controllers {
         // GET: Recipes/Delete/5
         public IActionResult Delete(int? id) {
             if (id == null || _recipeRepository.GetRecipes() == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
             }
 
             var recipe = _recipeRepository.GetRecipeById(id);
             if (recipe == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
             }
 
             return View(recipe);
@@ -125,24 +125,25 @@ namespace CapstoneProject.Controllers {
         public IActionResult Approve(int id) {
             var recipe = _recipeRepository.GetRecipeById(id);
             if (recipe == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
             }
             _recipeRepository.Approve(recipe);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Dashboard");
         }
 
         [Authorize]
         // POST: Recipes/Deny
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Deny(int id) {
+        public async Task<IActionResult> Deny(int id, string message) {
             var recipe = _recipeRepository.GetRecipeById(id);
             if (recipe == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
             }
-            await DeleteFromFirebaseStorage(recipe.ImgPath);
-            _recipeRepository.Deny(recipe);
-            return RedirectToAction(nameof(Index));
+            string responseMessage = message;
+            //await DeleteFromFirebaseStorage(recipe.ImgPath);
+            _recipeRepository.Deny(recipe, responseMessage);
+            return RedirectToAction("Index", "Dashboard");
         }
 
         private async Task DeleteFromFirebaseStorage(string fileName) {

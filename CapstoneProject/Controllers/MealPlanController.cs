@@ -1,30 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using System.Collections;
-using Microsoft.IdentityModel.Tokens;
 using SmartBreadcrumbs.Attributes;
-using NuGet.Packaging;
-using Firebase.Auth;
-using Firebase.Storage;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.Formats;
 using System.Text.Json;
-using System.Drawing.Printing;
-using System.Globalization;
 using System.Text.RegularExpressions;
 using Repositories;
 using BusinessObjects.Models;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace CapstoneProject.Controllers {
 
@@ -32,19 +18,51 @@ namespace CapstoneProject.Controllers {
     public class MealPlanController : Controller {
 
         private readonly UserManager<Account> _userManager;
+        private readonly SignInManager<Account> _signInManager;
         private readonly IMealPlanRepository _mealPlanRepository;
         private readonly IRecipeRepository _recipeRepository;
         private readonly IRecipeCategoryRepository _recipeCategoryRepository;
         private readonly IAccountRepository _accountRepository;
+        private readonly IEmailSender _emailSender;
+        private readonly string EmailSenderFunctionString = "https://cookez-fa.azurewebsites.net/api/EmailSenderFunction?code=hKCxoYtG8h_A-klC1duie7eyZ62dU8xi5bvJ4uestjbwAzFusY20Kg==";
 
-        public MealPlanController(IAccountRepository accountRepository, IRecipeCategoryRepository recipeCategoryRepository, IMealPlanRepository mealPlanRepository, IRecipeRepository recipeRepository, UserManager<Account> userManager) {
+        public MealPlanController(SignInManager<Account> signInManager, IEmailSender emailSender, IAccountRepository accountRepository, IRecipeCategoryRepository recipeCategoryRepository, IMealPlanRepository mealPlanRepository, IRecipeRepository recipeRepository, UserManager<Account> userManager) {
             _mealPlanRepository = mealPlanRepository;
             _recipeRepository = recipeRepository;
             _recipeCategoryRepository = recipeCategoryRepository;
             _accountRepository = accountRepository;
             _userManager = userManager;
+            _emailSender = emailSender;
+            _signInManager = signInManager;
         }
 
+        [HttpPost]
+        [Authorize]
+        public async Task<JsonResult> HandleJob(int id, DateTimeOffset executionDateTime, string timezone) {
+            var currentUserId = _userManager.GetUserId(User);
+            var mealPlan = _mealPlanRepository.GetMealPlanById(id);
+            string mealPlanTitle = mealPlan.Title;
+            string mealPlanDate = mealPlan.Date?.ToShortDateString();
+            var user = _accountRepository.GetAccountById(currentUserId);
+            var username = user.UserName;
+            var email = user.Email;
+            var client = new HttpClient();
+            var content = new StringContent(JsonConvert.SerializeObject(new {
+                timezone = timezone,
+                email = email,
+                mealPlanId = id,
+                username = username,
+                mealPlanDate = mealPlanDate,
+                mealPlanTitle = mealPlanTitle,
+                executionDateTime = executionDateTime,
+            }), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(EmailSenderFunctionString, content);
+            if (response.IsSuccessStatusCode) {
+                return Json(new { success = true });
+            } else {
+                return Json(new { success = false });
+            }
+        }
 
         public JsonResult GetEvents() {
             var currentUser = _userManager.GetUserId(User);
@@ -64,12 +82,12 @@ namespace CapstoneProject.Controllers {
         [HttpPost]
         public JsonResult GetDietaryRecipes(string dietary) {
             // Generate data based on the selected dietary
-            var allRecipes = _recipeRepository.GetRecipes().Where(a=>a.Status ==true);
+            var allRecipes = _recipeRepository.GetRecipes().Where(a => a.Status == true);
 
             IEnumerable<Recipe> recipes = new List<Recipe>();
             switch (dietary) {
                 case "highcalorie":
-                    recipes = allRecipes.Where(a=>a.Nutrition.Calories!= null).OrderByDescending(a=>a.Nutrition.Calories).Take(8).ToList();
+                    recipes = allRecipes.Where(a => a.Nutrition.Calories != null).OrderByDescending(a => a.Nutrition.Calories).Take(8).ToList();
                     break;
                 case "lowcalorie":
                     recipes = allRecipes.Where(a => a.Nutrition.Calories != null).OrderBy(a => a.Nutrition.Calories).Take(8).ToList();
@@ -99,8 +117,7 @@ namespace CapstoneProject.Controllers {
                     recipes = allRecipes.Where(a => a.Nutrition.Fat != null).OrderByDescending(a => a.Nutrition.Fat).Take(8).ToList();
                     break;
             }
-            var options = new JsonSerializerOptions
-            {
+            var options = new JsonSerializerOptions {
                 ReferenceHandler = ReferenceHandler.IgnoreCycles,
                 WriteIndented = true
             };
@@ -161,7 +178,7 @@ namespace CapstoneProject.Controllers {
             var mealplan = _mealPlanRepository.GetMealPlanDetails(id);
 
             if (mealplan == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested meal plan was not found." });
             }
             var mealPlanWithNutrition = _mealPlanRepository.GetMealPlanWithNutrition(id);
             var ingredientQuantities = mealplan.Recipes
@@ -179,7 +196,7 @@ namespace CapstoneProject.Controllers {
                 Calories = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Calories),
                 Fat = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Fat),
                 Protein = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Protein),
-                Fibre = mealPlanWithNutrition.Recipes.Sum(r=> r.Nutrition.Fibre),
+                Fibre = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Fibre),
                 Carbohydrate = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Carbohydrate),
                 Cholesterol = mealPlanWithNutrition.Recipes.Sum(r => r.Nutrition.Cholesterol)
             };
@@ -217,7 +234,7 @@ namespace CapstoneProject.Controllers {
                             ExtractIntegerAndString(recipeName, out int id, out string name);
                             recipeIds.Add(id);
                         }
-                        _mealPlanRepository.InsertMealPlan(mealplan,currentUser.Id,recipeIds);
+                        _mealPlanRepository.InsertMealPlan(mealplan, currentUser.Id, recipeIds);
                     } else if (mealplan.Date == null) {  //Weekly planning
 
                         // Process selected days and week last
@@ -252,7 +269,7 @@ namespace CapstoneProject.Controllers {
                                         ExtractIntegerAndString(recipeName, out int id, out string name);
                                         recipeIds.Add(id);
                                     }
-                                    _mealPlanRepository.InsertMealPlan(newMealPlan,currentUser.Id,recipeIds);
+                                    _mealPlanRepository.InsertMealPlan(newMealPlan, currentUser.Id, recipeIds);
                                 }
                             }
                         }
@@ -269,7 +286,7 @@ namespace CapstoneProject.Controllers {
         public IActionResult DeletePOST(int? id) {
             var obj = _mealPlanRepository.GetMealPlanById(id);
             if (obj == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested meal plan was not found." });
             }
 
             _mealPlanRepository.DeleteMealPlan(obj);

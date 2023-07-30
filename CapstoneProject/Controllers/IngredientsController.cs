@@ -110,13 +110,13 @@ namespace CapstoneProject.Controllers {
         [Authorize(Roles = "Admin")]
         public IActionResult Detail(int? id) {
             if (id == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient was not found." });
             }
 
             var ingredient = _ingredientRepository.GetIngredientById(id);
 
             if (ingredient == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient was not found." });
             }
 
             return View(ingredient);
@@ -179,13 +179,13 @@ namespace CapstoneProject.Controllers {
         [Authorize(Roles = "Admin")]
         public IActionResult Edit(int? id) {
             if (id == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient was not found." });
             }
 
             var ingredient = _ingredientRepository.GetIngredientById(id);
 
             if (ingredient == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient was not found." });
             }
 
             ViewData["FkCategoryId"] = new SelectList(_ingredientCategoryRepository.GetIngredientCategories(), "Id", "Name");
@@ -197,7 +197,7 @@ namespace CapstoneProject.Controllers {
         [Authorize(Roles = "Admin")]
         public IActionResult Edit(int id, [Bind("Id, Name, ImgPath, Description, Status, FkCategoryId")] Ingredient ingredient) {
             if (id != ingredient.Id) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient was not found." });
             }
 
             if (ModelState.IsValid) {
@@ -205,7 +205,7 @@ namespace CapstoneProject.Controllers {
                     _ingredientRepository.UpdateIngredient(ingredient);
                     TempData["success"] = "Ingredient updated successfully";
                 } catch (Exception) {
-                    return NotFound();
+                    return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient was not found." });
                 }
                 return RedirectToAction("Index");
             }
@@ -223,13 +223,13 @@ namespace CapstoneProject.Controllers {
         [Authorize(Roles = "Admin")]
         public IActionResult Delete(int? id) {
             if (id == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient was not found." });
             }
 
             var ingredient = _ingredientRepository.GetIngredientById(id);
 
             if (ingredient == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient was not found." });
             }
 
             return View(ingredient);
@@ -242,7 +242,7 @@ namespace CapstoneProject.Controllers {
         public async Task<IActionResult> DeletePOST(int? id) {
             var obj = _context.Ingredients.Find(id);
             if (obj == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient was not found." });
             }
 
             await DeleteFromFirebaseStorage(obj.ImgPath);
@@ -275,7 +275,7 @@ namespace CapstoneProject.Controllers {
         public IActionResult Approve(int id) {
             var ingredient = _ingredientRepository.GetIngredientById(id);
             if (ingredient == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient was not found." });
             }
             _ingredientRepository.Approve(ingredient);
             return RedirectToAction("Index", "Dashboard");
@@ -288,7 +288,7 @@ namespace CapstoneProject.Controllers {
         public async Task<IActionResult> Deny(int id) {
             var ingredient = _ingredientRepository.GetIngredientById(id);
             if (ingredient == null) {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested ingredient was not found." });
             }
             await DeleteFromFirebaseStorage(ingredient.ImgPath);
             _ingredientRepository.Deny(ingredient);

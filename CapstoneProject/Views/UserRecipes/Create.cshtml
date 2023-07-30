@@ -88,45 +88,7 @@
                 <label asp-for="ServingSize" class="control-label mb-2 label-font">Serving Size (People)</label>
                 <input asp-for="ServingSize" class="form-control" type="number" step="1" min="1" max="1000" placeholder="The prescribed serving size shall not exceed a value of 1000."/>
             </div>
-            @*
-            <div class="form-group mt-5">
-                <p class="text-center text-dark fw-bolder fs-2 label-font mb-4">Nutrition &nbsp;Facts</p>
-                <div class="row">
-                    <div class="col-md-4">
-                        <label asp-for="Nutrition.Calories" class="control-label label-font">Calories (kcal)</label>
-                        <input asp-for="Nutrition.Calories" class="form-control" min="1" max="10000" placeholder="Optional" />
-                        <span asp-validation-for="Nutrition" class="text-danger"></span>
-                    </div>
-                    <div class="col-md-4">
-                        <label asp-for="Nutrition.Fat" class="control-label label-font">Fat (g)</label>
-                        <input asp-for="Nutrition.Fat" class="form-control" min="1" max="10000" placeholder="Optional" />
-                        <span asp-validation-for="Nutrition" class="text-danger"></span>
-                    </div>
-                    <div class="col-md-4">
-                        <label asp-for="Nutrition.Protein" class="control-label label-font">Protein (g)</label>
-                        <input asp-for="Nutrition.Protein" class="form-control" min="1" max="10000" placeholder="Optional" />
-                        <span asp-validation-for="Nutrition" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="row mt-3">
-                    <div class="col-md-4">
-                        <label asp-for="Nutrition.Fibre" class="control-label label-font">Fibre (g)</label>
-                        <input asp-for="Nutrition.Fibre" class="form-control" min="1" max="10000" placeholder="Optional" />
-                        <span asp-validation-for="Nutrition" class="text-danger"></span>
-                    </div>
-                    <div class="col-md-4">
-                        <label asp-for="Nutrition.Cholesterol" class="control-label label-font">Cholesterol (g)</label>
-                        <input asp-for="Nutrition.Cholesterol" class="form-control" min="1" max="10000" placeholder="Optional" />
-                        <span asp-validation-for="Nutrition" class="text-danger"></span>
-                    </div>
-                    <div class="col-md-4">
-                        <label asp-for="Nutrition.Carbohydrate" class="control-label label-font">Carbohydrate (g)</label>
-                        <input asp-for="Nutrition.Carbohydrate" class="form-control" min="1" max="10000" placeholder="Optional" />
-                        <span asp-validation-for="Nutrition" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-            *@
+            
             <!-- Ingredient -->
             <div id="ingredient-container" class="mt-5">
                 <!-- Initial ingredient select element -->
@@ -243,6 +205,7 @@
                 </div>
             </div>
         </div>
+        <!--Modal footer -->
     </div>
     <div class="col-2">
     </div>
@@ -413,18 +376,35 @@
             var protein = $("#protein").val();
             var fat = $("#fat").val();
             var cholesterol = $("#cholesterol").val();
+            if (!ingname) {
+                return alert("Please enter a valid ingredient name.");
+            }
 
-            console.log(file);
-            console.log(categoryId);
-            console.log("Name: " + ingname);
-            console.log("Description: " + ingdescription);
-            console.log("Calories: " + calories);
-            console.log("Fibre: " + fibre);
-            console.log("Carbohydrate: " + carbohydrate);
-            console.log("Protein: " + protein);
-            console.log("Fat: " + fat);
-            console.log("Cholesterol: " + cholesterol);
+            if (!file) {
+                return alert("Please select a file.");
+            }
 
+            if (!ingdescription) {
+                return alert("Please enter a valid ingredient description.");
+            }
+            if (!calories) {
+                return alert("Please enter a valid calories.");
+            }
+            if (!fibre) {
+                return alert("Please enter a valid fibre.");
+            }
+            if (!carbohydrate) {
+                return alert("Please enter a valid carbohydrate.");
+            }
+            if (!protein) {
+                return alert("Please enter a valid protein.");
+            }
+            if (!fat) {
+                return alert("Please enter a valid fat.");
+            }
+            if (!cholesterol) {
+                return alert("Please enter a valid cholesterol.");
+            }
             var formData = new FormData();
             formData.append("Name", ingname);
             formData.append("file", file);
@@ -449,7 +429,7 @@
                     if (response.success) {
                         $('#gifImage').hide();
                         toastr.success('Ingredient created successfully');
-
+                        $("#ingName, #fileInput, #description, #calories, #fibre, #carbohydrate, #protein, #fat, #cholesterol").val('');
                         $('.btn-close').trigger('click');
                     } else {
                         $('#gifImage').hide();

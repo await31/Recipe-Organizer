@@ -26,7 +26,7 @@ namespace CapstoneProject.Views.UserRecipes
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
             }
 
             Recipe = await _context.Recipes
@@ -35,7 +35,7 @@ namespace CapstoneProject.Views.UserRecipes
 
             if (Recipe == null)
             {
-                return NotFound();
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
             }
            ViewData["FkRecipeId"] = new SelectList(_context.Recipes, "Id", "Id");
            ViewData["FkRecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Name");
@@ -59,7 +59,7 @@ namespace CapstoneProject.Views.UserRecipes
             {
                 if (!RecipeExists(Recipe.Id))
                 {
-                    return NotFound();
+                    return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
                 }
                 else
                 {

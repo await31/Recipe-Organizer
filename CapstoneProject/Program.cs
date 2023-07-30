@@ -32,7 +32,6 @@ builder.Services.AddBreadcrumbs(Assembly.GetExecutingAssembly(), options => {
     options.LiClasses = "breadcrumb-item";
     options.ActiveLiClasses = "breadcrumb-item active";
 });
-
 builder.Services.AddAuthentication()
     .AddGoogle(googleOptions => {
         googleOptions.ClientId = googleAuthNSection["ClientId"];
@@ -56,7 +55,6 @@ builder.Services.AddAuthentication()
         facebookOptions.Scope.Remove("email");
     });
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<RecipeOrganizerContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")
@@ -98,10 +96,8 @@ builder.Services.AddScoped<IRecipeFeedbackRepository, RecipeFeedbackRepository>(
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.UseExceptionHandler("/Home/Error");
 if (!app.Environment.IsDevelopment()) {
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
