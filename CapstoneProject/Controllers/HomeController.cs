@@ -53,10 +53,9 @@ namespace CapstoneProject.Controllers {
             //Favourite list
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser != null)
-                ViewBag.FavouriteList = _accountRepository.GetAccounts().FirstOrDefault(u => u.Id == currentUser.Id).Favourites.Select(f => new { f.Id, f.Name }).ToList();
+                ViewData["FavouriteList"] = _favouriteRepository.GetFavouritesUserProfile(currentUser);
             else
-                ViewBag.FavouriteList = null;
-
+                ViewData["FavouriteList"] = null;
             return View(recipes);
         }
 
@@ -64,7 +63,6 @@ namespace CapstoneProject.Controllers {
         public IActionResult Privacy() {
             return View();
         }
-
         [Breadcrumb("Recipe Detail", FromAction = "Index", FromController = typeof(HomeController))]
         public async Task<IActionResult> RecipeDetail(int? id) {
             var recipe = _recipeRepository.GetRecipeForHomeRecipeDetails(id);
@@ -185,7 +183,8 @@ namespace CapstoneProject.Controllers {
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error() {
+        public IActionResult Error()
+        {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }

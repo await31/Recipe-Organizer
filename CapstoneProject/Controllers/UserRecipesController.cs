@@ -195,9 +195,9 @@ namespace CapstoneProject.Controllers {
                 //Favourite list
                 var currentUser = await _userManager.GetUserAsync(User);
                 if (currentUser != null)
-                    ViewBag.FavouriteList = _accountRepository.GetAccounts().FirstOrDefault(u => u.Id == currentUser.Id).Favourites.Select(f => new { f.Id, f.Name }).ToList();
+                    ViewData["FavouriteList"] = _accountRepository.GetAccounts().FirstOrDefault(u => u.Id == currentUser.Id).Favourites.Select(f => new { f.Id, f.Name }).ToList();
                 else
-                    ViewBag.FavouriteList = null;
+                    ViewData["FavouriteList"] = null;
 
                 int recsCount = recipes.Count();
 
@@ -300,16 +300,21 @@ namespace CapstoneProject.Controllers {
         }
         [Breadcrumb("Details")]
         // GET: Recipes/Details/5
-        public IActionResult Details(int id, int pg = 1) {
+        public async Task<IActionResult> Details(int id, int pg = 1) {
             var recipe = _recipeRepository.GetRecipeForDetails(id);
+<<<<<<< HEAD
             if(recipe == null) {
                 return NotFound();
+=======
+            if (recipe == null)
+            {
+                return RedirectToAction("NotFound", "Error", new { errorMessage = "The requested recipe was not found." });
+>>>>>>> e2ca961434c9d1f2ffd8a7f5795bf254d113a4b8
             }
             var feedbacks = GetRecipeFeedbacks(id);
             var data = GetRecipeFeedbackPage(feedbacks, pg);
             ViewData["feedbacks"] = data;
             ViewData["RecipeId"] = id;
-
             if (recipe != null) {
                 recipe.ViewCount++;
             }
@@ -319,11 +324,11 @@ namespace CapstoneProject.Controllers {
             ViewData["footerRecipes"] = suggestRecipes;
 
             //Favourite list
-            var currentUser = _userManager.GetUserId(User);
+            var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser != null)
-                ViewBag.FavouriteList = _accountRepository.GetAccounts().FirstOrDefault(u => u.Id == currentUser).Favourites.Select(f => new { f.Id, f.Name }).ToList();
+                ViewData["FavouriteList"] = _favouriteRepository.GetFavouritesUserProfile(currentUser);
             else
-                ViewBag.FavouriteList = null;
+                ViewData["FavouriteList"] = null;
             return View(recipe);
         }
 

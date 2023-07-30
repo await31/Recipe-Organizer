@@ -87,15 +87,14 @@
                                 </div>
                             }
                         </div>
-                        <div style="margin: 8px">
-                            @if ((bool)collection.isPrivate)
-                            {
-                                <div style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif" class="text-color-change">PRIVATE</div>
+                        <div style="margin: 8px;text-align:left">
+                            @{
+                                var privacyText = "PUBLIC";
+                                if ((bool)collection.isPrivate)
+                                    privacyText = "PRIVATE";
                             }
-                            else
-                            {
-                                <div style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif" class="text-color-change">PUBLIC</div>
-                            }
+                                <div style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif" class="text-color-change">@privacyText</div>
+
                             <a class="card-title card-limit-1 link-info link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover text-color-change"
                                asp-controller="Favourites" asp-action="Details" asp-route-id="@collection.Id">
 
