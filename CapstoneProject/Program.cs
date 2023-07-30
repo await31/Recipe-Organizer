@@ -18,6 +18,8 @@ using Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using Microsoft.CodeAnalysis.Options;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
@@ -109,7 +111,14 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.Use(async (context, next) =>
+{
+    await next();
+    if (context.Response.StatusCode == 404)
+    {
+        context.Response.Redirect("/Error/404");
+    }
+});
 app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",

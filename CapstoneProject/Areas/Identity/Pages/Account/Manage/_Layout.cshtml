@@ -119,7 +119,7 @@
 
 	<script>
 	function clearLocalStorage() {
-		if (!window.location.href.includes('Identity/Account/Manage')){
+		if (window.location.href.includes('Identity/Account/Manage')){
 			localStorage.removeItem('activeTab');
 		}
 	}

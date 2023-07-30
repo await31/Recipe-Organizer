@@ -61,11 +61,25 @@ namespace CapstoneProject.Controllers {
 
             return Json(new { success = true });
         }
-
+        [HttpPost]
+        public async Task<IActionResult> CreateAjax(string name)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var favourite = new Favourite()
+            {
+                Name = name,
+                Description = null,
+                isPrivate = true,
+            };
+            favourite.Account = currentUser;
+            _favouriteRepository.InsertFavourite(favourite);
+            var data = _favouriteRepository.GetFavouritesUserProfile(currentUser);
+            return PartialView("_FavouriteListPartial", data);
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,isPrivate")] Favourite favourite) {
+        public async Task<IActionResult> Create([Bind("Name,Description,isPrivate")] Favourite favourite) {
             if (ModelState.IsValid) {
                 favourite.Account = await _userManager.GetUserAsync(User);
                 _favouriteRepository.InsertFavourite(favourite);
@@ -129,6 +143,11 @@ namespace CapstoneProject.Controllers {
 
             var favouriteList = _favouriteRepository.GetFavouritesDetails(id);
 
+            if (favouriteList == null)
+            {
+                return NotFound();
+            }
+
             ViewData["Name"] = favouriteList?.Name;
             ViewData["Description"] = favouriteList?.Description;
             ViewData["IsPrivate"] = favouriteList?.isPrivate;
@@ -138,7 +157,6 @@ namespace CapstoneProject.Controllers {
 
             var recipes = favouriteList?.Recipes
                 .ToList();
-
             return View(recipes);
         }
 

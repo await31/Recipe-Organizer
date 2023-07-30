@@ -22,7 +22,12 @@
                 data-mdb-toggle="dropdown"
                 data-mdb-display="static"
                 aria-expanded="false">
-            <img src="@user.ImgPath" class="img-responsive rounded-circle" style="width: 60px; height: 60px;" alt="avatar">
+            @{
+                var avatar = "";
+                if ((user != null)&&(user.ImgPath != null))
+                    avatar = user.ImgPath;
+            }
+            <img src="@avatar" class="img-responsive rounded-circle" style="width: 60px; height: 60px;" alt="avatar">
         </button>
         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-end">
             <li>

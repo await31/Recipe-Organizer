@@ -1,0 +1,15 @@
+﻿@model IEnumerable<BusinessObjects.Models.Favourite>
+@if ((Model != null)&&(Model.Count()>0)) {
+    @foreach (var item in Model) {
+        <div class="form-check my-5">
+            <label class="control control-checkbox text-color-change">
+                @item.Name
+                <input class="form-check-input favourite-checkbox" type="checkbox" checked="checked" id="favourite-checkbox-@item.Id" value="@item.Id" />
+                <div class="control_indicator"></div>
+            </label>
+        </div>
+    }
+}
+else{
+    <div>You have no collections!</div>
+}

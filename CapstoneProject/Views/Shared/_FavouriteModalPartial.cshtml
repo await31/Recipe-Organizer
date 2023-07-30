@@ -18,19 +18,22 @@
                 </div>
                 <div class="container list-container" style="">
                     <div class="overflow-auto" style="max-height:100%">
-                        @{
-                            if (ViewBag.FavouriteList != null) {
-                                foreach (var item in ViewBag.FavouriteList) {
-                                    <div class="form-check my-5">
-                                        <label class="control control-checkbox text-color-change">
-                                            @item.Name
-                                            <input class="form-check-input favourite-checkbox" type="checkbox" checked="checked" id="favourite-checkbox-@item.Id" value="@item.Id" />
-                                            <div class="control_indicator"></div>
-                                        </label>
-                                    </div>
-                                }
+                        <div style="margin-left:1%">
+                            <button class="btn btn-white" id="create-collection-button"><i class="fa-solid fa-plus"></i> Create a new Collection</button>
+                            <div id="create-collection-form" style="display:none">
+                            Name:
+                            <input type="text" id="create-collection-name"/>
+                                <button class="btn btn-success" id="create-confirm-button">Create</button>
+                            </div>
+                        </div>
+                        <div id="favourite-list-div">
+
+                            @if (ViewBag.FavouriteList != null)
+                            {
+                                var favourites = ViewData["FavouriteList"] as IEnumerable<Favourite>;
+                                <partial name="_FavouriteListPartial" model="@favourites" />
                             }
-                        }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -41,3 +44,30 @@
         </div>
     </div>
 </div>
+<script src="~/lib/jquery-3.7.0.min.js"></script>
+<script>
+    $('#create-collection-button').click(function () {
+        $('#create-collection-button').css("display", "none");
+        $('#create-collection-form').css("display", "block");
+    });
+    $('#create-confirm-button').click(function () {
+        var recipeId = $("#favourite-save").data('recipe-id');
+        $('#create-collection-button').css("display", "block");
+        $('#create-collection-form').css("display", "none");
+        var name = $("#create-collection-name").val();
+        $.ajax({
+            url: '/Favourites/CreateAjax',
+            type: 'POST',
+            data: { name: name },
+            success: function (data) {
+                $('#favourite-list-div').html(data);
+                $("#create-collection-name").val('');
+                UpdateCheckbox(recipeId);
+                toastr.success("Create collection successfully!");
+            },
+            error: function () {
+                toastr.error("Fail to create collection!");
+            }
+        });
+    });
+</script>
