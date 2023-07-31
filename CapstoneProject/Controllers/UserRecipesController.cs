@@ -228,7 +228,8 @@ namespace CapstoneProject.Controllers {
                 if (String.IsNullOrEmpty(includeList)) {
                     includeList = includeIngredients.Trim();
                 } else
-                    includeList += "," + includeIngredients.Trim();
+                    if(includeList.IndexOf(includeIngredients, StringComparison.OrdinalIgnoreCase) == -1)
+                        includeList += "," + includeIngredients.Trim();
             }
             if (!String.IsNullOrEmpty(excludeIngredients)) {
                 //Remove from include list if it has the exclude ingre inputed
@@ -238,8 +239,10 @@ namespace CapstoneProject.Controllers {
                 }
                 if (String.IsNullOrEmpty(excludeList)) {
                     excludeList = excludeIngredients.Trim();
-                } else
-                    excludeList += "," + excludeIngredients.Trim();
+                }
+                else
+                    if (excludeList.IndexOf(excludeIngredients, StringComparison.OrdinalIgnoreCase) == -1)
+                        excludeList += "," + excludeIngredients.Trim();
             }
             var parameter = new RouteValueDictionary
             {

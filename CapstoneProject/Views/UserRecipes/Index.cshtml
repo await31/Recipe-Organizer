@@ -52,7 +52,7 @@
                                 @item
                                 <a href="#" onclick="window.location.href = removeParameterFromUrl(window.location.href, 'ExcludeList', '@item');return false;">
 
-                                    <i class="fa fa-minus-circle" style="font-size:16px;color:black"></i>
+                                    <i class="fa fa-xmark text-danger" style="font-size:16px;color:black"></i>
                                 </a>
                             </span>
                         }
@@ -71,7 +71,7 @@
                     <select class="form-select" name="difficulty" asp-items="ViewBag.Difficulty" onchange="document.getElementById('btnSubmit').click();">
                         <option value="All">All</option>
                     </select>
-                    <input id="SearchString" name="searchString" type="hidden" value="@ViewData["FilterSearch"]" />
+                    @*<input id="SearchString" name="searchString" type="hidden" value="@ViewData["FilterSearch"]" />*@
                     <input type="submit" hidden id="btnSubmit" value="Filter" />
                 </form>
 
