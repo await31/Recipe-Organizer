@@ -421,6 +421,7 @@
             data: { recipeId: sendId, feedbackText: sendText },
             success: function (data) {
                 $('#feedbackDiv').html(data);
+                toastr.success("Feedback sent successfully!");
             },
             error: function () {
                 alert('Error feedback.');
@@ -437,6 +438,7 @@
             data: { recipeId: recipeId, id: feedbackId },
             success: function (data) {
                 $('#feedbackDiv').html(data);
+                toastr.success("Feedback deleted successfully!");
             },
             error: function () {
                 alert('Error removing feedback.');

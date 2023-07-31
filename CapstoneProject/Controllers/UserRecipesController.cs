@@ -195,7 +195,7 @@ namespace CapstoneProject.Controllers {
                 //Favourite list
                 var currentUser = await _userManager.GetUserAsync(User);
                 if (currentUser != null)
-                    ViewData["FavouriteList"] = _accountRepository.GetAccounts().FirstOrDefault(u => u.Id == currentUser.Id).Favourites.Select(f => new { f.Id, f.Name }).ToList();
+                    ViewData["FavouriteList"] = _favouriteRepository.GetFavouritesUserProfile(currentUser);
                 else
                     ViewData["FavouriteList"] = null;
 
