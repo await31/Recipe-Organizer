@@ -49,7 +49,7 @@
                     <div asp-validation-summary="ModelOnly" class="text-danger text-color-change-red"></div>
                     <div class="form-group">
                         <label asp-for="Name" class="control-label mb-2 label-font">Recipe Name</label>
-                        <input asp-for="Name" class="form-control" placeholder="e.g. Egg fried rice" />
+                        <input asp-for="Name" id="recipeNameInput" class="form-control" placeholder="e.g. Egg fried rice" />
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
                     <div class="form-group mt-4">
@@ -197,6 +197,12 @@ else
         var inputElements = document.querySelectorAll('#ingredient-container input[type="text"]');
         var quantityInputs = document.querySelectorAll('#ingredient-container input[type="number"]');
         var unitOfMeasureSelects = document.querySelectorAll('#ingredient-container select[name="UnitOfMeasures[]"]');
+
+        var recipeName = document.getElementById("recipeNameInput").value.trim();
+        if (!recipeName) {
+            document.getElementById("recipeNameInput").focus();
+            return toastr.warning('Failed to edit the recipe, make sure type in right name.');
+        }
 
         // Create a hidden input for each ingredient ID
         var hiddenInputsContainer = document.getElementById('hidden-inputs-container');

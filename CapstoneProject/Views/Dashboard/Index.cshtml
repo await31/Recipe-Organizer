@@ -106,12 +106,12 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Owner</th>
-                                <th class="text-center" colspan="3">Action</th>
+                                <th class="text-center" colspan="4">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model) {
-                                if (item.Status != null) {
+                                if (item.Status != null && item.ResponseMessage == null) {
                                     <tr>
                                         <td>
                                             @item.Name
@@ -139,7 +139,7 @@
                                                         </div>
                                                         <div class="modal-body">
                                                             <form id="denyForm-@item.Id" method="post" asp-controller="Recipes" asp-action="Deny">
-                                                                <p>@item.Id</p>
+                                                                <h5>@item.Name</h5>
                                                                 <input type="hidden" name="id" value="@item.Id" />
                                                                 <textarea class="form-control" type="text" name="message" placeholder="Please write down your deny reason" required></textarea>
                                                                 <span class="error-message" style="color: red;"></span>
@@ -148,6 +148,35 @@
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                             <button class="btn btn-primary submitDenyFormBtn" data-modal-id="denyModal-@item.Id">Confirm</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirm-@item.Id">Delete</button>
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="deleteConfirm-@item.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLongTitle">Delete</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form id="deleteConfirmForm-@item.Id" asp-action="Delete" asp-controller="Recipes">
+                                                                <input type="hidden" name="id" value="@item.Id" />
+                                                                <h6>@item.Name</h6>
+                                                                <p>Are you sure you want to delete this recipe?</p>
+                                                            </form>
+                                                        </div>
+
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                            <button class="btn btn-danger submitDeleteFormBtn" data-modal-id="deleteConfirm-@item.Id">Confirm</button>
+
                                                         </div>
                                                     </div>
                                                 </div>
@@ -468,6 +497,22 @@
                 // Clear the error message if textarea is not empty
                 form.find(".error-message").text("");
             }
+            // Submit the form
+            form.submit();
+        });
+        $(".deleteConfirmModalBtn").click(function () {
+            // Get the ID of the modal associated with this button
+            var modalId = $(this).data("modal-id");
+
+            // Show the modal using the Bootstrap modal method
+            $("#" + modalId).modal("show");
+        });
+
+        // Click event for "Confirm" buttons inside the modals
+        $(".modal").on("click", ".submitDeleteFormBtn", function () {
+            // Find the form inside the current modal
+            var form = $(this).closest(".modal-content").find("form");
+
             // Submit the form
             form.submit();
         });
