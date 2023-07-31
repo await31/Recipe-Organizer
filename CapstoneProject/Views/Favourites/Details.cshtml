@@ -67,7 +67,7 @@
                         <div class="card-head">
                             @if (isOwner)
                             {
-                                <button id="remove-button-@recipe.Id" data-favourite-id="@ViewData["Id"]" data-recipe-id="@recipe.Id" onclick="removeFavourite(this);" class="btn btn-danger text-center p-0"
+                                <button id="remove-button-@recipe.Id" data-recipe-id="@recipe.Id" data-bs-toggle="modal" data-bs-target="#removeRecipeModal" class="btn btn-danger text-center p-0 remove-button"
                                         style="z-index:1;border-radius:50%;position:absolute;right:-18px;top:-18px;width:36px;height:36px" value="-">
                                     <i class="fa-solid fa-minus fa-2x"></i>
                                 </button>
@@ -179,6 +179,28 @@
                 </div>
             </div>
         </div>
+        <!-- Remove Recipe -->
+        <div class="delete-modal modal fade" id="removeRecipeModal" tabindex="-1" aria-labelledby="removeRecipeModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="removeRecipeModalLabel"><i class="fa-solid fa-circle-minus mx-1" style="color:red"></i>Remove Recipe</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-dark">Are you sure you want to remove this recipe from the collection?</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <button id="modal-remove-button" data-favourite-id="@ViewData["Id"]" data-bs-dismiss="modal" data-recipe-id="" type="button" onclick="removeFavourite(this);" class="btn btn-danger">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Delete Modal -->
         <div class="delete-modal modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -276,6 +298,10 @@
             var currentUrl = window.location.href;
             var emailBody = 'This collection of recipes is amazing ' + currentUrl;
             window.open("mailto:?" + 'subject=Cookez - Share Collection' + '&body=' + emailBody, '_self');
+        });
+        $('.remove-button').click(function () {
+            var recipeId = $(this).data('recipe-id');
+            $('#modal-remove-button').attr("data-recipe-id", recipeId);
         });
         $('#editButton').click(function () {
             document.getElementById("editName").value = document.getElementById("collectionName").innerHTML;
