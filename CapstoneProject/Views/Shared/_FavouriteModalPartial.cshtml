@@ -51,23 +51,28 @@
         $('#create-collection-form').css("display", "block");
     });
     $('#create-confirm-button').click(function () {
-        var recipeId = $("#favourite-save").data('recipe-id');
-        $('#create-collection-button').css("display", "block");
-        $('#create-collection-form').css("display", "none");
-        var name = $("#create-collection-name").val();
-        $.ajax({
-            url: '/Favourites/CreateAjax',
-            type: 'POST',
-            data: { name: name },
-            success: function (data) {
-                $('#favourite-list-div').html(data);
-                $("#create-collection-name").val('');
-                UpdateCheckbox(recipeId);
-                toastr.success("Create collection successfully!");
-            },
-            error: function () {
-                toastr.error("Fail to create collection!");
-            }
-        });
+        var name = $("#create-collection-name").val().trim();
+        if(name!="") {
+            var recipeId = $("#favourite-save").data('recipe-id');
+            $('#create-collection-button').css("display", "block");
+            $('#create-collection-form').css("display", "none");
+            $.ajax({
+                url: '/Favourites/CreateAjax',
+                type: 'POST',
+                data: { name: name },
+                success: function (data) {
+                    $('#favourite-list-div').html(data);
+                    $("#create-collection-name").val('');
+                    UpdateCheckbox(recipeId);
+                    toastr.success("Create collection successfully!");
+                },
+                error: function () {
+                    toastr.error("Fail to create collection!");
+                }
+            });
+        }
+        else {
+            toastr.error("Collection name cannot be blank!");
+        }
     });
 </script>
