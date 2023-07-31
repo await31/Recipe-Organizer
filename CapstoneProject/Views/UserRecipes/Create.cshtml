@@ -40,7 +40,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger text-color-change-red"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label mb-2 label-font">Recipe Name</label>
-                <input asp-for="Name" class="form-control" placeholder="e.g. Egg fried rice" />
+                <input asp-for="Name" id="recipeNameInput" class="form-control" placeholder="e.g. Egg fried rice" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group mt-4">
@@ -78,7 +78,7 @@
             <div class="form-group mt-4">
                 <label asp-for="Difficult" class="control-label mb-2 label-font">Difficult Level</label>
                 <select asp-for="Difficult" class="form-control">
-                    <option value="0">Choose an option</option>
+
                     <option value="1">Easy</option>
                     <option value="2">Medium</option>
                     <option value="3">Hard</option>
@@ -266,11 +266,20 @@
         // Prevent the form from submitting
         event.preventDefault();
 
+        var recipeName = document.getElementById("recipeNameInput").value.trim();
+        if(!recipeName){
+            document.getElementById("recipeNameInput").scrollIntoView({ behavior: 'smooth' });
+            document.getElementById("recipeNameInput").focus();
+            return toastr.warning('Failed to create the recipe, make sure type in right name.');
+        }
+        
+
         // Get all the select elements within the container
         var inputElements = document.querySelectorAll('#ingredient-container input[type="text"]');
         var quantityInputs = document.querySelectorAll('#ingredient-container input[type="number"]');
         var unitOfMeasureSelects = document.querySelectorAll('#ingredient-container select[name="UnitOfMeasures[]"]');
 
+        
         // Create a hidden input for each ingredient ID
         var hiddenInputsContainer = document.getElementById('hidden-inputs-container');
         hiddenInputsContainer.innerHTML = ''; // Clear any existing hidden inputs
@@ -366,44 +375,44 @@
 
     $(document).ready(function () {
         $("#saveChangesBtn").click(function () {
-            var ingname = $("#ingName").val();
+            var ingname = $("#ingName").val().trim();
             var file = $("#fileInput").prop('files')[0];
-            var ingdescription = $("#description").val();
+            var ingdescription = $("#description").val().trim();
             var categoryId = $("#fkcategoryid").val();
-            var calories = $("#calories").val();
-            var fibre = $("#fibre").val();
-            var carbohydrate = $("#carbohydrate").val();
-            var protein = $("#protein").val();
-            var fat = $("#fat").val();
-            var cholesterol = $("#cholesterol").val();
+            var calories = $("#calories").val().trim();
+            var fibre = $("#fibre").val().trim();
+            var carbohydrate = $("#carbohydrate").val().trim();
+            var protein = $("#protein").val().trim();
+            var fat = $("#fat").val().trim();
+            var cholesterol = $("#cholesterol").val().trim();
             if (!ingname) {
-                return alert("Please enter a valid ingredient name.");
+                return toastr.warning("Please enter a valid ingredient name.");
             }
 
             if (!file) {
-                return alert("Please select a file.");
+                return toastr.warning("Please select a file.");
             }
 
             if (!ingdescription) {
-                return alert("Please enter a valid ingredient description.");
+                return toastr.warning("Please enter a valid ingredient description.");
             }
             if (!calories) {
-                return alert("Please enter a valid calories.");
+                return toastr.warning("Please enter a valid calories.");
             }
             if (!fibre) {
-                return alert("Please enter a valid fibre.");
+                return toastr.warning("Please enter a valid fibre.");
             }
             if (!carbohydrate) {
-                return alert("Please enter a valid carbohydrate.");
+                return toastr.warning("Please enter a valid carbohydrate.");
             }
             if (!protein) {
-                return alert("Please enter a valid protein.");
+                return toastr.warning("Please enter a valid protein.");
             }
             if (!fat) {
-                return alert("Please enter a valid fat.");
+                return toastr.warning("Please enter a valid fat.");
             }
             if (!cholesterol) {
-                return alert("Please enter a valid cholesterol.");
+                return toastr.warning("Please enter a valid cholesterol.");
             }
             var formData = new FormData();
             formData.append("Name", ingname);

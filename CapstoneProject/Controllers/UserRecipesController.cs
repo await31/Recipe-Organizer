@@ -573,6 +573,7 @@ namespace CapstoneProject.Controllers {
 
                     RemoveDuplicateIngredientsRecipe(ingredients);
                     RemoveDuplicateRecipeIngredients(recipeIngredients);
+                    existingRecipe.ResponseMessage = null;
                     _recipeRepository.UpdateRecipe(existingRecipe, ingredients, recipeIngredients, recipeNutrition);
                 }
                 try {

@@ -32,7 +32,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger text-color-change-red"></div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label mb-2 label-font">Title</label>
-                <input asp-for="Title" class="form-control" placeholder="e.g. Recipes to make for mother's day" required />
+                <input asp-for="Title" id="planNameInput" class="form-control" placeholder="e.g. Recipes to make for mother's day" required />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group mt-4">
@@ -165,6 +165,7 @@
 
 <script src="~/lib/jquery-3.7.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="~/js/asyncbutton.js"></script>
 
 <script>
@@ -312,6 +313,12 @@
         showLoading('create-button', 'create-button-container');
         // Prevent the form from submitting
         event.preventDefault();
+        var planName = document.getElementById("planNameInput").value.trim();
+        if (!planName) {
+            document.getElementById("planNameInput").scrollIntoView({ behavior: 'smooth' });
+            document.getElementById("planNameInput").focus();
+            return toastr.warning('Failed to create the plan, make sure type in right name.');
+        }
 
         // Get all the select elements within the container
         var inputElements = document.querySelectorAll('#recipe-container input[type="text"]');
